@@ -8,7 +8,6 @@
         body { font-family: "Helvetica Neue", Arial, sans-serif; text-align: center; margin: 0; padding: 20px; background-color: #ffffff; }
         .container { max-width: 500px; margin: auto; }
         
-        /* 讓 Logo 變成可點擊的連結樣式 */
         .logo-link { display: inline-block; margin-bottom: 15px; }
         .logo { width: 120px; height: 120px; object-fit: contain; display: block; }
         
@@ -25,6 +24,7 @@
             font-weight: 600; 
             transition: all 0.2s; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+            cursor: pointer;
         }
         .btn:hover { background: #333; color: white; border-color: #333; }
         footer { margin-top: 40px; font-size: 0.75rem; color: #aaa; }
@@ -41,7 +41,7 @@
     <p>專業的工業技術解決方案提供者</p>
 
     <div class="btn-group">
-        <a href="https://o936157111-ops.github.io/company-calendar/" class="btn">金牛頓公司活動行事曆</a>
+        <a href="javascript:void(0)" class="btn" onclick="checkDynamicPassword()">金牛頓公司活動行事曆</a>
         <a href="#" class="btn">核心業務與服務</a>
         <a href="#" class="btn">專案案例分享</a>
         <a href="#" class="btn">聯繫我們 (諮詢)</a>
@@ -51,6 +51,27 @@
         © 2026 金牛頓工業股份有限公司 All Rights Reserved.
     </footer>
 </div>
+
+<script>
+function checkDynamicPassword() {
+    var today = new Date();
+    var yyyy = today.getFullYear();
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var dd = String(today.getDate()).padStart(2, '0');
+    var dateString = yyyy + mm + dd;
+    
+    var correctPassword = "50755805" + dateString;
+    
+    // 已移除提示文字，僅顯示簡單的輸入請求
+    var input = prompt("請輸入驗證碼：");
+    
+    if (input === correctPassword) {
+        window.location.href = "https://o936157111-ops.github.io/company-calendar/";
+    } else if (input !== null) {
+        alert("驗證失敗。");
+    }
+}
+</script>
 
 </body>
 </html>
