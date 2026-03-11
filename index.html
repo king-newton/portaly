@@ -7,12 +7,14 @@
     <style>
         body { font-family: "Helvetica Neue", Arial, sans-serif; text-align: center; margin: 0; padding: 20px; background-color: #ffffff; }
         .container { max-width: 500px; margin: auto; }
-        .logo { width: 120px; height: 120px; object-fit: contain; margin-bottom: 15px; }
+        
+        /* 讓 Logo 變成可點擊的連結樣式 */
+        .logo-link { display: inline-block; margin-bottom: 15px; }
+        .logo { width: 120px; height: 120px; object-fit: contain; display: block; }
+        
         h1 { font-size: 1.4rem; margin: 5px 0; color: #333; }
         p { color: #555; font-size: 0.95rem; margin-bottom: 25px; }
         .btn-group { display: flex; flex-direction: column; gap: 12px; }
-        
-        /* 已更新：調整 border 顏色與寬度 */
         .btn { 
             padding: 16px; 
             background: #ffffff; 
@@ -24,7 +26,6 @@
             transition: all 0.2s; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
         }
-        
         .btn:hover { background: #333; color: white; border-color: #333; }
         footer { margin-top: 40px; font-size: 0.75rem; color: #aaa; }
     </style>
@@ -32,7 +33,10 @@
 <body>
 
 <div class="container">
-    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgSth4pRDh7w09XM_JrF0w31X_i9AipAJ1Ia5gHjmAW5vDRqb9fPrdPp2O-_lcCLbBh1hsMSAikxeFsr5mjvrZVFLTZi_cM4vYjmi-dp4yRKZeb651tKeADro-Ch2xfixz6fNwsONLdmb1w0eEol9wtqQuJQXqgM1NZU2C9vI5Ozpg1wxBzO26SjTpCUlUb/s16000-rw/20230727.png" alt="金牛頓工業 Logo" class="logo">
+    <a href="https://www.king-newton.com/" class="logo-link">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgSth4pRDh7w09XM_JrF0w31X_i9AipAJ1Ia5gHjmAW5vDRqb9fPrdPp2O-_lcCLbBh1hsMSAikxeFsr5mjvrZVFLTZi_cM4vYjmi-dp4yRKZeb651tKeADro-Ch2xfixz6fNwsONLdmb1w0eEol9wtqQuJQXqgM1NZU2C9vI5Ozpg1wxBzO26SjTpCUlUb/s16000-rw/20230727.png" alt="金牛頓工業 Logo" class="logo">
+    </a>
+    
     <h1>金牛頓工業股份有限公司</h1>
     <p>專業的工業技術解決方案提供者</p>
 
