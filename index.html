@@ -60,7 +60,7 @@ function checkDynamicPassword() {
     var dd = String(today.getDate()).padStart(2, '0');
     var dateString = yyyy + mm + dd;
     
-    var correctPassword = "50755805" + dateString;
+    var correctPassword = dateString;
     
     var input = prompt("請輸入驗證碼：");
     
@@ -74,3 +74,4 @@ function checkDynamicPassword() {
 
 </body>
 </html>
+
