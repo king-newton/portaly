@@ -62,7 +62,7 @@ function checkDynamicPassword(targetUrl) {
     // 密碼現在僅為當天日期 (YYYYMMDD)
     var correctPassword = yyyy + mm + dd;
     
-    var input = prompt("請輸入今日驗證碼：");
+    var input = prompt("請輸入驗證碼：");
     
     if (input === correctPassword) {
         window.open(targetUrl, '_blank');
@@ -74,3 +74,4 @@ function checkDynamicPassword(targetUrl) {
 
 </body>
 </html>
+
