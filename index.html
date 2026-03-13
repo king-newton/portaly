@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
+   
     <link rel="manifest" href="manifest.json">
 
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-  }
-</script>
-    
+    <script>
+     if ('serviceWorker' in navigator) {
+     navigator.serviceWorker.register('sw.js');
+     }
+    </script> 
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>金牛頓工業股份有限公司</title>
@@ -42,7 +44,7 @@
 
 <div class="container">
     <a href="https://www.king-newton.com/" class="logo-link">
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgSth4pRDh7w09XM_JrF0w31X_i9AipAJ1Ia5gHjmAW5vDRqb9fPrdPp2O-_lcCLbBh1hsMSAikxeFsr5mjvrZVFLTZi_cM4vYjmi-dp4yRKZeb651tKeADro-Ch2xfixz6fNwsONLdmb1w0eEol9wtqQuJQXqgM1NZU2C9vI5Ozpg1wxBzO26SjTpCUlUb/s16000-rw/20230727.png" alt="金牛頓工業 Logo" class="logo">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQn6xjuG-I81vGfFkGiulp55TCfDojnd-B60w3yjt81XHWF6dWfFnP4uZWlyI7PiB6drX5N259UjpHGrjHzlQfzRcxhx2MbkMDTniiElsZFV9Y3UWgPi7X_cRyZiTYifnCisvqzQVy_krPvJCrED_JEErXfGSsWukxmkiCR0ZrbAJEBjixhP6FW68X4FXo/s16000-rw/logo.gif" alt="金牛頓工業 Logo" class="logo">
     </a>
     
     <h1>金牛頓工業股份有限公司</h1>
@@ -67,7 +69,6 @@ function checkDynamicPassword(targetUrl) {
     var yyyy = today.getFullYear();
     var mm = String(today.getMonth() + 1).padStart(2, '0');
     var dd = String(today.getDate()).padStart(2, '0');
-    // 密碼現在僅為當天日期 (YYYYMMDD)
     var correctPassword = yyyy + mm + dd;
     
     var input = prompt("請輸入驗證碼：");
@@ -82,6 +83,3 @@ function checkDynamicPassword(targetUrl) {
 
 </body>
 </html>
-
-
-
