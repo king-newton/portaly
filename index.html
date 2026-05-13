@@ -65,9 +65,6 @@
         .ratio-label { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 4px; text-align: center; }
         .ratio-val { font-size: 1.1rem; font-weight: bold; color: white; }
 
-        .status-up { color: var(--up-green); }
-        .status-down { color: var(--down-red); }
-
         .calendar-btn {
             display: flex; align-items: center; justify-content: center;
             margin-top: 15px; padding: 15px; background: var(--btn-bg);
@@ -75,11 +72,31 @@
             text-decoration: none; font-weight: bold;
         }
 
-        footer { text-align: center; padding: 20px; font-size: 0.7rem; color: var(--text-dim); opacity: 0.5; }
+        /* 重要事項提醒表格化修正 */
+        .important-notice {
+            margin-top: 20px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 15px;
+            overflow: hidden;
+        }
+        .notice-header { color: var(--accent-blue); font-weight: bold; font-size: 1.1rem; margin-bottom: 12px; }
+        .notice-table { width: 100%; border-collapse: collapse; }
+        .notice-table th { background: rgba(56, 189, 248, 0.1); text-align: left; padding: 12px 10px; color: var(--accent-blue); font-size: 0.85rem; border-bottom: 2px solid rgba(56, 189, 248, 0.3); }
+        .notice-table td { padding: 14px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; vertical-align: top; line-height: 1.6; }
+        
+        /* 調大項目欄寬度至 100px */
+        .item-col { width: 200px; color: var(--accent-blue); font-weight: bold; }
+        .detail-col { color: var(--text-white); }
+
+        footer { text-align: center; padding: 30px 0; font-size: 0.7rem; color: var(--text-dim); opacity: 0.4; }
 
         @media screen and (max-width: 480px) {
             .card-value { font-size: 1.2rem; }
             .ratio-val { font-size: 0.95rem; }
+            .notice-table td { font-size: 0.82rem; }
+            .item-col { width: 80px; } /* 手機端稍微縮小一點避免擠壓內容 */
         }
     </style>
 </head>
@@ -136,7 +153,7 @@
         <div class="ratio-bar">
             <div class="ratio-item">
                 <span class="ratio-label">年度達成率</span>
-                <span id="rate-achieve" class="ratio-val status-up">--%</span>
+                <span id="rate-achieve" class="ratio-val" style="color:var(--up-green)">--%</span>
             </div>
             <div class="ratio-item">
                 <span class="ratio-label">目前毛利率</span>
@@ -149,6 +166,32 @@
         </div>
 
         <a href="https://o936157111-ops.github.io/company-calendar/" target="_blank" class="calendar-btn">📅 查看公司行事曆</a>
+
+        <div class="important-notice">
+            <div class="notice-header">重要事項提醒</div>
+            <table class="notice-table">
+                <thead>
+                    <tr>
+                        <th class="item-col">項目</th>
+                        <th class="detail-col">內容詳情</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="item-col">展覽</td>
+                        <td class="detail-col">提醒2026台北國際塑橡膠工業展<br><span style="color:var(--accent-blue); font-family:Consolas; font-weight:bold;">2026/09/15 開始 - 2026/09/18</span></td>
+                    </tr>
+                    <tr>
+                        <td class="item-col">專案</td>
+                        <td class="detail-col">產品型錄、LOGO、形象設計</td>
+                    </tr>
+                    <tr>
+                        <td class="item-col">產品</td>
+                        <td class="detail-col">AI-ESS技術手冊、教育訓練、售後服務</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <footer>© 2026 GOLD NEWTON INDUSTRIAL</footer>
     </div>
@@ -193,10 +236,8 @@
                     });
                     document.getElementById('total-sales').innerText = Math.round(s).toLocaleString();
                     document.getElementById('total-profit').innerText = Math.round(p).toLocaleString();
-                    
                     const timeNow = new Date();
                     document.getElementById('update-time').innerText = "最後同步時間：" + timeNow.toLocaleTimeString();
-                    
                     calculateLogic(s, p);
                 }
             });
@@ -207,27 +248,22 @@
             const start = new Date(dateObj.getFullYear(), 0, 0);
             const dayOfYear = Math.floor((dateObj - start) / 86400000);
             document.getElementById('day-info').innerText = `${dateObj.getFullYear()}年第 ${dayOfYear} 天`;
-            
             let monthly = parseFloat(document.getElementById('monthly-target').value.replace(/,/g, '')) || 0;
             let annual = monthly * 12;
             document.getElementById('annual-target').innerText = Math.round(annual).toLocaleString();
-            
             if (s === undefined) s = parseFloat(document.getElementById('total-sales').innerText.replace(/,/g, '')) || 0;
-            
             let timeWeightedTarget = (annual / 365) * dayOfYear;
             let diff = s - timeWeightedTarget;
             let progEl = document.getElementById('progress-status');
             let labelEl = document.getElementById('diff-label');
             progEl.innerText = Math.round(Math.abs(diff)).toLocaleString();
-            
             if (diff >= 0) {
-                progEl.className = 'card-value status-up';
+                progEl.style.color = '#4ade80';
                 labelEl.innerText = '進度超前 (+)';
             } else {
-                progEl.className = 'card-value status-down';
+                progEl.style.color = '#fb7185';
                 labelEl.innerText = '進度落後 (-)';
             }
-            
             let exp = parseFloat(document.getElementById('expense-val').innerText.replace(/,/g, '')) || 0;
             document.getElementById('rate-achieve').innerText = annual > 0 ? `${(s/annual*100).toFixed(1)}%` : '0%';
             document.getElementById('rate-margin').innerText = s > 0 ? `${(p/s*100).toFixed(1)}%` : '0%';
