@@ -6,6 +6,20 @@
     <title>金牛頓 2026 營運分析儀表板</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
+        /* 新增：啟動驗證遮罩層 */
+        #auth-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff; z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        #auth-input {
+            border: none; border-bottom: 2px solid #3e5a26; width: 220px;
+            font-size: 26px; text-align: center; outline: none; padding: 10px;
+            letter-spacing: 5px; font-family: "Consolas", monospace;
+        }
+        #auth-msg { margin-top: 15px; color: #888; font-size: 14px; }
+
+        /* 原有樣式 */
         body { font-family: "Microsoft JhengHei", sans-serif; padding: 20px; background-color: #f4f4f4; color: #333; margin: 0; }
         .tabs { display: flex; margin-bottom: 20px; }
         .tab-button { padding: 12px 24px; cursor: pointer; background: #ddd; border: none; font-size: 16px; flex: 1; transition: 0.3s; }
@@ -20,12 +34,7 @@
         .summary-row { background-color: #3e5a26; color: white; text-align: center; font-weight: bold; }
         .stats-header { background: #3e5a26; color: white; font-weight: bold; text-align: center; }
         .top-20-highlight { background-color: #f0f7ef !important; }
-        
-        /* 修正：輸入框文字靠左對齊 */
         input { width: 95%; text-align: left; border: none; font-size: 16px; font-family: "Consolas", monospace; background: transparent; padding: 2px; }
-        input:focus { outline: 1px solid #3e5a26; background: #fff; }
-        input[readonly] { background-color: #f0f0f0; color: #888; cursor: not-allowed; }
-
         .highlight-red { color: #d9534f; font-weight: bold; }
         .highlight-green { color: #28a745; font-weight: bold; }
 
@@ -44,6 +53,11 @@
 </head>
 <body>
 
+    <div id="auth-overlay">
+        <input type="password" id="auth-input" autofocus maxlength="8" placeholder="請輸入密碼">
+        <div id="auth-msg">請輸入當日驗證碼 (YYYYMMDD)</div>
+    </div>
+
     <div class="tabs">
         <button class="tab-button active" onclick="openTab(event, 'DASHBOARD')">DASHBOARD</button>
         <button class="tab-button" onclick="openTab(event, 'DATA')">資料明細</button>
@@ -51,7 +65,6 @@
 
     <div id="DASHBOARD" class="tab-content active">
         <div class="report-title">2026 年度累計營收銷售分析報告</div>
-        
         <table>
             <tr>
                 <td class="label">日期時間</td><td class="value" id="current-date">--</td>
@@ -60,7 +73,7 @@
             <tr>
                 <td class="label">2026年每月目標</td>
                 <td class="value"><input type="text" id="monthly-target" value="7,500,000" onfocus="this.value=this.value.replace(/,/g,'')" onblur="formatCommas(this); calculateLogic()"></td>
-                <td class="label">2026年營營收目標</td><td class="value" id="annual-target">NT$ 90,000,000</td>
+                <td class="label">2026年營收目標</td><td class="value" id="annual-target">NT$ 90,000,000</td>
             </tr>
             <tr>
                 <td class="label">目前銷貨合計</td><td class="value" id="total-sales">讀取中...</td>
@@ -75,17 +88,11 @@
                 <td colspan="4" class="summary-row" id="summary-bar">達成率：--% | 毛利率：--% | 費用率：--%</td>
             </tr>
         </table>
-
         <div style="margin-top: 30px;"></div>
-
         <table class="stats-table">
             <thead>
                 <tr>
-                    <th class="stats-header">客戶名稱</th>
-                    <th class="stats-header">銷貨合計</th>
-                    <th class="stats-header">利潤合計</th>
-                    <th class="stats-header">毛利率</th>
-                    <th class="stats-header">排名</th>
+                    <th class="stats-header">客戶名稱</th><th class="stats-header">銷貨合計</th><th class="stats-header">利潤合計</th><th class="stats-header">毛利率</th><th class="stats-header">排名</th>
                 </tr>
             </thead>
             <tbody id="customer-stats-body"></tbody>
@@ -97,17 +104,28 @@
     </div>
 
     <script>
-        const CSV_SALES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv";
-        const CSV_EXPENSE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv";
+        const CSV_SALES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv&t=" + Date.now();
+        const CSV_EXPENSE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv&t=" + Date.now();
         
+        // 驗證功能
+        const authInput = document.getElementById('auth-input');
+        const authOverlay = document.getElementById('auth-overlay');
+        
+        authInput.addEventListener('input', () => {
+            const today = new Date();
+            const correctPw = today.getFullYear() + String(today.getMonth() + 1).padStart(2, '0') + String(today.getDate()).padStart(2, '0');
+            if (authInput.value === correctPw) {
+                authOverlay.style.display = 'none'; // 密碼正確，移除遮罩
+            }
+        });
+
+        // 資料抓取功能 (延用 index-2026-5-13.html 邏輯)
         function fetchAllData() {
             Papa.parse(CSV_EXPENSE_URL, {
-                download: true,
-                header: false,
-                skipEmptyLines: true,
+                download: true, header: false, skipEmptyLines: true,
                 complete: function(results) {
                     let foundExpense = 0;
-                    if (results.data && results.data.length > 0) {
+                    if (results.data) {
                         outerLoop:
                         for (let row of results.data) {
                             for (let cell of row) {
@@ -129,10 +147,9 @@
             Papa.parse(CSV_SALES_URL, {
                 download: true, header: true, skipEmptyLines: true,
                 complete: function(results) {
-                    const data = results.data;
                     let sTotal = 0, pTotal = 0;
                     let custMap = {};
-                    data.forEach(row => {
+                    results.data.forEach(row => {
                         let s = parseFloat(row['本幣未稅金額']?.toString().replace(/,/g, '')) || 0;
                         let p = parseFloat(row['毛利']?.toString().replace(/,/g, '')) || 0;
                         let name = row['客戶名稱'] || '未分類';
@@ -140,21 +157,8 @@
                         if(!custMap[name]) custMap[name] = { s: 0, p: 0 };
                         custMap[name].s += s; custMap[name].p += p;
                     });
-                    let custArray = Object.keys(custMap).map(k => ({ name: k, ...custMap[k] })).sort((a, b) => b.s - a.s);
-                    let body = document.getElementById('customer-stats-body');
-                    body.innerHTML = '';
-                    custArray.forEach((c, i) => {
-                        let margin = c.s > 0 ? (c.p / c.s * 100).toFixed(1) : 0;
-                        let rank = i + 1;
-                        let rowClass = rank <= 20 ? 'top-20-highlight' : '';
-                        body.innerHTML += `<tr class="${rowClass}">
-                            <td data-label="客戶名稱">${c.name}</td>
-                            <td data-label="銷貨合計">${Math.round(c.s).toLocaleString()}</td>
-                            <td data-label="利潤合計">${Math.round(c.p).toLocaleString()}</td>
-                            <td data-label="毛利率">${margin}%</td>
-                            <td data-label="排名">${rank}</td>
-                        </tr>`;
-                    });
+                    // 更新列表... (略)
+                    renderCustomerTable(custMap);
                     document.getElementById('total-sales').innerText = 'NT$ ' + Math.round(sTotal).toLocaleString();
                     document.getElementById('total-profit').innerText = 'NT$ ' + Math.round(pTotal).toLocaleString();
                     calculateLogic(sTotal, pTotal);
@@ -162,12 +166,28 @@
             });
         }
 
+        function renderCustomerTable(custMap) {
+            let custArray = Object.keys(custMap).map(k => ({ name: k, ...custMap[k] })).sort((a, b) => b.s - a.s);
+            let body = document.getElementById('customer-stats-body');
+            body.innerHTML = '';
+            custArray.forEach((c, i) => {
+                let margin = c.s > 0 ? (c.p / c.s * 100).toFixed(1) : 0;
+                let rank = i + 1;
+                body.innerHTML += `<tr class="${rank <= 20 ? 'top-20-highlight' : ''}">
+                    <td data-label="客戶名稱">${c.name}</td>
+                    <td data-label="銷貨合計">${Math.round(c.s).toLocaleString()}</td>
+                    <td data-label="利潤合計">${Math.round(c.p).toLocaleString()}</td>
+                    <td data-label="毛利率">${margin}%</td>
+                    <td data-label="排名">${rank}</td>
+                </tr>`;
+            });
+        }
+
         function calculateLogic(s, p) {
-            if(s === undefined) { s = parseFloat(document.getElementById('total-sales').innerText.replace(/[NT$,]/g, '')) || 0; }
-            if(p === undefined) { p = parseFloat(document.getElementById('total-profit').innerText.replace(/[NT$,]/g, '')) || 0; }
+            if(s === undefined) s = parseFloat(document.getElementById('total-sales').innerText.replace(/[NT$,]/g, '')) || 0;
+            if(p === undefined) p = parseFloat(document.getElementById('total-profit').innerText.replace(/[NT$,]/g, '')) || 0;
             const now = new Date();
-            const startOfYear = new Date(now.getFullYear(), 0, 0);
-            const dayOfYear = Math.floor((now - startOfYear) / 86400000);
+            const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
             let monthly = parseFloat(document.getElementById('monthly-target').value.replace(/,/g, '')) || 0;
             let annual = monthly * 12;
             document.getElementById('annual-target').innerText = 'NT$ ' + annual.toLocaleString();
