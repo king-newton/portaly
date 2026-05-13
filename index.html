@@ -2,11 +2,6 @@
 <html lang="zh-Hant">
 <head>
     <link rel="manifest" href="manifest.json">
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
-    </script> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>金牛頓工業 - 行動戰情室</title>
@@ -20,14 +15,9 @@
         .subtitle { font-size: 0.8rem; color: #888; margin-top: 3px; }
         .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .card { background: #ffffff; padding: 20px; border-radius: 12px; text-decoration: none; color: #333; display: flex; flex-direction: column; transition: all 0.2s ease; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; }
-        .card:hover { background: #f8f9fa; border-color: #bbbbbb; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .card-label { font-size: 0.8rem; color: #1a73e8; margin-bottom: 8px; font-weight: bold; }
         .data-value { font-size: 1.4rem; color: #d93025; font-weight: 800; min-height: 1.6rem; }
-        
-        .full-width-card { grid-column: span 2; padding: 15px; text-align: center; justify-content: center; align-items: center; border: none; margin-top: 5px; font-weight: bold; }
-        .calendar-card { background: #e8f0fe; color: #1967d2; border: 1px solid #d2e3fc; }
-        .website-card { background: #f1f3f4; color: #5f6368; }
-        
+        .full-width-card { grid-column: span 2; padding: 15px; text-align: center; justify-content: center; align-items: center; border: none; margin-top: 5px; font-weight: bold; background: #e8f0fe; color: #1967d2; border-radius: 12px; text-decoration: none;}
         footer { margin-top: 40px; font-size: 0.75rem; color: #aaaaaa; text-align: center; }
     </style>
 </head>
@@ -35,9 +25,7 @@
 
 <div class="container">
     <header>
-        <a href="https://www.king-newton.com/">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQn6xjuG-I81vGfFkGiulp55TCfDojnd-B60w3yjt81XHWF6dWfFnP4uZWlyI7PiB6drX5N259UjpHGrjHzlQfzRcxhx2MbkMDTniiElsZFV9Y3UWgPi7X_cRyZiTYifnCisvqzQVy_krPvJCrED_JEErXfGSsWukxmkiCR0ZrbAJEBjixhP6FW68X4FXo/s16000-rw/logo.gif" alt="Logo" class="logo">
-        </a>
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQn6xjuG-I81vGfFkGiulp55TCfDojnd-B60w3yjt81XHWF6dWfFnP4uZWlyI7PiB6drX5N259UjpHGrjHzlQfzRcxhx2MbkMDTniiElsZFV9Y3UWgPi7X_cRyZiTYifnCisvqzQVy_krPvJCrED_JEErXfGSsWukxmkiCR0ZrbAJEBjixhP6FW68X4FXo/s16000-rw/logo.gif" alt="Logo" class="logo">
         <div class="header-text">
             <h1>整體現況</h1>
             <div class="subtitle">金牛頓工業股份有限公司</div>
@@ -45,119 +33,95 @@
     </header>
 
     <div class="dashboard-grid">
-        <div class="card" onclick="checkDynamicPassword('https://king-newton.github.io/dashboard/')">
+        <div class="card" onclick="checkDynamicPassword()">
             <span class="card-label">目前累計營收</span>
             <div id="revenue-val" class="data-value">讀取中...</div>
         </div>
-
-        <div class="card" onclick="checkDynamicPassword('https://king-newton.github.io/dashboard/')">
+        <div class="card" onclick="checkDynamicPassword()">
             <span class="card-label">公司毛利率</span>
-            <div id="margin-val" class="data-value">26.7%</div>
+            <div class="data-value">26.7%</div>
         </div>
-
-        <div class="card" onclick="checkDynamicPassword('https://king-newton.github.io/dashboard/')">
+        <div class="card" onclick="checkDynamicPassword()">
             <span class="card-label">營業費用總計</span>
             <div id="expense-val" class="data-value">讀取中...</div>
         </div>
-
-        <div class="card" onclick="checkDynamicPassword('https://king-newton.github.io/dashboard/')">
+        <div class="card" onclick="checkDynamicPassword()">
             <span class="card-label">營業費用率</span>
             <div id="expense-rate-val" class="data-value">...%</div>
         </div>
-
-        <a href="https://o936157111-ops.github.io/company-calendar/" target="_blank" class="card full-width-card calendar-card">
-            📅 公司行事曆
-        </a>
-
-        <a href="https://www.king-newton.com/" target="_blank" class="card full-width-card website-card">
-            金牛頓官方網站
-        </a>
+        <a href="https://o936157111-ops.github.io/company-calendar/" target="_blank" class="full-width-card">📅 公司行事曆</a>
     </div>
-
-    <footer>© 2026 金牛頓工業股份有限公司 All Rights Reserved.</footer>
+    <footer>© 2026 金牛頓工業股份有限公司</footer>
 </div>
 
 <script>
-// 加上 Date.now() 強制跳過 Google 快取
-const revenueUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv&t=' + Date.now();
-const expenseUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv&t=' + Date.now();
-
-let globalRevenue = 0;
-let globalExpense = 0;
+const revenueUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv';
+const expenseUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv';
 
 function parseNum(str) {
     if (!str) return null;
-    let n = parseFloat(str.replace(/[^\d.-]/g, ''));
+    let s = str.trim().replace(/,/g, '');
+    if (s.startsWith('(') && s.endsWith(')')) s = '-' + s.substring(1, s.length - 1);
+    let n = parseFloat(s);
     return isNaN(n) ? null : n;
 }
 
-function updateUI() {
-    if (globalRevenue > 0) {
-        document.getElementById('revenue-val').innerText = Math.round(globalRevenue).toLocaleString();
-    }
-    if (globalExpense > 0) {
-        document.getElementById('expense-val').innerText = Math.round(globalExpense).toLocaleString();
-    }
-    if (globalRevenue > 0 && globalExpense > 0) {
-        let rate = (globalExpense / globalRevenue) * 100;
-        document.getElementById('expense-rate-val').innerText = rate.toFixed(1) + "%";
-    }
-}
-
 async function updateDashboard() {
+    const cb = "&t=" + Date.now();
     try {
-        // 1. 同時抓取兩份資料
-        const [resR, resE] = await Promise.all([
-            fetch(revenueUrl),
-            fetch(expenseUrl)
-        ]);
-
-        const textR = await resR.text();
-        const rowsR = textR.split('\n').map(r => r.split(','));
+        // 1. 抓取營收
+        const resR = await fetch(revenueUrl + cb);
+        const csvR = await resR.text();
+        const rowsR = csvR.split('\n');
         let revSum = 0;
-        rowsR.forEach((r, idx) => {
-            if (idx === 0) return; // 跳過標題
-            let v = parseNum(r[6]);
-            if (v !== null) revSum += v;
+        rowsR.forEach((line, idx) => {
+            if (idx === 0) return; // 跳過第一列標題
+            const cols = line.split(',');
+            const val = parseNum(cols[6]); // 鎖定第 7 欄
+            if (val !== null) revSum += val;
         });
-        globalRevenue = revSum;
 
-        const textE = await resE.text();
-        const rowsE = textE.split('\n').map(r => r.split(','));
-        for (let row of rowsE) {
-            let rowStr = row.join('|');
-            if (rowStr.includes("合計") || rowStr.includes("總計")) {
-                // 掃描該列尋找第一個有效數字
-                for (let col of row) {
-                    let v = parseNum(col);
-                    if (v !== null && v !== 0) {
-                        globalExpense = Math.abs(v);
-                        break;
-                    }
-                }
-                if (globalExpense !== 0) break;
+        // 2. 抓取費用
+        const resE = await fetch(expenseUrl + cb);
+        const csvE = await resE.text();
+        const rowsE = csvE.split('\n');
+        let expVal = 0;
+        for (let line of rowsE) {
+            if (line.includes("合計") || line.includes("總計")) {
+                const cols = line.split(',');
+                // 找尋這一列中最大的數字，通常合計金額會是最大的
+                let maxInRow = 0;
+                cols.forEach(c => {
+                    let v = Math.abs(parseNum(c) || 0);
+                    if (v > maxInRow) maxInRow = v;
+                });
+                expVal = maxInRow;
+                if (expVal > 0) break;
             }
         }
-        
-        updateUI();
-    } catch(e) {
-        console.error("資料讀取失敗", e);
+
+        // 3. 一次性更新 UI，防止跳動
+        if (revSum > 0) {
+            document.getElementById('revenue-val').innerText = Math.round(revSum).toLocaleString();
+            if (expVal > 0) {
+                document.getElementById('expense-val').innerText = Math.round(expVal).toLocaleString();
+                document.getElementById('expense-rate-val').innerText = ((expVal / revSum) * 100).toFixed(1) + "%";
+            }
+        }
+    } catch (e) {
+        console.error("Fetch error:", e);
     }
 }
 
-// 頁面載入後執行
+function checkDynamicPassword() {
+    const d = new Date();
+    const pw = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+    if (prompt("") === pw) {
+        window.open('https://king-newton.github.io/dashboard/', '_blank');
+    }
+}
+
 window.onload = updateDashboard;
-
-function checkDynamicPassword(targetUrl) {
-    var today = new Date();
-    var pw = today.getFullYear() + String(today.getMonth() + 1).padStart(2, '0') + String(today.getDate()).padStart(2, '0');
-    var input = prompt("請輸入驗證碼 (YYYYMMDD)：");
-    if (input === pw) {
-        window.open(targetUrl, '_blank');
-    } else if (input !== null) {
-        alert("驗證失敗。");
-    }
-}
 </script>
 </body>
 </html>
