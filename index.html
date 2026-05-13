@@ -1,137 +1,198 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>金牛頓工業 - 行動戰情室</title>
+    <title>金牛頓 2026 營運分析儀表板</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        body { font-family: "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 20px; background-color: #ffffff; color: #333333; }
-        .container { max-width: 600px; margin: auto; }
-        header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 2px solid #eeeeee; padding-bottom: 15px; }
-        .logo { width: 50px; height: 50px; object-fit: contain; }
-        h1 { font-size: 1.2rem; margin: 0; color: #222; }
-        .subtitle { font-size: 0.8rem; color: #888; margin-top: 3px; }
-        .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .card { background: #ffffff; padding: 20px; border-radius: 12px; text-decoration: none; color: #333; display: flex; flex-direction: column; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; }
-        .card-label { font-size: 0.8rem; color: #1a73e8; margin-bottom: 8px; font-weight: bold; }
-        .data-value { font-size: 1.4rem; color: #d93025; font-weight: 800; min-height: 1.6rem; }
-        .full-width-card { grid-column: span 2; padding: 15px; text-align: center; font-weight: bold; background: #e8f0fe; color: #1967d2; border-radius: 12px; text-decoration: none; }
-        footer { margin-top: 40px; font-size: 0.75rem; color: #aaaaaa; text-align: center; }
+        body { font-family: "Microsoft JhengHei", sans-serif; padding: 20px; background-color: #f4f4f4; color: #333; margin: 0; }
+        .tabs { display: flex; margin-bottom: 20px; }
+        .tab-button { padding: 12px 24px; cursor: pointer; background: #ddd; border: none; font-size: 16px; flex: 1; transition: 0.3s; }
+        .tab-button.active { background: #3e5a26; color: white; }
+        .tab-content { display: none; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .tab-content.active { display: block; }
+        .report-title { font-size: 28px; font-weight: bold; margin-bottom: 25px; text-align: center; color: #1a1a1a; white-space: nowrap; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 0; }
+        td, th { border: 1px solid #ddd; padding: 15px; font-size: 16px; }
+        .label { background-color: #f9f9f9; color: #666; width: 30%; font-weight: bold; }
+        .value { width: 20%; text-align: right; font-family: "Consolas", monospace; }
+        .summary-row { background-color: #3e5a26; color: white; text-align: center; font-weight: bold; }
+        .stats-header { background: #3e5a26; color: white; font-weight: bold; text-align: center; }
+        .top-20-highlight { background-color: #f0f7ef !important; }
+        
+        /* 修正：輸入框文字靠左對齊 */
+        input { width: 95%; text-align: left; border: none; font-size: 16px; font-family: "Consolas", monospace; background: transparent; padding: 2px; }
+        input:focus { outline: 1px solid #3e5a26; background: #fff; }
+        input[readonly] { background-color: #f0f0f0; color: #888; cursor: not-allowed; }
+
+        .highlight-red { color: #d9534f; font-weight: bold; }
+        .highlight-green { color: #28a745; font-weight: bold; }
+
+        @media screen and (max-width: 600px) {
+            body { padding: 10px; }
+            .report-title { font-size: 20px; }
+            .label, .value { display: block; width: 100%; text-align: left; }
+            td { display: block; border: none; border-bottom: 1px solid #eee; padding: 10px; }
+            input { text-align: left; width: 100%; }
+            .stats-table thead { display: none; }
+            .stats-table tr { display: block; margin-bottom: 10px; border: 1px solid #ddd; }
+            .stats-table td { display: flex; justify-content: space-between; }
+            .stats-table td::before { content: attr(data-label); font-weight: bold; }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQn6xjuG-I81vGfFkGiulp55TCfDojnd-B60w3yjt81XHWF6dWfFnP4uZWlyI7PiB6drX5N259UjpHGrjHzlQfzRcxhx2MbkMDTniiElsZFV9Y3UWgPi7X_cRyZiTYifnCisvqzQVy_krPvJCrED_JEErXfGSsWukxmkiCR0ZrbAJEBjixhP6FW68X4FXo/s16000-rw/logo.gif" class="logo">
-        <div class="header-text">
-            <h1>整體現況</h1>
-            <div class="subtitle">金牛頓工業股份有限公司</div>
-        </div>
-    </header>
-
-    <div class="dashboard-grid">
-        <div class="card" onclick="verifyAndGo()">
-            <span class="card-label">目前累計營收</span>
-            <div id="revenue-val" class="data-value">讀取中...</div>
-        </div>
-        <div class="card" onclick="verifyAndGo()">
-            <span class="card-label">公司毛利率</span>
-            <div class="data-value">26.7%</div>
-        </div>
-        <div class="card" onclick="verifyAndGo()">
-            <span class="card-label">營業費用總計</span>
-            <div id="expense-val" class="data-value">讀取中...</div>
-        </div>
-        <div class="card" onclick="verifyAndGo()">
-            <span class="card-label">營業費用率</span>
-            <div id="expense-rate-val" class="data-value">...%</div>
-        </div>
-        <a href="https://o936157111-ops.github.io/company-calendar/" target="_blank" class="full-width-card">📅 公司行事曆</a>
+    <div class="tabs">
+        <button class="tab-button active" onclick="openTab(event, 'DASHBOARD')">DASHBOARD</button>
+        <button class="tab-button" onclick="openTab(event, 'DATA')">資料明細</button>
     </div>
-    <footer>© 2026 金牛頓工業股份有限公司</footer>
-</div>
 
-<script>
-// 使用與舊版網頁完全相同的數據源與快取清除機制
-const revenueUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv';
-const expenseUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv';
+    <div id="DASHBOARD" class="tab-content active">
+        <div class="report-title">2026 年度累計營收銷售分析報告</div>
+        
+        <table>
+            <tr>
+                <td class="label">日期時間</td><td class="value" id="current-date">--</td>
+                <td class="label">今日進度</td><td class="value" id="day-of-year">--</td>
+            </tr>
+            <tr>
+                <td class="label">2026年每月目標</td>
+                <td class="value"><input type="text" id="monthly-target" value="7,500,000" onfocus="this.value=this.value.replace(/,/g,'')" onblur="formatCommas(this); calculateLogic()"></td>
+                <td class="label">2026年營營收目標</td><td class="value" id="annual-target">NT$ 90,000,000</td>
+            </tr>
+            <tr>
+                <td class="label">目前銷貨合計</td><td class="value" id="total-sales">讀取中...</td>
+                <td class="label" id="diff-label">進度落後/超前</td><td class="value" id="progress-status">計算中...</td>
+            </tr>
+            <tr>
+                <td class="label">目前銷貨利潤合計</td><td class="value" id="total-profit">讀取中...</td>
+                <td class="label">營業費用總計</td>
+                <td class="value"><input type="text" id="expense-input" value="0" readonly></td>
+            </tr>
+            <tr>
+                <td colspan="4" class="summary-row" id="summary-bar">達成率：--% | 毛利率：--% | 費用率：--%</td>
+            </tr>
+        </table>
 
-function parseNum(str) {
-    if (!str) return null;
-    // 移除所有逗號與空格
-    let s = str.trim().replace(/,/g, '');
-    // 處理會計負數括號 (1,234) -> -1234
-    if (s.startsWith('(') && s.endsWith(')')) s = '-' + s.substring(1, s.length - 1);
-    let n = parseFloat(s);
-    return isNaN(n) ? null : n;
-}
+        <div style="margin-top: 30px;"></div>
 
-async function updateDashboard() {
-    const cb = "?t=" + Date.now();
-    try {
-        // 1. 處理營收 - 採用「廣域掃描」
-        const resR = await fetch(revenueUrl + cb);
-        const csvR = await resR.text();
-        let revSum = 0;
-        csvR.split('\n').forEach((line, i) => {
-            if (i === 0) return; // 略過標題
-            let cols = line.split(',');
-            // 嘗試從各個可能的位置尋找金額 (通常在 5, 6, 7 欄)
-            // 如果某一格是大於 1000 的數字，通常就是金額
-            cols.forEach(col => {
-                let v = parseNum(col);
-                if (v !== null && v > 1000) revSum += v; 
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th class="stats-header">客戶名稱</th>
+                    <th class="stats-header">銷貨合計</th>
+                    <th class="stats-header">利潤合計</th>
+                    <th class="stats-header">毛利率</th>
+                    <th class="stats-header">排名</th>
+                </tr>
+            </thead>
+            <tbody id="customer-stats-body"></tbody>
+        </table>
+    </div>
+
+    <div id="DATA" class="tab-content">
+        <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pubhtml?widget=true&amp;headers=false" style="width:100%; height:700px; border:none;"></iframe>
+    </div>
+
+    <script>
+        const CSV_SALES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv";
+        const CSV_EXPENSE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv";
+        
+        function fetchAllData() {
+            Papa.parse(CSV_EXPENSE_URL, {
+                download: true,
+                header: false,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    let foundExpense = 0;
+                    if (results.data && results.data.length > 0) {
+                        outerLoop:
+                        for (let row of results.data) {
+                            for (let cell of row) {
+                                let val = cell?.toString().replace(/,/g, '').trim();
+                                if (val !== "" && !isNaN(parseFloat(val))) {
+                                    foundExpense = parseFloat(val);
+                                    break outerLoop;
+                                }
+                            }
+                        }
+                    }
+                    document.getElementById('expense-input').value = Math.round(foundExpense).toLocaleString();
+                    fetchSalesData();
+                }
             });
-        });
-
-        // 2. 處理費用 - 採用「關鍵字定位後掃描」
-        const resE = await fetch(expenseUrl + cb);
-        const csvE = await resE.text();
-        let expVal = 0;
-        const rowsE = csvE.split('\n');
-        for (let line of rowsE) {
-            // 只要包含合計或總計關鍵字
-            if (line.includes("合計") || line.includes("總計")) {
-                let cols = line.split(',');
-                // 找出該列中絕對值最大的數值
-                let max = 0;
-                cols.forEach(c => {
-                    let v = Math.abs(parseNum(c) || 0);
-                    if (v > max) max = v;
-                });
-                expVal = max;
-                if (expVal > 0) break;
-            }
         }
 
-        // 3. 更新介面 (增加保護檢查)
-        if (revSum > 0) {
-            document.getElementById('revenue-val').innerText = Math.round(revSum).toLocaleString();
-            if (expVal > 0) {
-                document.getElementById('expense-val').innerText = Math.round(expVal).toLocaleString();
-                document.getElementById('expense-rate-val').innerText = ((expVal / revSum) * 100).toFixed(1) + "%";
-            }
-        } else {
-            document.getElementById('revenue-val').innerText = "數據格式錯誤";
+        function fetchSalesData() {
+            Papa.parse(CSV_SALES_URL, {
+                download: true, header: true, skipEmptyLines: true,
+                complete: function(results) {
+                    const data = results.data;
+                    let sTotal = 0, pTotal = 0;
+                    let custMap = {};
+                    data.forEach(row => {
+                        let s = parseFloat(row['本幣未稅金額']?.toString().replace(/,/g, '')) || 0;
+                        let p = parseFloat(row['毛利']?.toString().replace(/,/g, '')) || 0;
+                        let name = row['客戶名稱'] || '未分類';
+                        sTotal += s; pTotal += p;
+                        if(!custMap[name]) custMap[name] = { s: 0, p: 0 };
+                        custMap[name].s += s; custMap[name].p += p;
+                    });
+                    let custArray = Object.keys(custMap).map(k => ({ name: k, ...custMap[k] })).sort((a, b) => b.s - a.s);
+                    let body = document.getElementById('customer-stats-body');
+                    body.innerHTML = '';
+                    custArray.forEach((c, i) => {
+                        let margin = c.s > 0 ? (c.p / c.s * 100).toFixed(1) : 0;
+                        let rank = i + 1;
+                        let rowClass = rank <= 20 ? 'top-20-highlight' : '';
+                        body.innerHTML += `<tr class="${rowClass}">
+                            <td data-label="客戶名稱">${c.name}</td>
+                            <td data-label="銷貨合計">${Math.round(c.s).toLocaleString()}</td>
+                            <td data-label="利潤合計">${Math.round(c.p).toLocaleString()}</td>
+                            <td data-label="毛利率">${margin}%</td>
+                            <td data-label="排名">${rank}</td>
+                        </tr>`;
+                    });
+                    document.getElementById('total-sales').innerText = 'NT$ ' + Math.round(sTotal).toLocaleString();
+                    document.getElementById('total-profit').innerText = 'NT$ ' + Math.round(pTotal).toLocaleString();
+                    calculateLogic(sTotal, pTotal);
+                }
+            });
         }
-    } catch (e) { 
-        document.getElementById('revenue-val').innerText = "連線失敗";
-        console.error(e); 
-    }
-}
 
-function verifyAndGo() {
-    const d = new Date();
-    const pw = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
-    if (prompt("") === pw) {
-        window.open('https://king-newton.github.io/dashboard/', '_blank');
-    }
-}
+        function calculateLogic(s, p) {
+            if(s === undefined) { s = parseFloat(document.getElementById('total-sales').innerText.replace(/[NT$,]/g, '')) || 0; }
+            if(p === undefined) { p = parseFloat(document.getElementById('total-profit').innerText.replace(/[NT$,]/g, '')) || 0; }
+            const now = new Date();
+            const startOfYear = new Date(now.getFullYear(), 0, 0);
+            const dayOfYear = Math.floor((now - startOfYear) / 86400000);
+            let monthly = parseFloat(document.getElementById('monthly-target').value.replace(/,/g, '')) || 0;
+            let annual = monthly * 12;
+            document.getElementById('annual-target').innerText = 'NT$ ' + annual.toLocaleString();
+            let diff = s - ((annual / 365) * dayOfYear);
+            let progEl = document.getElementById('progress-status');
+            progEl.innerText = 'NT$ ' + Math.round(diff).toLocaleString();
+            progEl.className = diff >= 0 ? 'value highlight-green' : 'value highlight-red';
+            document.getElementById('diff-label').innerText = diff >= 0 ? '進度超前' : '進度落後';
+            let exp = parseFloat(document.getElementById('expense-input').value.replace(/,/g, '')) || 0;
+            document.getElementById('summary-bar').innerText = `達成率：${annual > 0 ? (s/annual*100).toFixed(1) : 0}% | 毛利率：${s > 0 ? (p/s*100).toFixed(1) : 0}% | 費用率：${s > 0 ? (exp/s*100).toFixed(1) : 0}%`;
+        }
 
-// 確保 PWA 環境與網頁載入同步啟動
-window.onload = updateDashboard;
-</script>
+        function formatCommas(i) { let v = parseFloat(i.value.replace(/,/g, '')); if(!isNaN(v)) i.value = v.toLocaleString(); }
+        function openTab(e, n) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.tab-button').forEach(el => el.className = el.className.replace(" active", ""));
+            document.getElementById(n).style.display = 'block';
+            e.currentTarget.className += " active";
+        }
+
+        window.onload = () => {
+            document.getElementById('current-date').innerText = new Date().toLocaleDateString();
+            document.getElementById('day-of-year').innerText = new Date().getFullYear() + '年第' + Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000) + '天';
+            fetchAllData();
+        };
+    </script>
 </body>
 </html>
