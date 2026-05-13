@@ -3,203 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>金牛頓工業 - 行動戰情室</title>
+    <title>行動戰情 - 金牛頓工業</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root {
-            --primary: #3e5a26;
-            --bg: #f5f7fa;
-            --card: #ffffff;
-            --green: #28a745;
-            --red: #d93025;
-            --text: #2c3e50;
+            --bg-gradient: linear-gradient(180deg, #102a61 0%, #071435 100%);
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --accent-blue: #4facfe;
+            --text-white: #ffffff;
+            --text-dim: #a0aec0;
+            --up-green: #4ade80;
+            --down-red: #f87171;
         }
 
-        /* 驗證層：確保在手機上也是全螢幕 */
+        /* 驗證層：深色主題 */
         #auth-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #ffffff; z-index: 10000;
+            background: #071435; z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         #auth-input {
-            border: none; border-bottom: 2px solid var(--primary); width: 220px;
+            border: none; border-bottom: 2px solid var(--accent-blue); width: 200px;
             font-size: 24px; text-align: center; outline: none; padding: 10px;
-            font-family: sans-serif;
+            background: transparent; color: white; letter-spacing: 5px;
         }
 
-        /* RWD 基礎設定 */
         body { 
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background-color: var(--bg); color: var(--text); 
-            margin: 0; padding: 10px; 
-            line-height: 1.5;
-        }
-        .container { width: 100%; max-width: 500px; margin: 0 auto; box-sizing: border-box; }
-        
-        header { text-align: center; margin: 15px 0 20px; }
-        .report-title { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin: 0; }
-        .current-info { font-size: 0.85rem; color: #7f8c8d; margin-top: 5px; }
-
-        /* 卡片設計 - RWD 核心 */
-        .dashboard-grid { display: flex; flex-direction: column; gap: 12px; }
-        .card { 
-            background: var(--card); padding: 20px; border-radius: 16px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-            display: flex; flex-direction: column;
-        }
-        .card-label { font-size: 0.9rem; color: #7f8c8d; font-weight: 600; margin-bottom: 5px; }
-        .card-value { font-size: 1.8rem; font-weight: 800; font-family: "Consolas", monospace; letter-spacing: -1px; }
-        
-        /* 雙向佈局卡片 */
-        .flex-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .sub-data { display: flex; flex-direction: column; }
-        .sub-label { font-size: 0.75rem; color: #95a5a6; }
-        .sub-value { font-size: 1.1rem; font-weight: 700; }
-
-        /* 達成率條狀顯示 */
-        .status-bar { 
-            background: var(--primary); color: white; border-radius: 16px; 
-            padding: 20px; margin-top: 15px; text-align: center;
-        }
-        .achieve-big { font-size: 1.4rem; font-weight: 800; }
-        .rate-row { display: flex; justify-content: space-around; margin-top: 10px; font-size: 0.9rem; opacity: 0.9; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px; }
-
-        /* 醒目顏色 */
-        .highlight-red { color: var(--red); }
-        .highlight-green { color: var(--green); }
-
-        /* 輸入框美化 */
-        .target-input { 
-            border: 1px solid #edf2f7; background: #f8fafc; padding: 6px 10px; 
-            border-radius: 8px; font-size: 1.1rem; text-align: right; 
-            font-family: "Consolas", monospace; width: 120px; color: var(--primary); font-weight: bold; 
+            margin: 0; padding: 0; 
+            background: var(--bg-gradient); 
+            background-attachment: fixed;
+            color: var(--text-white);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            min-height: 100vh;
         }
 
-        footer { text-align: center; margin: 30px 0; font-size: 0.7rem; color: #bdc3c7; }
+        .container { padding: 15px; max-width: 600px; margin: auto; }
+
+        header { padding: 10px 0 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+        .header-title { font-size: 1.5rem; font-weight: bold; margin: 0; }
+        .header-sub { font-size: 0.75rem; color: var(--text-dim); margin-top: 5px; }
+
+        /* 2x3 網格佈局 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .card-label { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 10px; display: block; }
+        .card-value { font-size: 1.4rem; font-weight: bold; font-family: 'Arial', sans-serif; }
+        .card-unit { font-size: 0.8rem; margin-left: 2px; color: var(--accent-blue); }
+        .card-footer { font-size: 0.7rem; color: var(--text-dim); margin-top: 8px; display: block; }
+
+        /* 全寬卡片 (目標與進度) */
+        .full-card { grid-column: span 2; }
+        .flex-row { display: flex; justify-content: space-between; align-items: baseline; }
+
+        /* 目標輸入框樣式 */
+        .target-input {
+            background: rgba(255,255,255,0.1);
+            border: none; color: white; padding: 4px 8px;
+            border-radius: 4px; font-size: 1rem; width: 110px; text-align: right;
+        }
+
+        .status-up { color: var(--up-green); }
+        .status-down { color: var(--down-red); }
+
+        footer { text-align: center; padding: 30px 0; font-size: 0.7rem; color: var(--text-dim); opacity: 0.5; }
     </style>
 </head>
 <body>
 
     <div id="auth-overlay">
-        <input type="password" id="auth-input" autofocus maxlength="8" placeholder="請輸入密碼">
+        <input type="password" id="auth-input" autofocus maxlength="8" placeholder="••••">
     </div>
 
     <div class="container">
         <header>
-            <h1 class="report-title">2026 行動戰情室</h1>
-            <div class="current-info" id="current-info-text">載入中...</div>
+            <div class="header-title">整體現況</div>
+            <div class="header-sub" id="update-info">更新時間：載入中...</div>
         </header>
 
-        <div class="dashboard-grid">
-            <div class="card">
+        <div class="grid">
+            <div class="card full-card">
                 <div class="flex-row">
                     <span class="card-label">每月營收目標</span>
                     <input type="text" id="monthly-target" class="target-input" value="7,500,000" onfocus="this.value=this.value.replace(/,/g,'')" onblur="formatCommas(this); calculateLogic()">
                 </div>
-                <div class="flex-row" style="margin-top: 12px;">
-                    <span class="sub-label">年度總目標</span>
-                    <span class="sub-value" id="annual-target">--</span>
+                <div class="flex-row" style="margin-top: 10px;">
+                    <span class="card-footer">年度總目標</span>
+                    <span id="annual-target" style="font-weight: bold;">--</span>
                 </div>
             </div>
 
             <div class="card">
-                <span class="card-label">目前累積銷貨 (未稅)</span>
-                <div class="card-value" id="total-sales">---,---</div>
+                <span class="card-label">目前銷貨合計</span>
+                <div class="card-value" id="total-sales">--</div>
+                <span class="card-footer">累計至今日</span>
             </div>
 
             <div class="card">
                 <span class="card-label" id="diff-label">進度落後/超前</span>
-                <div class="card-value" id="progress-status">---,---</div>
+                <div class="card-value" id="progress-status">--</div>
+                <span class="card-footer">與進度目標比</span>
             </div>
 
             <div class="card">
-                <div class="flex-row">
-                    <div class="sub-data">
-                        <span class="card-label">累積毛利</span>
-                        <div class="sub-value highlight-green" id="total-profit">--</div>
-                    </div>
-                    <div class="sub-data" style="text-align: right;">
-                        <span class="card-label">累積費用</span>
-                        <div class="sub-value highlight-red" id="expense-val">--</div>
-                    </div>
+                <span class="card-label">銷貨利潤合計</span>
+                <div class="card-value status-up" id="total-profit">--</div>
+                <span class="card-footer">已扣除成本</span>
+            </div>
+
+            <div class="card">
+                <span class="card-label">營業費用總計</span>
+                <div class="card-value status-down" id="expense-val">--</div>
+                <span class="card-footer">後台即時數據</span>
+            </div>
+
+            <div class="card full-card">
+                <span class="card-label">關鍵經營指標</span>
+                <div class="flex-row" id="rate-summary" style="margin-top: 5px; font-size: 0.95rem; font-weight: bold;">
+                    載入中...
                 </div>
             </div>
         </div>
 
-        <div class="status-bar" id="summary-bar">
-            <div class="achieve-big">數據計算中...</div>
-        </div>
-
-        <footer>© 2026 金牛頓工業股份有限公司</footer>
+        <footer>GOLD NEWTON INDUSTRIAL BI-DASHBOARD</footer>
     </div>
 
     <script>
-        const CSV_SALES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv&t=" + Date.now();
-        const CSV_EXPENSE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv&t=" + Date.now();
-        
-        // 驗證
+        const SALES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv&t=" + Date.now();
+        const EXP_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv&t=" + Date.now();
+
+        // 密碼驗證
         document.getElementById('auth-input').addEventListener('input', function() {
             const today = new Date();
             const pw = today.getFullYear() + String(today.getMonth() + 1).padStart(2, '0') + String(today.getDate()).padStart(2, '0');
             if (this.value === pw) document.getElementById('auth-overlay').style.display = 'none';
         });
 
-        // 數據讀取
-        function fetchAllData() {
-            Papa.parse(CSV_EXPENSE_URL, {
+        function fetchAll() {
+            Papa.parse(EXP_URL, {
                 download: true, header: false, skipEmptyLines: true,
-                complete: function(results) {
+                complete: function(res) {
                     let exp = 0;
-                    if (results.data) {
-                        outer: for (let row of results.data) {
+                    if (res.data) {
+                        outer: for (let row of res.data) {
                             for (let cell of row) {
                                 let v = cell?.toString().replace(/,/g, '').trim();
                                 if (v !== "" && !isNaN(parseFloat(v))) { exp = parseFloat(v); break outer; }
                             }
                         }
                     }
-                    document.getElementById('expense-val').innerText = Math.round(exp).toLocaleString();
-                    fetchSalesData();
+                    document.getElementById('expense-val').innerText = (exp/10000).toFixed(2) + '萬';
+                    fetchSales();
                 }
             });
         }
 
-        function fetchSalesData() {
-            Papa.parse(CSV_SALES_URL, {
+        function fetchSales() {
+            Papa.parse(SALES_URL, {
                 download: true, header: true, skipEmptyLines: true,
-                complete: function(results) {
-                    let sTotal = 0, pTotal = 0;
-                    results.data.forEach(row => {
-                        sTotal += parseFloat(row['本幣未稅金額']?.toString().replace(/,/g, '')) || 0;
-                        pTotal += parseFloat(row['毛利']?.toString().replace(/,/g, '')) || 0;
+                complete: function(res) {
+                    let s = 0, p = 0;
+                    res.data.forEach(row => {
+                        s += parseFloat(row['本幣未稅金額']?.toString().replace(/,/g, '')) || 0;
+                        p += parseFloat(row['毛利']?.toString().replace(/,/g, '')) || 0;
                     });
-                    document.getElementById('total-sales').innerText = Math.round(sTotal).toLocaleString();
-                    document.getElementById('total-profit').innerText = Math.round(pTotal).toLocaleString();
-                    calculateLogic(sTotal, pTotal);
+                    document.getElementById('total-sales').innerText = (s/10000).toFixed(2) + '萬';
+                    document.getElementById('total-profit').innerText = (p/10000).toFixed(2) + '萬';
+                    calculateLogic(s, p);
                 }
             });
         }
 
         function calculateLogic(s, p) {
-            if(s === undefined) s = parseFloat(document.getElementById('total-sales').innerText.replace(/,/g, '')) || 0;
             const now = new Date();
             const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
             let monthly = parseFloat(document.getElementById('monthly-target').value.replace(/,/g, '')) || 0;
             let annual = monthly * 12;
-            document.getElementById('annual-target').innerText = 'NT$ ' + annual.toLocaleString();
+            document.getElementById('annual-target').innerText = 'NT$ ' + (annual/10000).toLocaleString() + ' 萬';
+            
             let diff = s - ((annual / 365) * dayOfYear);
             let progEl = document.getElementById('progress-status');
-            progEl.innerText = Math.round(diff).toLocaleString();
-            progEl.className = 'card-value ' + (diff >= 0 ? 'highlight-green' : 'highlight-red');
+            progEl.innerText = (Math.abs(diff)/10000).toFixed(2) + '萬';
+            progEl.className = 'card-value ' + (diff >= 0 ? 'status-up' : 'status-down');
             document.getElementById('diff-label').innerText = diff >= 0 ? '進度超前 (+)' : '進度落後 (-)';
-            let exp = parseFloat(document.getElementById('expense-val').innerText.replace(/,/g, '')) || 0;
             
-            document.getElementById('summary-bar').innerHTML = `
-                <div class="achieve-big">達成率：${annual > 0 ? (s/annual*100).toFixed(1) : 0}%</div>
-                <div class="rate-row">
-                    <span>毛利率：${s > 0 ? (p/s*100).toFixed(1) : 0}%</span>
-                    <span>費用率：${s > 0 ? (exp/s*100).toFixed(1) : 0}%</span>
-                </div>
+            let exp = parseFloat(document.getElementById('expense-val').innerText.replace('萬', '')) * 10000 || 0;
+            document.getElementById('rate-summary').innerHTML = `
+                <span>達成率: ${(s/annual*100).toFixed(1)}%</span>
+                <span>毛利率: ${(p/s*100).toFixed(1)}%</span>
+                <span>費用率: ${(exp/s*100).toFixed(1)}%</span>
             `;
         }
 
@@ -207,9 +210,8 @@
 
         window.onload = () => {
             const now = new Date();
-            const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
-            document.getElementById('current-info-text').innerText = `${now.toLocaleDateString()} | 第 ${dayOfYear} 天`;
-            fetchAllData();
+            document.getElementById('update-info').innerText = `更新時間：${now.toLocaleDateString()} ${now.getHours()}:${now.getMinutes()}`;
+            fetchAll();
         };
     </script>
 </body>
