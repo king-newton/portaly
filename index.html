@@ -37,7 +37,6 @@
         .header-title { font-size: 1.5rem; font-weight: bold; margin: 0; color: var(--accent-blue); }
         .time-badge { background: var(--btn-bg); color: var(--accent-blue); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; border: 1px solid rgba(56,189,248,0.3); }
 
-        /* 統一 2 欄網格 */
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .full-width { grid-column: span 2; }
 
@@ -160,14 +159,8 @@
 
         document.getElementById('auth-input').addEventListener('input', function() {
             const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const correctPw = year + month + day;
-            
-            if (this.value === correctPw) {
-                document.getElementById('auth-overlay').style.display = 'none';
-            }
+            const correctPw = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
+            if (this.value === correctPw) document.getElementById('auth-overlay').style.display = 'none';
         });
 
         function fetchAll() {
@@ -200,6 +193,11 @@
                     });
                     document.getElementById('total-sales').innerText = Math.round(s).toLocaleString();
                     document.getElementById('total-profit').innerText = Math.round(p).toLocaleString();
+                    
+                    // 修正：補回顯示更新時間的邏輯
+                    const now = new Date();
+                    document.getElementById('update-time').innerText = "最後同步時間：" + now.toLocaleTimeString();
+                    
                     calculateLogic(s, p);
                 }
             });
@@ -209,7 +207,7 @@
             const now = new Date();
             const start = new Date(now.getFullYear(), 0, 0);
             const dayOfYear = Math.floor((now - start) / 86400000);
-            document.getElementById('day-info').innerText = `2026年第 ${dayOfYear} 天`;
+            document.getElementById('day-info').innerText = `${now.getFullYear()}年第 ${dayOfYear} 天`;
             
             let monthly = parseFloat(document.getElementById('monthly-target').value.replace(/,/g, '')) || 0;
             let annual = monthly * 12;
