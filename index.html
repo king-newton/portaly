@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>金牛頓工業 - 行動戰情室</title>
     <style>
-        /* 驗證層：全螢幕白色蓋住內容 */
+        /* 驗證遮罩層 */
         #auth-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #ffffff; z-index: 9999;
@@ -16,31 +16,29 @@
             border: none; border-bottom: 2px solid #1a73e8; width: 200px;
             font-size: 24px; text-align: center; outline: none; padding: 10px; letter-spacing: 5px;
         }
-
         body { font-family: "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 20px; background-color: #ffffff; color: #333333; }
         .container { max-width: 600px; margin: auto; }
         header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 2px solid #eeeeee; padding-bottom: 15px; }
         .logo { width: 50px; height: 50px; object-fit: contain; }
-        .header-text { display: flex; flex-direction: column; }
         h1 { font-size: 1.2rem; margin: 0; color: #222; }
         .subtitle { font-size: 0.8rem; color: #888; margin-top: 3px; }
         .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .card { background: #ffffff; padding: 20px; border-radius: 12px; text-decoration: none; color: #333; display: flex; flex-direction: column; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .card-label { font-size: 0.8rem; color: #1a73e8; margin-bottom: 8px; font-weight: bold; }
         .data-value { font-size: 1.4rem; color: #d93025; font-weight: 800; min-height: 1.6rem; }
-        .full-width-card { grid-column: span 2; padding: 15px; text-align: center; justify-content: center; align-items: center; border: none; margin-top: 5px; font-weight: bold; background: #e8f0fe; color: #1967d2; border-radius: 12px; text-decoration: none;}
+        .full-width-card { grid-column: span 2; padding: 15px; text-align: center; font-weight: bold; background: #e8f0fe; color: #1967d2; border-radius: 12px; text-decoration: none;}
         footer { margin-top: 40px; font-size: 0.75rem; color: #aaaaaa; text-align: center; }
     </style>
 </head>
 <body>
 
 <div id="auth-screen">
-    <input type="password" id="auth-input" autofocus maxlength="8" placeholder="請輸入密碼">
+    <input type="password" id="auth-input" autofocus maxlength="8" placeholder="輸入密碼">
 </div>
 
 <div class="container">
     <header>
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQn6xjuG-I81vGfFkGiulp55TCfDojnd-B60w3yjt81XHWF6dWfFnP4uZWlyI7PiB6drX5N259UjpHGrjHzlQfzRcxhx2MbkMDTniiElsZFV9Y3UWgPi7X_cRyZiTYifnCisvqzQVy_krPvJCrED_JEErXfGSsWukxmkiCR0ZrbAJEBjixhP6FW68X4FXo/s16000-rw/logo.gif" alt="Logo" class="logo">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQn6xjuG-I81vGfFkGiulp55TCfDojnd-B60w3yjt81XHWF6dWfFnP4uZWlyI7PiB6drX5N259UjpHGrjHzlQfzRcxhx2MbkMDTniiElsZFV9Y3UWgPi7X_cRyZiTYifnCisvqzQVy_krPvJCrED_JEErXfGSsWukxmkiCR0ZrbAJEBjixhP6FW68X4FXo/s16000-rw/logo.gif" class="logo">
         <div class="header-text">
             <h1>整體現況</h1>
             <div class="subtitle">金牛頓工業股份有限公司</div>
@@ -66,79 +64,77 @@
         </div>
         <a href="https://o936157111-ops.github.io/company-calendar/" target="_blank" class="full-width-card">📅 公司行事曆</a>
     </div>
-
-    <footer>© 2026 金牛頓工業股份有限公司 All Rights Reserved.</footer>
+    <footer>© 2026 金牛頓工業股份有限公司</footer>
 </div>
 
 <script>
-    // --- 1. 資料讀取部分 ---
     const revenueUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv';
     const expenseUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv';
 
-    let globalRevenue = 0;
-    let globalExpense = 0;
-
+    // 強化的數字解析：處理括號(負數)、逗號、百分比
     function parseNum(str) {
         if (!str) return null;
-        let n = parseFloat(str.replace(/[^\d.-]/g, ''));
+        let s = str.trim();
+        if (s.startsWith('(') && s.endsWith(')')) s = '-' + s.substring(1, s.length - 1);
+        let n = parseFloat(s.replace(/[^\d.-]/g, ''));
         return isNaN(n) ? null : n;
     }
 
     async function updateDashboard() {
-        const cacheBuster = "&t=" + Date.now();
+        const cb = "?t=" + Date.now();
         try {
-            // 抓取營收
-            const resR = await fetch(revenueUrl + cacheBuster);
-            const dataR = await resR.text();
+            // 1. 處理營收：掃描每一列，尋找數值
+            const resR = await fetch(revenueUrl + cb);
+            const csvR = await resR.text();
             let revSum = 0;
-            dataR.split('\n').forEach(line => {
-                let v = parseNum(line.split(',')[6]);
-                if (v !== null) revSum += v;
+            csvR.split('\n').forEach((line, idx) => {
+                if (idx === 0) return; // 跳過第一列標題
+                let cols = line.split(',');
+                let val = parseNum(cols[6]); // 假設主要金額在第 7 欄 (Index 6)
+                if (val !== null) revSum += val;
             });
-            globalRevenue = revSum;
-            document.getElementById('revenue-val').innerText = Math.round(globalRevenue).toLocaleString();
+            document.getElementById('revenue-val').innerText = Math.round(revSum).toLocaleString();
 
-            // 抓取費用
-            const resE = await fetch(expenseUrl + cacheBuster);
-            const dataE = await resE.text();
-            dataE.split('\n').forEach(line => {
+            // 2. 處理費用：全列搜尋「合計」或「總計」關鍵字
+            const resE = await fetch(expenseUrl + cb);
+            const csvE = await resE.text();
+            let expVal = 0;
+            const rowsE = csvE.split('\n');
+            for (let line of rowsE) {
                 if (line.includes("合計") || line.includes("總計")) {
-                    let v = parseNum(line.split(',')[6]);
-                    if (v !== null) globalExpense = Math.abs(v);
+                    let cols = line.split(',');
+                    // 掃描這列的所有欄位，抓取第一個不為零的數字
+                    for (let col of cols) {
+                        let v = parseNum(col);
+                        if (v !== null && v !== 0) {
+                            expVal = Math.abs(v);
+                            break;
+                        }
+                    }
+                    if (expVal !== 0) break;
                 }
-            });
-            document.getElementById('expense-val').innerText = Math.round(globalExpense).toLocaleString();
-
-            // 計算比率
-            if (globalRevenue > 0) {
-                let rate = (globalExpense / globalRevenue) * 100;
-                document.getElementById('expense-rate-val').innerText = rate.toFixed(1) + "%";
             }
-        } catch (e) {
-            console.error("Fetch Error:", e);
-        }
+            document.getElementById('expense-val').innerText = Math.round(expVal).toLocaleString();
+
+            // 3. 計算率
+            if (revSum > 0) {
+                document.getElementById('expense-rate-val').innerText = ((expVal / revSum) * 100).toFixed(1) + "%";
+            }
+        } catch (e) { console.error(e); }
     }
 
-    // --- 2. 驗證控制部分 ---
+    // 驗證邏輯
     const authInput = document.getElementById('auth-input');
-    const authScreen = document.getElementById('auth-screen');
-
     authInput.addEventListener('input', () => {
-        const today = new Date();
-        const correctPw = today.getFullYear() + String(today.getMonth() + 1).padStart(2, '0') + String(today.getDate()).padStart(2, '0');
-        
-        if (authInput.value === correctPw) {
-            authScreen.style.display = 'none'; // 移除遮罩
+        const d = new Date();
+        const pw = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+        if (authInput.value === pw) {
+            document.getElementById('auth-screen').style.display = 'none';
         }
     });
 
-    // --- 3. 啟動 ---
-    // 一進入網頁就開始抓資料，不需要等密碼輸入
+    // 啟動抓取
     updateDashboard();
-
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    }
 </script>
 </body>
 </html>
