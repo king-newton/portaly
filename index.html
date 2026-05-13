@@ -10,14 +10,13 @@
         .container { max-width: 600px; margin: auto; }
         header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 2px solid #eeeeee; padding-bottom: 15px; }
         .logo { width: 50px; height: 50px; object-fit: contain; }
-        .header-text { display: flex; flex-direction: column; }
         h1 { font-size: 1.2rem; margin: 0; color: #222; }
         .subtitle { font-size: 0.8rem; color: #888; margin-top: 3px; }
         .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .card { background: #ffffff; padding: 20px; border-radius: 12px; text-decoration: none; color: #333; display: flex; flex-direction: column; transition: all 0.2s ease; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; }
         .card-label { font-size: 0.8rem; color: #1a73e8; margin-bottom: 8px; font-weight: bold; }
         .data-value { font-size: 1.4rem; color: #d93025; font-weight: 800; min-height: 1.6rem; }
-        .full-width-card { grid-column: span 2; padding: 15px; text-align: center; justify-content: center; align-items: center; border: none; margin-top: 5px; font-weight: bold; background: #e8f0fe; color: #1967d2; border-radius: 12px; text-decoration: none;}
+        .full-width-card { grid-column: span 2; padding: 15px; text-align: center; font-weight: bold; background: #e8f0fe; color: #1967d2; border-radius: 12px; text-decoration: none; }
         footer { margin-top: 40px; font-size: 0.75rem; color: #aaaaaa; text-align: center; }
     </style>
 </head>
@@ -25,7 +24,7 @@
 
 <div class="container">
     <header>
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQn6xjuG-I81vGfFkGiulp55TCfDojnd-B60w3yjt81XHWF6dWfFnP4uZWlyI7PiB6drX5N259UjpHGrjHzlQfzRcxhx2MbkMDTniiElsZFV9Y3UWgPi7X_cRyZiTYifnCisvqzQVy_krPvJCrED_JEErXfGSsWukxmkiCR0ZrbAJEBjixhP6FW68X4FXo/s16000-rw/logo.gif" alt="Logo" class="logo">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQn6xjuG-I81vGfFkGiulp55TCfDojnd-B60w3yjt81XHWF6dWfFnP4uZWlyI7PiB6drX5N259UjpHGrjHzlQfzRcxhx2MbkMDTniiElsZFV9Y3UWgPi7X_cRyZiTYifnCisvqzQVy_krPvJCrED_JEErXfGSsWukxmkiCR0ZrbAJEBjixhP6FW68X4FXo/s16000-rw/logo.gif" class="logo">
         <div class="header-text">
             <h1>整體現況</h1>
             <div class="subtitle">金牛頓工業股份有限公司</div>
@@ -33,19 +32,19 @@
     </header>
 
     <div class="dashboard-grid">
-        <div class="card" onclick="checkDynamicPassword()">
+        <div class="card" onclick="verifyAndGo()">
             <span class="card-label">目前累計營收</span>
             <div id="revenue-val" class="data-value">讀取中...</div>
         </div>
-        <div class="card" onclick="checkDynamicPassword()">
+        <div class="card" onclick="verifyAndGo()">
             <span class="card-label">公司毛利率</span>
             <div class="data-value">26.7%</div>
         </div>
-        <div class="card" onclick="checkDynamicPassword()">
+        <div class="card" onclick="verifyAndGo()">
             <span class="card-label">營業費用總計</span>
             <div id="expense-val" class="data-value">讀取中...</div>
         </div>
-        <div class="card" onclick="checkDynamicPassword()">
+        <div class="card" onclick="verifyAndGo()">
             <span class="card-label">營業費用率</span>
             <div id="expense-rate-val" class="data-value">...%</div>
         </div>
@@ -66,41 +65,41 @@ function parseNum(str) {
     return isNaN(n) ? null : n;
 }
 
+// 參考舊網頁的資料處理邏輯
 async function updateDashboard() {
-    const cb = "&t=" + Date.now();
+    const cb = "?t=" + Date.now();
     try {
-        // 1. 抓取營收
+        // 營收：確保只加總有效數字列
         const resR = await fetch(revenueUrl + cb);
         const csvR = await resR.text();
-        const rowsR = csvR.split('\n');
         let revSum = 0;
-        rowsR.forEach((line, idx) => {
-            if (idx === 0) return; // 跳過第一列標題
-            const cols = line.split(',');
-            const val = parseNum(cols[6]); // 鎖定第 7 欄
-            if (val !== null) revSum += val;
+        csvR.split('\n').forEach((line, i) => {
+            if (i === 0) return;
+            let cols = line.split(',');
+            let v = parseNum(cols[6]);
+            if (v !== null) revSum += v;
         });
 
-        // 2. 抓取費用
+        // 費用：全列掃描「合計」關鍵字
         const resE = await fetch(expenseUrl + cb);
         const csvE = await resE.text();
-        const rowsE = csvE.split('\n');
         let expVal = 0;
+        const rowsE = csvE.split('\n');
         for (let line of rowsE) {
             if (line.includes("合計") || line.includes("總計")) {
-                const cols = line.split(',');
-                // 找尋這一列中最大的數字，通常合計金額會是最大的
-                let maxInRow = 0;
+                let cols = line.split(',');
+                // 找出該列中最大的數值（通常是總計金額）
+                let max = 0;
                 cols.forEach(c => {
                     let v = Math.abs(parseNum(c) || 0);
-                    if (v > maxInRow) maxInRow = v;
+                    if (v > max) max = v;
                 });
-                expVal = maxInRow;
+                expVal = max;
                 if (expVal > 0) break;
             }
         }
 
-        // 3. 一次性更新 UI，防止跳動
+        // 更新介面
         if (revSum > 0) {
             document.getElementById('revenue-val').innerText = Math.round(revSum).toLocaleString();
             if (expVal > 0) {
@@ -108,12 +107,11 @@ async function updateDashboard() {
                 document.getElementById('expense-rate-val').innerText = ((expVal / revSum) * 100).toFixed(1) + "%";
             }
         }
-    } catch (e) {
-        console.error("Fetch error:", e);
-    }
+    } catch (e) { console.error(e); }
 }
 
-function checkDynamicPassword() {
+// 參考舊網頁的驗證與跳轉邏輯
+function verifyAndGo() {
     const d = new Date();
     const pw = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
     if (prompt("") === pw) {
