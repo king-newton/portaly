@@ -14,6 +14,7 @@
             --text-dim: #94a3b8;
             --up-green: #4ade80;
             --down-red: #fb7185;
+            --btn-bg: rgba(56, 189, 248, 0.1);
         }
 
         /* 驗證層 */
@@ -44,7 +45,7 @@
         .header-title { font-size: 1.4rem; font-weight: bold; margin: 0; color: var(--accent-blue); }
         .time-badge { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
 
-        /* 2x2 網格佈局 */
+        /* 網格佈局 */
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
         .card {
@@ -63,7 +64,7 @@
         .full-card { grid-column: span 2; }
         .flex-row { display: flex; justify-content: space-between; align-items: baseline; }
 
-        /* 目標輸入框 */
+        /* 目標輸入 */
         .target-input {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
@@ -74,7 +75,7 @@
         .status-up { color: var(--up-green); }
         .status-down { color: var(--down-red); }
 
-        /* 經營比率欄位 */
+        /* 經營比率 */
         .summary-bar {
             margin-top: 15px; background: rgba(255,255,255,0.03); 
             padding: 15px; border-radius: 12px; display: flex; 
@@ -82,9 +83,30 @@
         }
         .rate-item { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; }
 
+        /* 公司行事曆按鈕 */
+        .calendar-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--btn-bg);
+            border: 1px solid var(--accent-blue);
+            border-radius: 12px;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .calendar-btn:active {
+            background: var(--accent-blue);
+            color: #020617;
+        }
+        .calendar-icon { margin-right: 10px; font-size: 1.2rem; }
+
         footer { text-align: center; padding: 30px 0; font-size: 0.7rem; color: var(--text-dim); letter-spacing: 1px; }
 
-        /* 手機端微調字體大小避免溢出 */
         @media screen and (max-width: 400px) {
             .card-value { font-size: 1.15rem; }
         }
@@ -126,7 +148,7 @@
             <div class="card">
                 <span class="card-label" id="diff-label">進度分析</span>
                 <div class="card-value" id="progress-status">--</div>
-                <span class="card-footer">比對時間權重金額</span>
+                <span class="card-footer">比對時間權重</span>
             </div>
 
             <div class="card">
@@ -138,7 +160,7 @@
             <div class="card">
                 <span class="card-label">營業費用總計</span>
                 <div class="card-value status-down" id="expense-val">--</div>
-                <span class="card-footer">後台即時同步數據</span>
+                <span class="card-footer">後台即時同步</span>
             </div>
         </div>
 
@@ -148,6 +170,10 @@
             <div class="rate-item"><span>費用率</span><span id="rate-expense">--%</span></div>
         </div>
 
+        <a href="https://calendar.google.com" target="_blank" class="calendar-btn">
+            <span class="calendar-icon">📅</span> 查看公司行事曆
+        </a>
+
         <footer>© 2026 GOLD NEWTON INDUSTRIAL</footer>
     </div>
 
@@ -155,14 +181,12 @@
         const SALES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv&t=" + Date.now();
         const EXP_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv&t=" + Date.now();
 
-        // 1. 驗證與解鎖
         document.getElementById('auth-input').addEventListener('input', function() {
             const now = new Date();
             const pw = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
             if (this.value === pw) document.getElementById('auth-overlay').style.display = 'none';
         });
 
-        // 2. 抓取數據
         function fetchAll() {
             Papa.parse(EXP_URL, {
                 download: true, header: false, skipEmptyLines: true,
@@ -198,24 +222,19 @@
             });
         }
 
-        // 3. 計算邏輯
         function calculateLogic(s, p) {
             const now = new Date();
             const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
             document.getElementById('day-info').innerText = `2026年第 ${dayOfYear} 天`;
-            
             let monthly = parseFloat(document.getElementById('monthly-target').value.replace(/,/g, '')) || 0;
             let annual = monthly * 12;
             document.getElementById('annual-target').innerText = 'NT$ ' + annual.toLocaleString();
-            
             let diff = s - ((annual / 365) * dayOfYear);
             let progEl = document.getElementById('progress-status');
             progEl.innerText = Math.round(Math.abs(diff)).toLocaleString();
             progEl.className = 'card-value ' + (diff >= 0 ? 'status-up' : 'status-down');
             document.getElementById('diff-label').innerText = diff >= 0 ? '進度超前 (+)' : '進度落後 (-)';
-            
             let exp = parseFloat(document.getElementById('expense-val').innerText.replace(/,/g, '')) || 0;
-            
             document.getElementById('rate-achieve').innerText = `${(s/annual*100).toFixed(1)}%`;
             document.getElementById('rate-margin').innerText = `${(p/s*100).toFixed(1)}%`;
             document.getElementById('rate-expense').innerText = `${(exp/s*100).toFixed(1)}%`;
