@@ -7,19 +7,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         :root {
-            --bg-gradient: linear-gradient(180deg, #102a61 0%, #071435 100%);
-            --card-bg: rgba(255, 255, 255, 0.08);
-            --accent-blue: #4facfe;
-            --text-white: #ffffff;
-            --text-dim: #a0aec0;
+            --bg-gradient: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent-blue: #38bdf8;
+            --text-white: #f8fafc;
+            --text-dim: #94a3b8;
             --up-green: #4ade80;
-            --down-red: #f87171;
+            --down-red: #fb7185;
         }
 
-        /* 驗證層：深色主題 */
+        /* 驗證層 */
         #auth-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #071435; z-index: 10000;
+            background: #020617; z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         #auth-input {
@@ -39,57 +39,70 @@
 
         .container { padding: 15px; max-width: 600px; margin: auto; }
 
-        header { padding: 10px 0 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        .header-title { font-size: 1.5rem; font-weight: bold; margin: 0; }
-        .header-sub { font-size: 0.75rem; color: var(--text-dim); margin-top: 5px; }
+        header { padding: 10px 0 15px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+        .header-flex { display: flex; justify-content: space-between; align-items: flex-end; }
+        .header-title { font-size: 1.4rem; font-weight: bold; margin: 0; color: var(--accent-blue); }
+        .time-badge { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
 
-        /* 2x3 網格佈局 */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
+        /* 2x2 網格佈局 */
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
         .card {
             background: var(--card-bg);
-            padding: 15px;
-            border-radius: 8px;
+            padding: 16px;
+            border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .card-label { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 10px; display: block; }
-        .card-value { font-size: 1.4rem; font-weight: bold; font-family: 'Arial', sans-serif; }
-        .card-unit { font-size: 0.8rem; margin-left: 2px; color: var(--accent-blue); }
-        .card-footer { font-size: 0.7rem; color: var(--text-dim); margin-top: 8px; display: block; }
+        .card-label { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px; display: block; }
+        .card-value { font-size: 1.3rem; font-weight: 800; font-family: 'Consolas', monospace; white-space: nowrap; }
+        .card-footer { font-size: 0.7rem; color: var(--text-dim); margin-top: 6px; display: block; }
 
-        /* 全寬卡片 (目標與進度) */
+        /* 全寬卡片 */
         .full-card { grid-column: span 2; }
         .flex-row { display: flex; justify-content: space-between; align-items: baseline; }
 
-        /* 目標輸入框樣式 */
+        /* 目標輸入框 */
         .target-input {
-            background: rgba(255,255,255,0.1);
-            border: none; color: white; padding: 4px 8px;
-            border-radius: 4px; font-size: 1rem; width: 110px; text-align: right;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white; padding: 4px 8px;
+            border-radius: 6px; font-size: 1rem; width: 130px; text-align: right; font-family: 'Consolas';
         }
 
         .status-up { color: var(--up-green); }
         .status-down { color: var(--down-red); }
 
-        footer { text-align: center; padding: 30px 0; font-size: 0.7rem; color: var(--text-dim); opacity: 0.5; }
+        /* 經營比率欄位 */
+        .summary-bar {
+            margin-top: 15px; background: rgba(255,255,255,0.03); 
+            padding: 15px; border-radius: 12px; display: flex; 
+            flex-direction: column; gap: 8px; font-size: 0.9rem;
+        }
+        .rate-item { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; }
+
+        footer { text-align: center; padding: 30px 0; font-size: 0.7rem; color: var(--text-dim); letter-spacing: 1px; }
+
+        /* 手機端微調字體大小避免溢出 */
+        @media screen and (max-width: 400px) {
+            .card-value { font-size: 1.15rem; }
+        }
     </style>
 </head>
 <body>
 
     <div id="auth-overlay">
-        <input type="password" id="auth-input" autofocus maxlength="8" placeholder="••••">
+        <input type="password" id="auth-input" autofocus maxlength="8" placeholder="請輸入密碼">
     </div>
 
     <div class="container">
         <header>
-            <div class="header-title">整體現況</div>
-            <div class="header-sub" id="update-info">更新時間：載入中...</div>
+            <div class="header-flex">
+                <h1 class="header-title">行動戰情室</h1>
+                <div class="time-badge" id="day-info">第 -- 天</div>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 5px;" id="update-time">載入中...</div>
         </header>
 
         <div class="grid">
@@ -98,58 +111,58 @@
                     <span class="card-label">每月營收目標</span>
                     <input type="text" id="monthly-target" class="target-input" value="7,500,000" onfocus="this.value=this.value.replace(/,/g,'')" onblur="formatCommas(this); calculateLogic()">
                 </div>
-                <div class="flex-row" style="margin-top: 10px;">
+                <div class="flex-row" style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
                     <span class="card-footer">年度總目標</span>
-                    <span id="annual-target" style="font-weight: bold;">--</span>
+                    <span id="annual-target" style="font-weight: bold; font-size: 0.9rem; font-family: 'Consolas';">--</span>
                 </div>
             </div>
 
             <div class="card">
-                <span class="card-label">目前銷貨合計</span>
+                <span class="card-label">目前累積銷貨</span>
                 <div class="card-value" id="total-sales">--</div>
-                <span class="card-footer">累計至今日</span>
+                <span class="card-footer">未稅合計</span>
             </div>
 
             <div class="card">
-                <span class="card-label" id="diff-label">進度落後/超前</span>
+                <span class="card-label" id="diff-label">進度分析</span>
                 <div class="card-value" id="progress-status">--</div>
-                <span class="card-footer">與進度目標比</span>
+                <span class="card-footer">比對時間權重金額</span>
             </div>
 
             <div class="card">
                 <span class="card-label">銷貨利潤合計</span>
                 <div class="card-value status-up" id="total-profit">--</div>
-                <span class="card-footer">已扣除成本</span>
+                <span class="card-footer">扣除成本後金額</span>
             </div>
 
             <div class="card">
                 <span class="card-label">營業費用總計</span>
                 <div class="card-value status-down" id="expense-val">--</div>
-                <span class="card-footer">後台即時數據</span>
-            </div>
-
-            <div class="card full-card">
-                <span class="card-label">關鍵經營指標</span>
-                <div class="flex-row" id="rate-summary" style="margin-top: 5px; font-size: 0.95rem; font-weight: bold;">
-                    載入中...
-                </div>
+                <span class="card-footer">後台即時同步數據</span>
             </div>
         </div>
 
-        <footer>GOLD NEWTON INDUSTRIAL BI-DASHBOARD</footer>
+        <div class="summary-bar" id="rate-summary">
+            <div class="rate-item"><span>年度達成率</span><span id="rate-achieve" class="status-up">--%</span></div>
+            <div class="rate-item"><span>毛利率</span><span id="rate-margin">--%</span></div>
+            <div class="rate-item"><span>費用率</span><span id="rate-expense">--%</span></div>
+        </div>
+
+        <footer>© 2026 GOLD NEWTON INDUSTRIAL</footer>
     </div>
 
     <script>
         const SALES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv&t=" + Date.now();
         const EXP_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv&t=" + Date.now();
 
-        // 密碼驗證
+        // 1. 驗證與解鎖
         document.getElementById('auth-input').addEventListener('input', function() {
-            const today = new Date();
-            const pw = today.getFullYear() + String(today.getMonth() + 1).padStart(2, '0') + String(today.getDate()).padStart(2, '0');
+            const now = new Date();
+            const pw = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
             if (this.value === pw) document.getElementById('auth-overlay').style.display = 'none';
         });
 
+        // 2. 抓取數據
         function fetchAll() {
             Papa.parse(EXP_URL, {
                 download: true, header: false, skipEmptyLines: true,
@@ -163,7 +176,7 @@
                             }
                         }
                     }
-                    document.getElementById('expense-val').innerText = (exp/10000).toFixed(2) + '萬';
+                    document.getElementById('expense-val').innerText = Math.round(exp).toLocaleString();
                     fetchSales();
                 }
             });
@@ -178,39 +191,41 @@
                         s += parseFloat(row['本幣未稅金額']?.toString().replace(/,/g, '')) || 0;
                         p += parseFloat(row['毛利']?.toString().replace(/,/g, '')) || 0;
                     });
-                    document.getElementById('total-sales').innerText = (s/10000).toFixed(2) + '萬';
-                    document.getElementById('total-profit').innerText = (p/10000).toFixed(2) + '萬';
+                    document.getElementById('total-sales').innerText = Math.round(s).toLocaleString();
+                    document.getElementById('total-profit').innerText = Math.round(p).toLocaleString();
                     calculateLogic(s, p);
                 }
             });
         }
 
+        // 3. 計算邏輯
         function calculateLogic(s, p) {
             const now = new Date();
             const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+            document.getElementById('day-info').innerText = `2026年第 ${dayOfYear} 天`;
+            
             let monthly = parseFloat(document.getElementById('monthly-target').value.replace(/,/g, '')) || 0;
             let annual = monthly * 12;
-            document.getElementById('annual-target').innerText = 'NT$ ' + (annual/10000).toLocaleString() + ' 萬';
+            document.getElementById('annual-target').innerText = 'NT$ ' + annual.toLocaleString();
             
             let diff = s - ((annual / 365) * dayOfYear);
             let progEl = document.getElementById('progress-status');
-            progEl.innerText = (Math.abs(diff)/10000).toFixed(2) + '萬';
+            progEl.innerText = Math.round(Math.abs(diff)).toLocaleString();
             progEl.className = 'card-value ' + (diff >= 0 ? 'status-up' : 'status-down');
             document.getElementById('diff-label').innerText = diff >= 0 ? '進度超前 (+)' : '進度落後 (-)';
             
-            let exp = parseFloat(document.getElementById('expense-val').innerText.replace('萬', '')) * 10000 || 0;
-            document.getElementById('rate-summary').innerHTML = `
-                <span>達成率: ${(s/annual*100).toFixed(1)}%</span>
-                <span>毛利率: ${(p/s*100).toFixed(1)}%</span>
-                <span>費用率: ${(exp/s*100).toFixed(1)}%</span>
-            `;
+            let exp = parseFloat(document.getElementById('expense-val').innerText.replace(/,/g, '')) || 0;
+            
+            document.getElementById('rate-achieve').innerText = `${(s/annual*100).toFixed(1)}%`;
+            document.getElementById('rate-margin').innerText = `${(p/s*100).toFixed(1)}%`;
+            document.getElementById('rate-expense').innerText = `${(exp/s*100).toFixed(1)}%`;
         }
 
         function formatCommas(i) { let v = parseFloat(i.value.replace(/,/g, '')); if(!isNaN(v)) i.value = v.toLocaleString(); }
 
         window.onload = () => {
             const now = new Date();
-            document.getElementById('update-info').innerText = `更新時間：${now.toLocaleDateString()} ${now.getHours()}:${now.getMinutes()}`;
+            document.getElementById('update-time').innerText = `數據同步：${now.toLocaleDateString()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
             fetchAll();
         };
     </script>
