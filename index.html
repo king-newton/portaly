@@ -158,8 +158,8 @@
         const EXP_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv&t=" + Date.now();
 
         document.getElementById('auth-input').addEventListener('input', function() {
-            const now = new Date();
-            const correctPw = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
+            const date = new Date();
+            const correctPw = date.getFullYear() + String(date.getMonth() + 1).padStart(2, '0') + String(date.getDate()).padStart(2, '0');
             if (this.value === correctPw) document.getElementById('auth-overlay').style.display = 'none';
         });
 
@@ -194,9 +194,8 @@
                     document.getElementById('total-sales').innerText = Math.round(s).toLocaleString();
                     document.getElementById('total-profit').innerText = Math.round(p).toLocaleString();
                     
-                    // 修正：補回顯示更新時間的邏輯
-                    const now = new Date();
-                    document.getElementById('update-time').innerText = "最後同步時間：" + now.toLocaleTimeString();
+                    const timeNow = new Date();
+                    document.getElementById('update-time').innerText = "最後同步時間：" + timeNow.toLocaleTimeString();
                     
                     calculateLogic(s, p);
                 }
@@ -204,17 +203,16 @@
         }
 
         function calculateLogic(s, p) {
-            const now = new Date();
-            const start = new Date(now.getFullYear(), 0, 0);
-            const dayOfYear = Math.floor((now - start) / 86400000);
-            document.getElementById('day-info').innerText = `${now.getFullYear()}年第 ${dayOfYear} 天`;
+            const dateObj = new Date();
+            const start = new Date(dateObj.getFullYear(), 0, 0);
+            const dayOfYear = Math.floor((dateObj - start) / 86400000);
+            document.getElementById('day-info').innerText = `${dateObj.getFullYear()}年第 ${dayOfYear} 天`;
             
             let monthly = parseFloat(document.getElementById('monthly-target').value.replace(/,/g, '')) || 0;
             let annual = monthly * 12;
             document.getElementById('annual-target').innerText = Math.round(annual).toLocaleString();
             
             if (s === undefined) s = parseFloat(document.getElementById('total-sales').innerText.replace(/,/g, '')) || 0;
-            if (p === undefined) p = parseFloat(document.getElementById('total-profit').innerText.replace(/,/g, '')) || 0;
             
             let timeWeightedTarget = (annual / 365) * dayOfYear;
             let diff = s - timeWeightedTarget;
