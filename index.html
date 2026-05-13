@@ -13,7 +13,7 @@
         h1 { font-size: 1.2rem; margin: 0; color: #222; }
         .subtitle { font-size: 0.8rem; color: #888; margin-top: 3px; }
         .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .card { background: #ffffff; padding: 20px; border-radius: 12px; text-decoration: none; color: #333; display: flex; flex-direction: column; transition: all 0.2s ease; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; }
+        .card { background: #ffffff; padding: 20px; border-radius: 12px; text-decoration: none; color: #333; display: flex; flex-direction: column; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; }
         .card-label { font-size: 0.8rem; color: #1a73e8; margin-bottom: 8px; font-weight: bold; }
         .data-value { font-size: 1.4rem; color: #d93025; font-weight: 800; min-height: 1.6rem; }
         .full-width-card { grid-column: span 2; padding: 15px; text-align: center; font-weight: bold; background: #e8f0fe; color: #1967d2; border-radius: 12px; text-decoration: none; }
@@ -54,41 +54,48 @@
 </div>
 
 <script>
+// 使用與舊版網頁完全相同的數據源與快取清除機制
 const revenueUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv';
 const expenseUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv';
 
 function parseNum(str) {
     if (!str) return null;
+    // 移除所有逗號與空格
     let s = str.trim().replace(/,/g, '');
+    // 處理會計負數括號 (1,234) -> -1234
     if (s.startsWith('(') && s.endsWith(')')) s = '-' + s.substring(1, s.length - 1);
     let n = parseFloat(s);
     return isNaN(n) ? null : n;
 }
 
-// 參考舊網頁的資料處理邏輯
 async function updateDashboard() {
     const cb = "?t=" + Date.now();
     try {
-        // 營收：確保只加總有效數字列
+        // 1. 處理營收 - 採用「廣域掃描」
         const resR = await fetch(revenueUrl + cb);
         const csvR = await resR.text();
         let revSum = 0;
         csvR.split('\n').forEach((line, i) => {
-            if (i === 0) return;
+            if (i === 0) return; // 略過標題
             let cols = line.split(',');
-            let v = parseNum(cols[6]);
-            if (v !== null) revSum += v;
+            // 嘗試從各個可能的位置尋找金額 (通常在 5, 6, 7 欄)
+            // 如果某一格是大於 1000 的數字，通常就是金額
+            cols.forEach(col => {
+                let v = parseNum(col);
+                if (v !== null && v > 1000) revSum += v; 
+            });
         });
 
-        // 費用：全列掃描「合計」關鍵字
+        // 2. 處理費用 - 採用「關鍵字定位後掃描」
         const resE = await fetch(expenseUrl + cb);
         const csvE = await resE.text();
         let expVal = 0;
         const rowsE = csvE.split('\n');
         for (let line of rowsE) {
+            // 只要包含合計或總計關鍵字
             if (line.includes("合計") || line.includes("總計")) {
                 let cols = line.split(',');
-                // 找出該列中最大的數值（通常是總計金額）
+                // 找出該列中絕對值最大的數值
                 let max = 0;
                 cols.forEach(c => {
                     let v = Math.abs(parseNum(c) || 0);
@@ -99,18 +106,22 @@ async function updateDashboard() {
             }
         }
 
-        // 更新介面
+        // 3. 更新介面 (增加保護檢查)
         if (revSum > 0) {
             document.getElementById('revenue-val').innerText = Math.round(revSum).toLocaleString();
             if (expVal > 0) {
                 document.getElementById('expense-val').innerText = Math.round(expVal).toLocaleString();
                 document.getElementById('expense-rate-val').innerText = ((expVal / revSum) * 100).toFixed(1) + "%";
             }
+        } else {
+            document.getElementById('revenue-val').innerText = "數據格式錯誤";
         }
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+        document.getElementById('revenue-val').innerText = "連線失敗";
+        console.error(e); 
+    }
 }
 
-// 參考舊網頁的驗證與跳轉邏輯
 function verifyAndGo() {
     const d = new Date();
     const pw = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
@@ -119,6 +130,7 @@ function verifyAndGo() {
     }
 }
 
+// 確保 PWA 環境與網頁載入同步啟動
 window.onload = updateDashboard;
 </script>
 </body>
