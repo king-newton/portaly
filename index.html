@@ -57,14 +57,12 @@
         }
 
         .card-label { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px; display: block; }
-        .card-value { font-size: 1.3rem; font-weight: 800; font-family: 'Consolas', monospace; white-space: nowrap; }
+        .card-value { font-size: 1.25rem; font-weight: 800; font-family: 'Consolas', monospace; white-space: nowrap; }
         .card-footer { font-size: 0.7rem; color: var(--text-dim); margin-top: 6px; display: block; }
 
-        /* 全寬卡片 */
         .full-card { grid-column: span 2; }
         .flex-row { display: flex; justify-content: space-between; align-items: baseline; }
 
-        /* 目標輸入 */
         .target-input {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
@@ -75,7 +73,6 @@
         .status-up { color: var(--up-green); }
         .status-down { color: var(--down-red); }
 
-        /* 經營比率 */
         .summary-bar {
             margin-top: 15px; background: rgba(255,255,255,0.03); 
             padding: 15px; border-radius: 12px; display: flex; 
@@ -83,7 +80,7 @@
         }
         .rate-item { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; }
 
-        /* 公司行事曆按鈕 */
+        /* 行事曆按鈕 */
         .calendar-btn {
             display: flex;
             align-items: center;
@@ -97,18 +94,18 @@
             text-decoration: none;
             font-weight: bold;
             font-size: 1rem;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         .calendar-btn:active {
             background: var(--accent-blue);
             color: #020617;
+            transform: scale(0.98);
         }
-        .calendar-icon { margin-right: 10px; font-size: 1.2rem; }
 
         footer { text-align: center; padding: 30px 0; font-size: 0.7rem; color: var(--text-dim); letter-spacing: 1px; }
 
         @media screen and (max-width: 400px) {
-            .card-value { font-size: 1.15rem; }
+            .card-value { font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -142,7 +139,7 @@
             <div class="card">
                 <span class="card-label">目前累積銷貨</span>
                 <div class="card-value" id="total-sales">--</div>
-                <span class="card-footer">未稅合計</span>
+                <span class="card-footer">未稅合計 (元)</span>
             </div>
 
             <div class="card">
@@ -154,7 +151,7 @@
             <div class="card">
                 <span class="card-label">銷貨利潤合計</span>
                 <div class="card-value status-up" id="total-profit">--</div>
-                <span class="card-footer">扣除成本後金額</span>
+                <span class="card-footer">扣除成本金額</span>
             </div>
 
             <div class="card">
@@ -167,11 +164,11 @@
         <div class="summary-bar" id="rate-summary">
             <div class="rate-item"><span>年度達成率</span><span id="rate-achieve" class="status-up">--%</span></div>
             <div class="rate-item"><span>毛利率</span><span id="rate-margin">--%</span></div>
-            <div class="rate-item"><span>費用率</span><span id="rate-expense">--%</span></div>
+            <div class="rate-item) "><span>費用率</span><span id="rate-expense">--%</span></div>
         </div>
 
-        <a href="https://calendar.google.com" target="_blank" class="calendar-btn">
-            <span class="calendar-icon">📅</span> 查看公司行事曆
+        <a href="https://o936157111-ops.github.io/company-calendar/" target="_blank" class="calendar-btn">
+            📅 查看公司行事曆
         </a>
 
         <footer>© 2026 GOLD NEWTON INDUSTRIAL</footer>
@@ -224,16 +221,21 @@
 
         function calculateLogic(s, p) {
             const now = new Date();
-            const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+            const start = new Date(now.getFullYear(), 0, 0);
+            const diff_ms = now - start;
+            const dayOfYear = Math.floor(diff_ms / 86400000);
             document.getElementById('day-info').innerText = `2026年第 ${dayOfYear} 天`;
+            
             let monthly = parseFloat(document.getElementById('monthly-target').value.replace(/,/g, '')) || 0;
             let annual = monthly * 12;
             document.getElementById('annual-target').innerText = 'NT$ ' + annual.toLocaleString();
+            
             let diff = s - ((annual / 365) * dayOfYear);
             let progEl = document.getElementById('progress-status');
             progEl.innerText = Math.round(Math.abs(diff)).toLocaleString();
             progEl.className = 'card-value ' + (diff >= 0 ? 'status-up' : 'status-down');
             document.getElementById('diff-label').innerText = diff >= 0 ? '進度超前 (+)' : '進度落後 (-)';
+            
             let exp = parseFloat(document.getElementById('expense-val').innerText.replace(/,/g, '')) || 0;
             document.getElementById('rate-achieve').innerText = `${(s/annual*100).toFixed(1)}%`;
             document.getElementById('rate-margin').innerText = `${(p/s*100).toFixed(1)}%`;
