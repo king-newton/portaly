@@ -2,41 +2,59 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>金牛頓 2026 營運分析儀表板</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>金牛頓工業 - 行動戰情室</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        /* 驗證層：僅保留輸入框內的提示字樣 */
+        :root {
+            --primary-dark: #3e5a26;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #1a1a1a;
+            --text-sub: #666666;
+            --up-color: #28a745;
+            --down-color: #d93025;
+        }
+
+        /* 驗證層 */
         #auth-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #ffffff; z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         #auth-input {
-            border: none; border-bottom: 2px solid #3e5a26; width: 240px;
-            font-size: 22px; text-align: center; outline: none; padding: 10px;
-            font-family: "Microsoft JhengHei", sans-serif;
+            border: none; border-bottom: 2px solid var(--primary-dark); width: 220px;
+            font-size: 24px; text-align: center; outline: none; padding: 10px;
+            font-family: sans-serif;
         }
 
-        /* 儀表板樣式 */
-        body { font-family: "Microsoft JhengHei", sans-serif; padding: 20px; background-color: #f4f4f4; color: #333; margin: 0; }
-        .tab-content { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 800px; margin: auto; }
-        .report-title { font-size: 28px; font-weight: bold; margin-bottom: 25px; text-align: center; color: #1a1a1a; }
-        table { width: 100%; border-collapse: collapse; }
-        td, th { border: 1px solid #ddd; padding: 15px; font-size: 16px; }
-        .label { background-color: #f9f9f9; color: #666; width: 30%; font-weight: bold; }
-        .value { width: 20%; text-align: right; font-family: "Consolas", monospace; }
-        .summary-row { background-color: #3e5a26; color: white; text-align: center; font-weight: bold; }
-        input.data-input { width: 95%; text-align: right; border: none; font-size: 16px; background: transparent; font-family: "Consolas", monospace; }
-        .highlight-red { color: #d9534f; font-weight: bold; }
-        .highlight-green { color: #28a745; font-weight: bold; }
+        /* 主體樣式 */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 15px; }
+        .container { max-width: 500px; margin: auto; }
+        
+        header { text-align: center; margin-bottom: 20px; padding-top: 10px; }
+        .report-title { font-size: 1.4rem; font-weight: 800; color: var(--primary-dark); letter-spacing: 1px; }
+        .current-info { font-size: 0.85rem; color: var(--text-sub); margin-top: 5px; }
 
-        @media screen and (max-width: 600px) {
-            .report-title { font-size: 20px; }
-            .label, .value { display: block; width: 100%; text-align: left; }
-            td { display: block; border: none; border-bottom: 1px solid #eee; }
-            input.data-input { text-align: left; }
-        }
+        /* 數據卡片設計 */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .card { background: var(--card-bg); padding: 18px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.03); }
+        .card-label { font-size: 0.9rem; color: var(--text-sub); font-weight: 600; display: block; margin-bottom: 8px; }
+        .card-value { font-size: 1.6rem; font-weight: 800; font-family: "Consolas", monospace; }
+        
+        /* 目標與達成列 */
+        .flex-row { display: flex; justify-content: space-between; align-items: center; }
+        .target-input { border: none; background: #f8f9fa; padding: 4px 8px; border-radius: 6px; font-size: 1.1rem; text-align: right; font-family: "Consolas", monospace; width: 130px; color: var(--primary-dark); font-weight: bold; }
+        
+        /* 狀態列 */
+        .status-bar { background: var(--primary-dark); color: white; border-radius: 12px; padding: 15px; margin-top: 15px; text-align: center; box-shadow: 0 4px 15px rgba(62, 90, 38, 0.3); }
+        .status-main { font-size: 1rem; font-weight: 600; line-height: 1.6; }
+        
+        /* 醒目顏色 */
+        .highlight-red { color: var(--down-color) !important; }
+        .highlight-green { color: var(--up-color) !important; }
+
+        footer { text-align: center; margin-top: 30px; font-size: 0.75rem; color: #bbb; padding-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -45,111 +63,142 @@
         <input type="password" id="auth-input" autofocus maxlength="8" placeholder="請輸入密碼">
     </div>
 
-    <div class="tab-content">
-        <div class="report-title">2026 年度累計營收銷售分析報告</div>
-        <table>
-            <tr>
-                <td class="label">日期時間</td><td class="value" id="current-date">--</td>
-                <td class="label">今日進度</td><td class="value" id="day-of-year">--</td>
-            </tr>
-            <tr>
-                <td class="label">2026年每月目標</td>
-                <td class="value"><input type="text" id="monthly-target" class="data-input" value="7,500,000" onfocus="this.value=this.value.replace(/,/g,'')" onblur="formatCommas(this); calculateLogic()"></td>
-                <td class="label">2026年營收目標</td><td class="value" id="annual-target">NT$ 90,000,000</td>
-            </tr>
-            <tr>
-                <td class="label">目前銷貨合計</td><td class="value" id="total-sales">讀取中...</td>
-                <td class="label" id="diff-label">進度落後/超前</td><td class="value" id="progress-status">計算中...</td>
-            </tr>
-            <tr>
-                <td class="label">目前銷貨利潤合計</td><td class="value" id="total-profit">讀取中...</td>
-                <td class="label">營業費用總計</td>
-                <td class="value"><input type="text" id="expense-input" class="data-input" value="0" readonly></td>
-            </tr>
-            <tr>
-                <td colspan="4" class="summary-row" id="summary-bar">達成率：--% | 毛利率：--% | 費用率：--%</td>
-            </tr>
-        </table>
+    <div class="container">
+        <header>
+            <div class="report-title">2026 行動戰情室</div>
+            <div class="current-info" id="current-info-text">-- / --</div>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="flex-row">
+                    <span class="card-label">每月營收目標</span>
+                    <input type="text" id="monthly-target" class="target-input" value="7,500,000" onfocus="this.value=this.value.replace(/,/g,'')" onblur="formatCommas(this); calculateLogic()">
+                </div>
+                <div class="flex-row" style="margin-top: 10px; border-top: 1px solid #f0f0f0; padding-top: 10px;">
+                    <span style="font-size: 0.85rem; color: #999;">年度目標</span>
+                    <span style="font-size: 1rem; font-weight: 700;" id="annual-target">--</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <span class="card-label">目前累積銷貨 (未稅)</span>
+                <div class="card-value" id="total-sales">讀取中...</div>
+            </div>
+
+            <div class="card">
+                <span class="card-label" id="diff-label">進度落後/超前</span>
+                <div class="card-value" id="progress-status">計算中...</div>
+            </div>
+
+            <div class="card">
+                <div class="flex-row">
+                    <div>
+                        <span class="card-label">銷貨利潤</span>
+                        <div style="font-size: 1.2rem; font-weight: 700; color: var(--up-color);" id="total-profit">--</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span class="card-label">營業費用</span>
+                        <div style="font-size: 1.2rem; font-weight: 700; color: var(--down-color);" id="expense-val">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar" id="summary-bar">
+            數據讀取中...
+        </div>
+
+        <footer>© 2026 金牛頓工業股份有限公司</footer>
     </div>
 
     <script>
         const CSV_SALES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv&t=" + Date.now();
         const CSV_EXPENSE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv&t=" + Date.now();
         
-        // 驗證邏輯
+        // 1. 驗證
         const authInput = document.getElementById('auth-input');
         const authOverlay = document.getElementById('auth-overlay');
         authInput.addEventListener('input', () => {
             const today = new Date();
-            const correctPw = today.getFullYear() + String(today.getMonth() + 1).padStart(2, '0') + String(today.getDate()).padStart(2, '0');
-            if (authInput.value === correctPw) {
-                authOverlay.style.display = 'none';
-            }
+            const pw = today.getFullYear() + String(today.getMonth() + 1).padStart(2, '0') + String(today.getDate()).padStart(2, '0');
+            if (authInput.value === pw) authOverlay.style.display = 'none';
         });
 
-        // 資料處理
+        // 2. 抓取費用
         function fetchAllData() {
             Papa.parse(CSV_EXPENSE_URL, {
                 download: true, header: false, skipEmptyLines: true,
                 complete: function(results) {
-                    let foundExpense = 0;
+                    let exp = 0;
                     if (results.data) {
-                        outerLoop:
-                        for (let row of results.data) {
+                        outer: for (let row of results.data) {
                             for (let cell of row) {
-                                let val = cell?.toString().replace(/,/g, '').trim();
-                                if (val !== "" && !isNaN(parseFloat(val))) {
-                                    foundExpense = parseFloat(val);
-                                    break outerLoop;
-                                }
+                                let v = cell?.toString().replace(/,/g, '').trim();
+                                if (v !== "" && !isNaN(parseFloat(v))) { exp = parseFloat(v); break outer; }
                             }
                         }
                     }
-                    document.getElementById('expense-input').value = Math.round(foundExpense).toLocaleString();
+                    document.getElementById('expense-val').innerText = Math.round(exp).toLocaleString();
                     fetchSalesData();
                 }
             });
         }
 
+        // 3. 抓取銷貨
         function fetchSalesData() {
             Papa.parse(CSV_SALES_URL, {
                 download: true, header: true, skipEmptyLines: true,
                 complete: function(results) {
                     let sTotal = 0, pTotal = 0;
                     results.data.forEach(row => {
-                        let s = parseFloat(row['本幣未稅金額']?.toString().replace(/,/g, '')) || 0;
-                        let p = parseFloat(row['毛利']?.toString().replace(/,/g, '')) || 0;
-                        sTotal += s; pTotal += p;
+                        sTotal += parseFloat(row['本幣未稅金額']?.toString().replace(/,/g, '')) || 0;
+                        pTotal += parseFloat(row['毛利']?.toString().replace(/,/g, '')) || 0;
                     });
-                    document.getElementById('total-sales').innerText = 'NT$ ' + Math.round(sTotal).toLocaleString();
-                    document.getElementById('total-profit').innerText = 'NT$ ' + Math.round(pTotal).toLocaleString();
+                    document.getElementById('total-sales').innerText = Math.round(sTotal).toLocaleString();
+                    document.getElementById('total-profit').innerText = Math.round(pTotal).toLocaleString();
                     calculateLogic(sTotal, pTotal);
                 }
             });
         }
 
+        // 4. 計算核心邏輯
         function calculateLogic(s, p) {
-            if(s === undefined) s = parseFloat(document.getElementById('total-sales').innerText.replace(/[NT$,]/g, '')) || 0;
-            if(p === undefined) p = parseFloat(document.getElementById('total-profit').innerText.replace(/[NT$,]/g, '')) || 0;
+            if(s === undefined) s = parseFloat(document.getElementById('total-sales').innerText.replace(/,/g, '')) || 0;
+            if(p === undefined) p = parseFloat(document.getElementById('total-profit').innerText.replace(/,/g, '')) || 0;
+            
             const now = new Date();
             const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+            
             let monthly = parseFloat(document.getElementById('monthly-target').value.replace(/,/g, '')) || 0;
             let annual = monthly * 12;
             document.getElementById('annual-target').innerText = 'NT$ ' + annual.toLocaleString();
+            
             let diff = s - ((annual / 365) * dayOfYear);
             let progEl = document.getElementById('progress-status');
-            progEl.innerText = 'NT$ ' + Math.round(diff).toLocaleString();
-            progEl.className = diff >= 0 ? 'value highlight-green' : 'value highlight-red';
-            document.getElementById('diff-label').innerText = diff >= 0 ? '進度超前' : '進度落後';
-            let exp = parseFloat(document.getElementById('expense-input').value.replace(/,/g, '')) || 0;
-            document.getElementById('summary-bar').innerText = `達成率：${annual > 0 ? (s/annual*100).toFixed(1) : 0}% | 毛利率：${s > 0 ? (p/s*100).toFixed(1) : 0}% | 費用率：${s > 0 ? (exp/s*100).toFixed(1) : 0}%`;
+            progEl.innerText = Math.round(diff).toLocaleString();
+            progEl.className = 'card-value ' + (diff >= 0 ? 'highlight-green' : 'highlight-red');
+            document.getElementById('diff-label').innerText = diff >= 0 ? '進度超前 (+)' : '進度落後 (-)';
+            
+            let exp = parseFloat(document.getElementById('expense-val').innerText.replace(/,/g, '')) || 0;
+            
+            // 更新狀態列
+            let achieveRate = annual > 0 ? (s/annual*100).toFixed(1) : 0;
+            let marginRate = s > 0 ? (p/s*100).toFixed(1) : 0;
+            let expenseRate = s > 0 ? (exp/s*100).toFixed(1) : 0;
+            
+            document.getElementById('summary-bar').innerHTML = `
+                <div class="status-main">達成率：${achieveRate}%</div>
+                <div style="font-size:0.85rem; opacity: 0.9; margin-top:5px;">毛利率：${marginRate}% | 費用率：${expenseRate}%</div>
+            `;
         }
 
         function formatCommas(i) { let v = parseFloat(i.value.replace(/,/g, '')); if(!isNaN(v)) i.value = v.toLocaleString(); }
 
         window.onload = () => {
-            document.getElementById('current-date').innerText = new Date().toLocaleDateString();
-            document.getElementById('day-of-year').innerText = new Date().getFullYear() + '年第' + Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000) + '天';
+            const now = new Date();
+            const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+            document.getElementById('current-info-text').innerText = `${now.toLocaleDateString()} | 第 ${dayOfYear} 天`;
             fetchAllData();
         };
     </script>
