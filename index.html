@@ -6,16 +6,16 @@
     <title>金牛頓 2026 營運分析儀表板</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        /* 驗證層 */
+        /* 驗證層：僅保留輸入框內的提示字樣 */
         #auth-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #ffffff; z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         #auth-input {
-            border: none; border-bottom: 2px solid #3e5a26; width: 200px;
-            font-size: 26px; text-align: center; outline: none; padding: 10px;
-            letter-spacing: 5px; font-family: "Consolas", monospace;
+            border: none; border-bottom: 2px solid #3e5a26; width: 240px;
+            font-size: 22px; text-align: center; outline: none; padding: 10px;
+            font-family: "Microsoft JhengHei", sans-serif;
         }
 
         /* 儀表板樣式 */
@@ -27,7 +27,7 @@
         .label { background-color: #f9f9f9; color: #666; width: 30%; font-weight: bold; }
         .value { width: 20%; text-align: right; font-family: "Consolas", monospace; }
         .summary-row { background-color: #3e5a26; color: white; text-align: center; font-weight: bold; }
-        input { width: 95%; text-align: right; border: none; font-size: 16px; background: transparent; font-family: "Consolas", monospace; }
+        input.data-input { width: 95%; text-align: right; border: none; font-size: 16px; background: transparent; font-family: "Consolas", monospace; }
         .highlight-red { color: #d9534f; font-weight: bold; }
         .highlight-green { color: #28a745; font-weight: bold; }
 
@@ -35,14 +35,14 @@
             .report-title { font-size: 20px; }
             .label, .value { display: block; width: 100%; text-align: left; }
             td { display: block; border: none; border-bottom: 1px solid #eee; }
-            input { text-align: left; }
+            input.data-input { text-align: left; }
         }
     </style>
 </head>
 <body>
 
     <div id="auth-overlay">
-        <input type="password" id="auth-input" autofocus maxlength="8">
+        <input type="password" id="auth-input" autofocus maxlength="8" placeholder="請輸入密碼">
     </div>
 
     <div class="tab-content">
@@ -54,7 +54,7 @@
             </tr>
             <tr>
                 <td class="label">2026年每月目標</td>
-                <td class="value"><input type="text" id="monthly-target" value="7,500,000" onfocus="this.value=this.value.replace(/,/g,'')" onblur="formatCommas(this); calculateLogic()"></td>
+                <td class="value"><input type="text" id="monthly-target" class="data-input" value="7,500,000" onfocus="this.value=this.value.replace(/,/g,'')" onblur="formatCommas(this); calculateLogic()"></td>
                 <td class="label">2026年營收目標</td><td class="value" id="annual-target">NT$ 90,000,000</td>
             </tr>
             <tr>
@@ -64,7 +64,7 @@
             <tr>
                 <td class="label">目前銷貨利潤合計</td><td class="value" id="total-profit">讀取中...</td>
                 <td class="label">營業費用總計</td>
-                <td class="value"><input type="text" id="expense-input" value="0" readonly></td>
+                <td class="value"><input type="text" id="expense-input" class="data-input" value="0" readonly></td>
             </tr>
             <tr>
                 <td colspan="4" class="summary-row" id="summary-bar">達成率：--% | 毛利率：--% | 費用率：--%</td>
@@ -87,7 +87,7 @@
             }
         });
 
-        // 資料抓取與計算邏輯
+        // 資料處理
         function fetchAllData() {
             Papa.parse(CSV_EXPENSE_URL, {
                 download: true, header: false, skipEmptyLines: true,
