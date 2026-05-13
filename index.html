@@ -17,6 +17,8 @@
             --btn-bg: rgba(56, 189, 248, 0.1);
         }
 
+        body { margin: 0; padding: 0; background: var(--bg-gradient); background-attachment: fixed; color: var(--text-white); font-family: "PingFang TC", "Microsoft JhengHei", sans-serif; min-height: 100vh; }
+
         #auth-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #020617; z-index: 10000;
@@ -28,36 +30,21 @@
             background: transparent; color: white; letter-spacing: 5px;
         }
 
-        body { 
-            margin: 0; padding: 0; 
-            background: var(--bg-gradient); 
-            background-attachment: fixed;
-            color: var(--text-white);
-            font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
-            min-height: 100vh;
-        }
-
-        .container { padding: 15px; max-width: 1100px; margin: auto; }
+        .container { padding: 15px; max-width: 800px; margin: auto; }
 
         header { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
         .header-flex { display: flex; justify-content: space-between; align-items: center; }
         .header-title { font-size: 1.5rem; font-weight: bold; margin: 0; color: var(--accent-blue); }
         .time-badge { background: var(--btn-bg); color: var(--accent-blue); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; border: 1px solid rgba(56,189,248,0.3); }
 
-        /* 電腦版：3 欄網格 */
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 12px; 
-        }
+        /* 統一 2 欄網格 */
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .full-width { grid-column: span 2; }
 
         .card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 12px;
+            background: var(--card-bg); padding: 15px; border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.08);
-            display: flex; flex-direction: column; justify-content: center;
-            min-height: 100px;
+            display: flex; flex-direction: column; justify-content: center; min-height: 100px;
         }
 
         .card-label { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 6px; }
@@ -69,15 +56,15 @@
             color: var(--accent-blue); padding: 4px 8px; border-radius: 6px; font-size: 1rem; width: 110px; text-align: right;
         }
 
-        /* 專屬比率區塊 (三欄橫排) */
         .ratio-bar {
             margin-top: 15px; background: rgba(56, 189, 248, 0.08); 
             padding: 15px; border-radius: 12px; border: 1px solid rgba(56,189,248,0.2);
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;
         }
-        .ratio-item { display: flex; flex-direction: column; align-items: center; }
-        .ratio-label { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 4px; }
-        .ratio-val { font-size: 1.2rem; font-weight: bold; color: white; }
+        .ratio-item { display: flex; flex-direction: column; align-items: center; border-right: 1px solid rgba(255,255,255,0.1); }
+        .ratio-item:last-child { border-right: none; }
+        .ratio-label { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 4px; text-align: center; }
+        .ratio-val { font-size: 1.1rem; font-weight: bold; color: white; }
 
         .status-up { color: var(--up-green); }
         .status-down { color: var(--down-red); }
@@ -89,20 +76,11 @@
             text-decoration: none; font-weight: bold;
         }
 
-        /* --- 手機版 RWD 佈局優化 --- */
-        @media screen and (max-width: 768px) {
-            .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            
-            /* 第1列：營收目標 (佔滿2欄) */
-            .card:nth-child(1) { grid-column: span 2; }
-            
-            /* 第2, 3列：銷貨、進度、利潤、費用 (自動每排2個) */
-            
-            .card-value { font-size: 1.25rem; }
-            
-            /* 第4列：比率區塊保持三欄但縮小字體防止溢出 */
-            .ratio-val { font-size: 1rem; }
-            .ratio-label { font-size: 0.7rem; }
+        footer { text-align: center; padding: 20px; font-size: 0.7rem; color: var(--text-dim); opacity: 0.5; }
+
+        @media screen and (max-width: 480px) {
+            .card-value { font-size: 1.2rem; }
+            .ratio-val { font-size: 0.95rem; }
         }
     </style>
 </head>
@@ -122,7 +100,7 @@
         </header>
 
         <div class="grid">
-            <div class="card">
+            <div class="card full-width">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span class="card-label">每月營收目標</span>
                     <input type="text" id="monthly-target" class="target-input" value="7,500,000" onfocus="this.value=this.value.replace(/,/g,'')" onblur="formatCommas(this); calculateLogic()">
@@ -138,7 +116,6 @@
                 <div class="card-value" id="total-sales">--</div>
                 <span class="card-footer">未稅總計</span>
             </div>
-
             <div class="card">
                 <span class="card-label" id="diff-label">進度分析</span>
                 <div class="card-value" id="progress-status">--</div>
@@ -150,7 +127,6 @@
                 <div class="card-value status-up" id="total-profit">--</div>
                 <span class="card-footer">扣除成本利潤</span>
             </div>
-
             <div class="card">
                 <span class="card-label">營業費用總計</span>
                 <div class="card-value status-down" id="expense-val">--</div>
@@ -184,8 +160,14 @@
 
         document.getElementById('auth-input').addEventListener('input', function() {
             const now = new Date();
-            const pw = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
-            if (this.value === pw) document.getElementById('auth-overlay').style.display = 'none';
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const correctPw = year + month + day;
+            
+            if (this.value === correctPw) {
+                document.getElementById('auth-overlay').style.display = 'none';
+            }
         });
 
         function fetchAll() {
@@ -229,8 +211,7 @@
             const dayOfYear = Math.floor((now - start) / 86400000);
             document.getElementById('day-info').innerText = `2026年第 ${dayOfYear} 天`;
             
-            let rawInput = document.getElementById('monthly-target').value.replace(/[^0-9.]/g, '');
-            let monthly = parseFloat(rawInput) || 0;
+            let monthly = parseFloat(document.getElementById('monthly-target').value.replace(/,/g, '')) || 0;
             let annual = monthly * 12;
             document.getElementById('annual-target').innerText = Math.round(annual).toLocaleString();
             
@@ -262,9 +243,7 @@
             if(!isNaN(v)) i.value = v.toLocaleString(); 
         }
 
-        window.onload = () => {
-            fetchAll();
-        };
+        window.onload = fetchAll;
     </script>
 </body>
 </html>
