@@ -2,43 +2,45 @@
 <html lang="zh-Hant">
 <head>
     <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>金牛頓工業 - 行動戰情室</title>
     <style>
-        /* 驗證遮罩層 */
-        #auth-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #ffffff; z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        #auth-input {
-            border: none; border-bottom: 2px solid #1a73e8; width: 200px;
-            font-size: 24px; text-align: center; outline: none; padding: 10px; letter-spacing: 5px;
-        }
         body { font-family: "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 20px; background-color: #ffffff; color: #333333; }
         .container { max-width: 600px; margin: auto; }
         header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 2px solid #eeeeee; padding-bottom: 15px; }
         .logo { width: 50px; height: 50px; object-fit: contain; }
+        .header-text { display: flex; flex-direction: column; }
         h1 { font-size: 1.2rem; margin: 0; color: #222; }
         .subtitle { font-size: 0.8rem; color: #888; margin-top: 3px; }
         .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .card { background: #ffffff; padding: 20px; border-radius: 12px; text-decoration: none; color: #333; display: flex; flex-direction: column; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .card { background: #ffffff; padding: 20px; border-radius: 12px; text-decoration: none; color: #333; display: flex; flex-direction: column; transition: all 0.2s ease; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; }
+        .card:hover { background: #f8f9fa; border-color: #bbbbbb; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .card-label { font-size: 0.8rem; color: #1a73e8; margin-bottom: 8px; font-weight: bold; }
         .data-value { font-size: 1.4rem; color: #d93025; font-weight: 800; min-height: 1.6rem; }
-        .full-width-card { grid-column: span 2; padding: 15px; text-align: center; font-weight: bold; background: #e8f0fe; color: #1967d2; border-radius: 12px; text-decoration: none;}
+        .card-title { font-size: 1.2rem; font-weight: bold; color: #222; }
+        
+        /* 全寬方框樣式 */
+        .full-width-card { grid-column: span 2; padding: 15px; text-align: center; justify-content: center; align-items: center; border: none; margin-top: 5px; font-weight: bold; }
+        .calendar-card { background: #e8f0fe; color: #1967d2; border: 1px solid #d2e3fc; }
+        .calendar-card:hover { background: #d2e3fc; }
+        .website-card { background: #f1f3f4; color: #5f6368; }
+        
         footer { margin-top: 40px; font-size: 0.75rem; color: #aaaaaa; text-align: center; }
     </style>
 </head>
 <body>
 
-<div id="auth-screen">
-    <input type="password" id="auth-input" autofocus maxlength="8" placeholder="輸入密碼">
-</div>
-
 <div class="container">
     <header>
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQn6xjuG-I81vGfFkGiulp55TCfDojnd-B60w3yjt81XHWF6dWfFnP4uZWlyI7PiB6drX5N259UjpHGrjHzlQfzRcxhx2MbkMDTniiElsZFV9Y3UWgPi7X_cRyZiTYifnCisvqzQVy_krPvJCrED_JEErXfGSsWukxmkiCR0ZrbAJEBjixhP6FW68X4FXo/s16000-rw/logo.gif" class="logo">
+        <a href="https://www.king-newton.com/">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQn6xjuG-I81vGfFkGiulp55TCfDojnd-B60w3yjt81XHWF6dWfFnP4uZWlyI7PiB6drX5N259UjpHGrjHzlQfzRcxhx2MbkMDTniiElsZFV9Y3UWgPi7X_cRyZiTYifnCisvqzQVy_krPvJCrED_JEErXfGSsWukxmkiCR0ZrbAJEBjixhP6FW68X4FXo/s16000-rw/logo.gif" alt="Logo" class="logo">
+        </a>
         <div class="header-text">
             <h1>整體現況</h1>
             <div class="subtitle">金牛頓工業股份有限公司</div>
@@ -46,95 +48,112 @@
     </header>
 
     <div class="dashboard-grid">
-        <div class="card">
+        <div class="card" onclick="checkDynamicPassword('https://king-newton.github.io/dashboard/')">
             <span class="card-label">目前累計營收</span>
-            <div id="revenue-val" class="data-value">0</div>
+            <div id="revenue-val" class="data-value">13,901,806</div>
         </div>
-        <div class="card">
+
+        <div class="card" onclick="checkDynamicPassword('https://king-newton.github.io/dashboard/')">
             <span class="card-label">公司毛利率</span>
             <div id="margin-val" class="data-value">26.7%</div>
         </div>
-        <div class="card">
+
+        <div class="card" onclick="checkDynamicPassword('https://king-newton.github.io/dashboard/')">
             <span class="card-label">營業費用總計</span>
-            <div id="expense-val" class="data-value">0</div>
+            <div id="expense-val" class="data-value">7,934,875</div>
         </div>
-        <div class="card">
+
+        <div class="card" onclick="checkDynamicPassword('https://king-newton.github.io/dashboard/')">
             <span class="card-label">營業費用率</span>
-            <div id="expense-rate-val" class="data-value">0%</div>
+            <div id="expense-rate-val" class="data-value">57.1%</div>
         </div>
-        <a href="https://o936157111-ops.github.io/company-calendar/" target="_blank" class="full-width-card">📅 公司行事曆</a>
+
+        <a href="https://o936157111-ops.github.io/company-calendar/" target="_blank" class="card full-width-card calendar-card">
+            📅 公司行事曆
+        </a>
+
+        <a href="https://www.king-newton.com/" target="_blank" class="card full-width-card website-card">
+            金牛頓官方網站
+        </a>
     </div>
-    <footer>© 2026 金牛頓工業股份有限公司</footer>
+
+    <footer>© 2026 金牛頓工業股份有限公司 All Rights Reserved.</footer>
 </div>
 
 <script>
-    const revenueUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv';
-    const expenseUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv';
+const revenueUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv';
+const expenseUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv';
 
-    // 強化的數字解析：處理括號(負數)、逗號、百分比
-    function parseNum(str) {
-        if (!str) return null;
-        let s = str.trim();
-        if (s.startsWith('(') && s.endsWith(')')) s = '-' + s.substring(1, s.length - 1);
-        let n = parseFloat(s.replace(/[^\d.-]/g, ''));
-        return isNaN(n) ? null : n;
+let globalRevenue = 13901806;
+let globalExpense = 7934875;
+
+function parseNum(str) {
+    if (!str) return null;
+    let n = parseFloat(str.replace(/[^\d.-]/g, ''));
+    return isNaN(n) ? null : n;
+}
+
+function updateRateUI() {
+    if (globalRevenue > 0) {
+        let rate = (globalExpense / globalRevenue) * 100;
+        document.getElementById('expense-rate-val').innerText = rate.toFixed(1) + "%";
+        document.getElementById('expense-val').innerText = globalExpense.toLocaleString();
     }
+}
 
-    async function updateDashboard() {
-        const cb = "?t=" + Date.now();
+async function updateDashboard() {
+    // 1. 抓取營收
+    try {
+        const res = await fetch(revenueUrl);
+        const data = await res.text();
+        const rows = data.split('\n').map(r => r.split(','));
+        let revSum = 0;
+        rows.forEach(r => {
+            let v = parseNum(r[6]);
+            if (v !== null) revSum += v;
+        });
+        if (revSum > 0) {
+            globalRevenue = revSum;
+            document.getElementById('revenue-val').innerText = globalRevenue.toLocaleString();
+        }
+    } catch(e) {}
+
+    // 2. 抓取費用
+    setTimeout(async () => {
         try {
-            // 1. 處理營收：掃描每一列，尋找數值
-            const resR = await fetch(revenueUrl + cb);
-            const csvR = await resR.text();
-            let revSum = 0;
-            csvR.split('\n').forEach((line, idx) => {
-                if (idx === 0) return; // 跳過第一列標題
-                let cols = line.split(',');
-                let val = parseNum(cols[6]); // 假設主要金額在第 7 欄 (Index 6)
-                if (val !== null) revSum += val;
-            });
-            document.getElementById('revenue-val').innerText = Math.round(revSum).toLocaleString();
-
-            // 2. 處理費用：全列搜尋「合計」或「總計」關鍵字
-            const resE = await fetch(expenseUrl + cb);
-            const csvE = await resE.text();
-            let expVal = 0;
-            const rowsE = csvE.split('\n');
-            for (let line of rowsE) {
-                if (line.includes("合計") || line.includes("總計")) {
-                    let cols = line.split(',');
-                    // 掃描這列的所有欄位，抓取第一個不為零的數字
-                    for (let col of cols) {
-                        let v = parseNum(col);
-                        if (v !== null && v !== 0) {
-                            expVal = Math.abs(v);
-                            break;
-                        }
+            const res = await fetch(expenseUrl);
+            const data = await res.text();
+            const rows = data.split('\n').map(r => r.split(','));
+            for (let i = 0; i < rows.length; i++) {
+                let rowStr = rows[i].join('|');
+                if (rowStr.includes("合計") || rowStr.includes("總計")) {
+                    let v = parseNum(rows[i][6]);
+                    if (v !== null) {
+                        globalExpense = Math.abs(v);
+                        break;
                     }
-                    if (expVal !== 0) break;
                 }
             }
-            document.getElementById('expense-val').innerText = Math.round(expVal).toLocaleString();
+            updateRateUI();
+        } catch(e) {}
+    }, 800);
+}
 
-            // 3. 計算率
-            if (revSum > 0) {
-                document.getElementById('expense-rate-val').innerText = ((expVal / revSum) * 100).toFixed(1) + "%";
-            }
-        } catch (e) { console.error(e); }
+window.onload = updateDashboard;
+
+function checkDynamicPassword(targetUrl) {
+    var today = new Date();
+    var yyyy = today.getFullYear();
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var dd = String(today.getDate()).padStart(2, '0');
+    var correctPassword = yyyy + mm + dd;
+    var input = prompt("請輸入驗證碼 (YYYYMMDD)：");
+    if (input === correctPassword) {
+        window.open(targetUrl, '_blank');
+    } else if (input !== null) {
+        alert("驗證失敗。");
     }
-
-    // 驗證邏輯
-    const authInput = document.getElementById('auth-input');
-    authInput.addEventListener('input', () => {
-        const d = new Date();
-        const pw = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
-        if (authInput.value === pw) {
-            document.getElementById('auth-screen').style.display = 'none';
-        }
-    });
-
-    // 啟動抓取
-    updateDashboard();
+}
 </script>
 </body>
 </html>
