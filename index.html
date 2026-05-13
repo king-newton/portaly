@@ -45,7 +45,7 @@
         .header-title { font-size: 1.4rem; font-weight: bold; margin: 0; color: var(--accent-blue); }
         .time-badge { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
 
-        /* 網格佈局 */
+        /* 2x2 網格佈局 */
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
         .card {
@@ -60,19 +60,22 @@
         .card-value { font-size: 1.25rem; font-weight: 800; font-family: 'Consolas', monospace; white-space: nowrap; }
         .card-footer { font-size: 0.7rem; color: var(--text-dim); margin-top: 6px; display: block; }
 
+        /* 全寬卡片 */
         .full-card { grid-column: span 2; }
         .flex-row { display: flex; justify-content: space-between; align-items: baseline; }
 
+        /* 目標輸入 */
         .target-input {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
             color: white; padding: 4px 8px;
-            border-radius: 6px; font-size: 1rem; width: 130px; text-align: right; font-family: 'Consolas';
+            border-radius: 6px; font-size: 1rem; width: 135px; text-align: right; font-family: 'Consolas';
         }
 
         .status-up { color: var(--up-green); }
         .status-down { color: var(--down-red); }
 
+        /* 比率區域 */
         .summary-bar {
             margin-top: 15px; background: rgba(255,255,255,0.03); 
             padding: 15px; border-radius: 12px; display: flex; 
@@ -112,7 +115,7 @@
 <body>
 
     <div id="auth-overlay">
-        <input type="password" id="auth-input" autofocus maxlength="8" placeholder="請輸入密碼">
+        <input type="password" id="auth-input" autofocus maxlength="8" placeholder="請輸入日期密碼">
     </div>
 
     <div class="container">
@@ -121,7 +124,7 @@
                 <h1 class="header-title">行動戰情室</h1>
                 <div class="time-badge" id="day-info">第 -- 天</div>
             </div>
-            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 5px;" id="update-time">載入中...</div>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 5px;" id="update-time">數據讀取中...</div>
         </header>
 
         <div class="grid">
@@ -145,26 +148,26 @@
             <div class="card">
                 <span class="card-label" id="diff-label">進度分析</span>
                 <div class="card-value" id="progress-status">--</div>
-                <span class="card-footer">比對時間權重</span>
+                <span class="card-footer">與時間權重目標差</span>
             </div>
 
             <div class="card">
                 <span class="card-label">銷貨利潤合計</span>
                 <div class="card-value status-up" id="total-profit">--</div>
-                <span class="card-footer">扣除成本金額</span>
+                <span class="card-footer">已扣除成本</span>
             </div>
 
             <div class="card">
                 <span class="card-label">營業費用總計</span>
                 <div class="card-value status-down" id="expense-val">--</div>
-                <span class="card-footer">後台即時同步</span>
+                <span class="card-footer">後台同步數據</span>
             </div>
         </div>
 
-        <div class="summary-bar" id="rate-summary">
+        <div class="summary-bar">
             <div class="rate-item"><span>年度達成率</span><span id="rate-achieve" class="status-up">--%</span></div>
             <div class="rate-item"><span>毛利率</span><span id="rate-margin">--%</span></div>
-            <div class="rate-item) "><span>費用率</span><span id="rate-expense">--%</span></div>
+            <div class="rate-item"><span>費用率</span><span id="rate-expense">--%</span></div>
         </div>
 
         <a href="https://o936157111-ops.github.io/company-calendar/" target="_blank" class="calendar-btn">
@@ -178,12 +181,14 @@
         const SALES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv&t=" + Date.now();
         const EXP_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv&t=" + Date.now();
 
+        // 1. 密碼驗證
         document.getElementById('auth-input').addEventListener('input', function() {
             const now = new Date();
             const pw = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
             if (this.value === pw) document.getElementById('auth-overlay').style.display = 'none';
         });
 
+        // 2. 獲取費用數據
         function fetchAll() {
             Papa.parse(EXP_URL, {
                 download: true, header: false, skipEmptyLines: true,
@@ -192,7 +197,7 @@
                     if (res.data) {
                         outer: for (let row of res.data) {
                             for (let cell of row) {
-                                let v = cell?.toString().replace(/,/g, '').trim();
+                                let v = cell?.toString().replace(/[^0-9.]/g, '').trim();
                                 if (v !== "" && !isNaN(parseFloat(v))) { exp = parseFloat(v); break outer; }
                             }
                         }
@@ -203,6 +208,7 @@
             });
         }
 
+        // 3. 獲取銷貨數據
         function fetchSales() {
             Papa.parse(SALES_URL, {
                 download: true, header: true, skipEmptyLines: true,
@@ -219,6 +225,7 @@
             });
         }
 
+        // 4. 核心計算邏輯 (修正逗號與動態標題)
         function calculateLogic(s, p) {
             const now = new Date();
             const start = new Date(now.getFullYear(), 0, 0);
@@ -226,23 +233,46 @@
             const dayOfYear = Math.floor(diff_ms / 86400000);
             document.getElementById('day-info').innerText = `2026年第 ${dayOfYear} 天`;
             
-            let monthly = parseFloat(document.getElementById('monthly-target').value.replace(/,/g, '')) || 0;
+            // 處理目標輸入：去掉所有非數字字元
+            let rawInput = document.getElementById('monthly-target').value.replace(/[^0-9.]/g, '');
+            let monthly = parseFloat(rawInput) || 0;
             let annual = monthly * 12;
-            document.getElementById('annual-target').innerText = 'NT$ ' + annual.toLocaleString();
+            document.getElementById('annual-target').innerText = 'NT$ ' + Math.round(annual).toLocaleString();
             
-            let diff = s - ((annual / 365) * dayOfYear);
+            // 抓取畫面上現有的銷貨與利潤數值(若無傳入參數)
+            if (s === undefined) s = parseFloat(document.getElementById('total-sales').innerText.replace(/,/g, '')) || 0;
+            if (p === undefined) p = parseFloat(document.getElementById('total-profit').innerText.replace(/,/g, '')) || 0;
+            
+            // 進度計算公式：s - (年度目標 / 365 * 今年第幾天)
+            let timeWeightedTarget = (annual / 365) * dayOfYear;
+            let diff = s - timeWeightedTarget;
+            
             let progEl = document.getElementById('progress-status');
-            progEl.innerText = Math.round(Math.abs(diff)).toLocaleString();
-            progEl.className = 'card-value ' + (diff >= 0 ? 'status-up' : 'status-down');
-            document.getElementById('diff-label').innerText = diff >= 0 ? '進度超前 (+)' : '進度落後 (-)';
+            let labelEl = document.getElementById('diff-label');
             
+            // 顯示絕對值並判斷正負
+            progEl.innerText = Math.round(Math.abs(diff)).toLocaleString();
+            
+            if (diff >= 0) {
+                progEl.className = 'card-value status-up';
+                labelEl.innerText = '進度超前 (+)';
+            } else {
+                progEl.className = 'card-value status-down';
+                labelEl.innerText = '進度落後 (-)';
+            }
+            
+            // 下方比率更新
             let exp = parseFloat(document.getElementById('expense-val').innerText.replace(/,/g, '')) || 0;
-            document.getElementById('rate-achieve').innerText = `${(s/annual*100).toFixed(1)}%`;
-            document.getElementById('rate-margin').innerText = `${(p/s*100).toFixed(1)}%`;
-            document.getElementById('rate-expense').innerText = `${(exp/s*100).toFixed(1)}%`;
+            document.getElementById('rate-achieve').innerText = annual > 0 ? `${(s/annual*100).toFixed(1)}%` : '0%';
+            document.getElementById('rate-margin').innerText = s > 0 ? `${(p/s*100).toFixed(1)}%` : '0%';
+            document.getElementById('rate-expense').innerText = s > 0 ? `${(exp/s*100).toFixed(1)}%` : '0%';
         }
 
-        function formatCommas(i) { let v = parseFloat(i.value.replace(/,/g, '')); if(!isNaN(v)) i.value = v.toLocaleString(); }
+        // 格式化輸入框逗號
+        function formatCommas(i) { 
+            let v = parseFloat(i.value.replace(/[^0-9.]/g, '')); 
+            if(!isNaN(v)) i.value = v.toLocaleString(); 
+        }
 
         window.onload = () => {
             const now = new Date();
