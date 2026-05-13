@@ -37,79 +37,72 @@
             min-height: 100vh;
         }
 
-        .container { padding: 20px; max-width: 1100px; margin: auto; }
+        .container { padding: 15px; max-width: 1100px; margin: auto; }
 
-        header { padding: 10px 0 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 25px; }
+        header { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
         .header-flex { display: flex; justify-content: space-between; align-items: center; }
-        .header-title { font-size: 1.6rem; font-weight: bold; margin: 0; color: var(--accent-blue); letter-spacing: 1px; }
-        .time-badge { background: var(--btn-bg); color: var(--accent-blue); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; border: 1px solid rgba(56,189,248,0.3); }
+        .header-title { font-size: 1.5rem; font-weight: bold; margin: 0; color: var(--accent-blue); }
+        .time-badge { background: var(--btn-bg); color: var(--accent-blue); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; border: 1px solid rgba(56,189,248,0.3); }
 
-        /* 核心網格：電腦版固定 3 欄 (3x2=6) */
+        /* 電腦版：3 欄網格 */
         .grid { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
-            gap: 15px; 
+            gap: 12px; 
         }
 
         .card {
             background: var(--card-bg);
-            padding: 18px;
+            padding: 15px;
             border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            display: flex; flex-direction: column; justify-content: space-between;
-            min-height: 110px;
+            display: flex; flex-direction: column; justify-content: center;
+            min-height: 100px;
         }
 
-        .card-label { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px; display: block; }
-        .card-value { font-size: 1.4rem; font-weight: 800; font-family: 'Consolas', monospace; white-space: nowrap; }
-        .card-footer { font-size: 0.75rem; color: var(--text-dim); margin-top: 8px; display: block; }
-
-        .flex-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .card-label { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 6px; }
+        .card-value { font-size: 1.5rem; font-weight: 800; font-family: 'Consolas', monospace; white-space: nowrap; }
+        .card-footer { font-size: 0.7rem; color: var(--text-dim); margin-top: 6px; }
 
         .target-input {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: var(--accent-blue); padding: 4px 8px;
-            border-radius: 6px; font-size: 1rem; width: 110px; text-align: right; font-family: 'Consolas';
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+            color: var(--accent-blue); padding: 4px 8px; border-radius: 6px; font-size: 1rem; width: 110px; text-align: right;
         }
+
+        /* 專屬比率區塊 (三欄橫排) */
+        .ratio-bar {
+            margin-top: 15px; background: rgba(56, 189, 248, 0.08); 
+            padding: 15px; border-radius: 12px; border: 1px solid rgba(56,189,248,0.2);
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+        }
+        .ratio-item { display: flex; flex-direction: column; align-items: center; }
+        .ratio-label { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 4px; }
+        .ratio-val { font-size: 1.2rem; font-weight: bold; color: white; }
 
         .status-up { color: var(--up-green); }
         .status-down { color: var(--down-red); }
 
-        /* 下方比率欄：2 欄對稱 */
-        .summary-bar {
-            margin-top: 20px; background: rgba(56, 189, 248, 0.05); 
-            padding: 15px; border-radius: 12px; border: 1px solid rgba(56,189,248,0.15);
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
-        }
-        .rate-item { display: flex; flex-direction: column; align-items: center; }
-        .rate-label { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 4px; }
-        .rate-val { font-size: 1.2rem; font-weight: bold; color: white; }
-
         .calendar-btn {
             display: flex; align-items: center; justify-content: center;
-            margin-top: 20px; padding: 15px;
-            background: var(--btn-bg); border: 1px solid var(--accent-blue);
-            border-radius: 12px; color: var(--accent-blue);
-            text-decoration: none; font-weight: bold; font-size: 1rem;
-            transition: all 0.2s ease;
-        }
-        .calendar-btn:active { background: var(--accent-blue); color: #020617; }
-
-        footer { text-align: center; padding: 30px 0; font-size: 0.7rem; color: var(--text-dim); opacity: 0.4; }
-
-        /* --- 手機版面調整 (螢幕寬度小於 850px) --- */
-        @media screen and (max-width: 850px) {
-            /* 手機版改為 2 欄 (2x3=6)，完美對齊 */
-            .grid { grid-template-columns: repeat(2, 1fr); }
-            .card-value { font-size: 1.2rem; }
-            .container { padding: 12px; }
+            margin-top: 15px; padding: 15px; background: var(--btn-bg);
+            border: 1px solid var(--accent-blue); border-radius: 12px; color: var(--accent-blue);
+            text-decoration: none; font-weight: bold;
         }
 
-        @media screen and (max-width: 400px) {
-            .card-value { font-size: 1.1rem; }
-            .target-input { width: 90px; }
+        /* --- 手機版 RWD 佈局優化 --- */
+        @media screen and (max-width: 768px) {
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            
+            /* 第1列：營收目標 (佔滿2欄) */
+            .card:nth-child(1) { grid-column: span 2; }
+            
+            /* 第2, 3列：銷貨、進度、利潤、費用 (自動每排2個) */
+            
+            .card-value { font-size: 1.25rem; }
+            
+            /* 第4列：比率區塊保持三欄但縮小字體防止溢出 */
+            .ratio-val { font-size: 1rem; }
+            .ratio-label { font-size: 0.7rem; }
         }
     </style>
 </head>
@@ -125,66 +118,62 @@
                 <h1 class="header-title">行動戰情室</h1>
                 <div class="time-badge" id="day-info">第 -- 天</div>
             </div>
-            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 5px;" id="update-time">數據載入中...</div>
+            <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 4px;" id="update-time">Syncing...</div>
         </header>
 
         <div class="grid">
             <div class="card">
-                <div class="flex-row">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span class="card-label">每月營收目標</span>
                     <input type="text" id="monthly-target" class="target-input" value="7,500,000" onfocus="this.value=this.value.replace(/,/g,'')" onblur="formatCommas(this); calculateLogic()">
                 </div>
-                <div class="flex-row" style="margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px;">
-                    <span class="card-footer">年度目標總額</span>
-                    <span id="annual-target" style="font-weight: bold; font-family: 'Consolas'; color: var(--accent-blue); font-size: 0.9rem;">--</span>
+                <div style="display: flex; justify-content: space-between; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px;">
+                    <span class="card-footer">年度總目標</span>
+                    <span id="annual-target" style="font-family: 'Consolas'; color: var(--accent-blue); font-size: 0.85rem;">--</span>
                 </div>
             </div>
 
             <div class="card">
                 <span class="card-label">目前累積銷貨</span>
                 <div class="card-value" id="total-sales">--</div>
-                <span class="card-footer">未稅總計 (元)</span>
+                <span class="card-footer">未稅總計</span>
             </div>
 
             <div class="card">
                 <span class="card-label" id="diff-label">進度分析</span>
                 <div class="card-value" id="progress-status">--</div>
-                <span class="card-footer">時間權重目標差</span>
+                <span class="card-footer">與權重目標差</span>
             </div>
 
             <div class="card">
                 <span class="card-label">銷貨利潤合計</span>
                 <div class="card-value status-up" id="total-profit">--</div>
-                <span class="card-footer">已扣除成本金額</span>
+                <span class="card-footer">扣除成本利潤</span>
             </div>
 
             <div class="card">
                 <span class="card-label">營業費用總計</span>
                 <div class="card-value status-down" id="expense-val">--</div>
-                <span class="card-footer">後台即時同步</span>
-            </div>
-
-            <div class="card">
-                <span class="card-label">年度達成率</span>
-                <div class="card-value status-up" id="rate-achieve">--%</div>
-                <span class="card-footer">對比年度總目標</span>
+                <span class="card-footer">後台同步數據</span>
             </div>
         </div>
 
-        <div class="summary-bar">
-            <div class="rate-item">
-                <span class="rate-label">目前毛利率</span>
-                <span id="rate-margin" class="rate-val">--%</span>
+        <div class="ratio-bar">
+            <div class="ratio-item">
+                <span class="ratio-label">年度達成率</span>
+                <span id="rate-achieve" class="ratio-val status-up">--%</span>
             </div>
-            <div class="rate-item">
-                <span class="rate-label">營業費用率</span>
-                <span id="rate-expense" class="rate-val">--%</span>
+            <div class="ratio-item">
+                <span class="ratio-label">目前毛利率</span>
+                <span id="rate-margin" class="ratio-val">--%</span>
+            </div>
+            <div class="ratio-item">
+                <span class="ratio-label">營業費用率</span>
+                <span id="rate-expense" class="ratio-val">--%</span>
             </div>
         </div>
 
-        <a href="https://o936157111-ops.github.io/company-calendar/" target="_blank" class="calendar-btn">
-            📅 查看公司行事曆
-        </a>
+        <a href="https://o936157111-ops.github.io/company-calendar/" target="_blank" class="calendar-btn">📅 查看公司行事曆</a>
 
         <footer>© 2026 GOLD NEWTON INDUSTRIAL</footer>
     </div>
@@ -245,12 +234,11 @@
             let annual = monthly * 12;
             document.getElementById('annual-target').innerText = Math.round(annual).toLocaleString();
             
-            if (s === undefined) s = parseFloat(document.getElementById('total-sales').innerText.replace(/[^0-9.]/g, '')) || 0;
-            if (p === undefined) p = parseFloat(document.getElementById('total-profit').innerText.replace(/[^0-9.]/g, '')) || 0;
+            if (s === undefined) s = parseFloat(document.getElementById('total-sales').innerText.replace(/,/g, '')) || 0;
+            if (p === undefined) p = parseFloat(document.getElementById('total-profit').innerText.replace(/,/g, '')) || 0;
             
             let timeWeightedTarget = (annual / 365) * dayOfYear;
             let diff = s - timeWeightedTarget;
-            
             let progEl = document.getElementById('progress-status');
             let labelEl = document.getElementById('diff-label');
             progEl.innerText = Math.round(Math.abs(diff)).toLocaleString();
@@ -263,7 +251,7 @@
                 labelEl.innerText = '進度落後 (-)';
             }
             
-            let exp = parseFloat(document.getElementById('expense-val').innerText.replace(/[^0-9.]/g, '')) || 0;
+            let exp = parseFloat(document.getElementById('expense-val').innerText.replace(/,/g, '')) || 0;
             document.getElementById('rate-achieve').innerText = annual > 0 ? `${(s/annual*100).toFixed(1)}%` : '0%';
             document.getElementById('rate-margin').innerText = s > 0 ? `${(p/s*100).toFixed(1)}%` : '0%';
             document.getElementById('rate-expense').innerText = s > 0 ? `${(exp/s*100).toFixed(1)}%` : '0%';
@@ -275,8 +263,6 @@
         }
 
         window.onload = () => {
-            const now = new Date();
-            document.getElementById('update-time').innerText = `數據同步：${now.toLocaleDateString()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
             fetchAll();
         };
     </script>
