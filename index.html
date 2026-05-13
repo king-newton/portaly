@@ -6,44 +6,41 @@
     <title>金牛頓 2026 營運分析儀表板</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        /* 新增：啟動驗證遮罩層 */
+        /* 驗證層：完全空白，只有一個輸入框 */
         #auth-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #ffffff; z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         #auth-input {
-            border: none; border-bottom: 2px solid #3e5a26; width: 220px;
+            border: none; border-bottom: 2px solid #3e5a26; width: 200px;
             font-size: 26px; text-align: center; outline: none; padding: 10px;
             letter-spacing: 5px; font-family: "Consolas", monospace;
         }
-        #auth-msg { margin-top: 15px; color: #888; font-size: 14px; }
 
-        /* 原有樣式 */
+        /* 儀表板樣式 */
         body { font-family: "Microsoft JhengHei", sans-serif; padding: 20px; background-color: #f4f4f4; color: #333; margin: 0; }
         .tabs { display: flex; margin-bottom: 20px; }
         .tab-button { padding: 12px 24px; cursor: pointer; background: #ddd; border: none; font-size: 16px; flex: 1; transition: 0.3s; }
         .tab-button.active { background: #3e5a26; color: white; }
         .tab-content { display: none; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .tab-content.active { display: block; }
-        .report-title { font-size: 28px; font-weight: bold; margin-bottom: 25px; text-align: center; color: #1a1a1a; white-space: nowrap; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 0; }
+        .report-title { font-size: 28px; font-weight: bold; margin-bottom: 25px; text-align: center; color: #1a1a1a; }
+        table { width: 100%; border-collapse: collapse; }
         td, th { border: 1px solid #ddd; padding: 15px; font-size: 16px; }
         .label { background-color: #f9f9f9; color: #666; width: 30%; font-weight: bold; }
         .value { width: 20%; text-align: right; font-family: "Consolas", monospace; }
         .summary-row { background-color: #3e5a26; color: white; text-align: center; font-weight: bold; }
         .stats-header { background: #3e5a26; color: white; font-weight: bold; text-align: center; }
         .top-20-highlight { background-color: #f0f7ef !important; }
-        input { width: 95%; text-align: left; border: none; font-size: 16px; font-family: "Consolas", monospace; background: transparent; padding: 2px; }
+        input { width: 95%; text-align: left; border: none; font-size: 16px; background: transparent; }
         .highlight-red { color: #d9534f; font-weight: bold; }
         .highlight-green { color: #28a745; font-weight: bold; }
 
         @media screen and (max-width: 600px) {
-            body { padding: 10px; }
             .report-title { font-size: 20px; }
             .label, .value { display: block; width: 100%; text-align: left; }
-            td { display: block; border: none; border-bottom: 1px solid #eee; padding: 10px; }
-            input { text-align: left; width: 100%; }
+            td { display: block; border: none; border-bottom: 1px solid #eee; }
             .stats-table thead { display: none; }
             .stats-table tr { display: block; margin-bottom: 10px; border: 1px solid #ddd; }
             .stats-table td { display: flex; justify-content: space-between; }
@@ -54,8 +51,7 @@
 <body>
 
     <div id="auth-overlay">
-        <input type="password" id="auth-input" autofocus maxlength="8" placeholder="請輸入密碼">
-        <div id="auth-msg">請輸入當日驗證碼 (YYYYMMDD)</div>
+        <input type="password" id="auth-input" autofocus maxlength="8">
     </div>
 
     <div class="tabs">
@@ -82,7 +78,7 @@
             <tr>
                 <td class="label">目前銷貨利潤合計</td><td class="value" id="total-profit">讀取中...</td>
                 <td class="label">營業費用總計</td>
-                <td class="value"><input type="text" id="expense-input" value="0" readonly></td>
+                <td class="value"><input type="text" id="expense-input" value="0" readonly style="text-align: right;"></td>
             </tr>
             <tr>
                 <td colspan="4" class="summary-row" id="summary-bar">達成率：--% | 毛利率：--% | 費用率：--%</td>
@@ -107,19 +103,18 @@
         const CSV_SALES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv&t=" + Date.now();
         const CSV_EXPENSE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv&t=" + Date.now();
         
-        // 驗證功能
+        // 驗證
         const authInput = document.getElementById('auth-input');
         const authOverlay = document.getElementById('auth-overlay');
-        
         authInput.addEventListener('input', () => {
             const today = new Date();
             const correctPw = today.getFullYear() + String(today.getMonth() + 1).padStart(2, '0') + String(today.getDate()).padStart(2, '0');
             if (authInput.value === correctPw) {
-                authOverlay.style.display = 'none'; // 密碼正確，移除遮罩
+                authOverlay.style.display = 'none';
             }
         });
 
-        // 資料抓取功能 (延用 index-2026-5-13.html 邏輯)
+        // 資料處理邏輯 (延用 index-2026-5-13.html)
         function fetchAllData() {
             Papa.parse(CSV_EXPENSE_URL, {
                 download: true, header: false, skipEmptyLines: true,
@@ -157,7 +152,6 @@
                         if(!custMap[name]) custMap[name] = { s: 0, p: 0 };
                         custMap[name].s += s; custMap[name].p += p;
                     });
-                    // 更新列表... (略)
                     renderCustomerTable(custMap);
                     document.getElementById('total-sales').innerText = 'NT$ ' + Math.round(sTotal).toLocaleString();
                     document.getElementById('total-profit').innerText = 'NT$ ' + Math.round(pTotal).toLocaleString();
@@ -187,7 +181,8 @@
             if(s === undefined) s = parseFloat(document.getElementById('total-sales').innerText.replace(/[NT$,]/g, '')) || 0;
             if(p === undefined) p = parseFloat(document.getElementById('total-profit').innerText.replace(/[NT$,]/g, '')) || 0;
             const now = new Date();
-            const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+            const start = new Date(now.getFullYear(), 0, 0);
+            const dayOfYear = Math.floor((now - start) / 86400000);
             let monthly = parseFloat(document.getElementById('monthly-target').value.replace(/,/g, '')) || 0;
             let annual = monthly * 12;
             document.getElementById('annual-target').innerText = 'NT$ ' + annual.toLocaleString();
