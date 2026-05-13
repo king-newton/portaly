@@ -3,81 +3,161 @@
 <head>
     <link rel="manifest" href="manifest.json">
     <script>
-     if ('serviceWorker' in navigator) {
-     navigator.serviceWorker.register('sw.js');
-     }
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
     </script> 
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>金牛頓工業股份有限公司</title>
+    <title>金牛頓工業 - 行動戰情室</title>
     <style>
-        body { font-family: "Helvetica Neue", Arial, sans-serif; text-align: center; margin: 0; padding: 20px; background-color: #ffffff; }
-        .container { max-width: 500px; margin: auto; }
+        body { font-family: "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 20px; background-color: #ffffff; color: #333333; }
+        .container { max-width: 600px; margin: auto; }
+        header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 2px solid #eeeeee; padding-bottom: 15px; }
+        .logo { width: 50px; height: 50px; object-fit: contain; }
+        .header-text { display: flex; flex-direction: column; }
+        h1 { font-size: 1.2rem; margin: 0; color: #222; }
+        .subtitle { font-size: 0.8rem; color: #888; margin-top: 3px; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .card { background: #ffffff; padding: 20px; border-radius: 12px; text-decoration: none; color: #333; display: flex; flex-direction: column; transition: all 0.2s ease; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; }
+        .card:hover { background: #f8f9fa; border-color: #bbbbbb; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .card-label { font-size: 0.8rem; color: #1a73e8; margin-bottom: 8px; font-weight: bold; }
+        .data-value { font-size: 1.4rem; color: #d93025; font-weight: 800; min-height: 1.6rem; }
         
-        .logo-link { display: inline-block; margin-bottom: 15px; }
-        .logo { width: 120px; height: 120px; object-fit: contain; display: block; }
+        .full-width-card { grid-column: span 2; padding: 15px; text-align: center; justify-content: center; align-items: center; border: none; margin-top: 5px; font-weight: bold; }
+        .calendar-card { background: #e8f0fe; color: #1967d2; border: 1px solid #d2e3fc; }
+        .website-card { background: #f1f3f4; color: #5f6368; }
         
-        h1 { font-size: 1.4rem; margin: 5px 0; color: #333; }
-        p { color: #555; font-size: 0.95rem; margin-bottom: 25px; }
-        .btn-group { display: flex; flex-direction: column; gap: 12px; }
-        .btn { 
-            padding: 16px; 
-            background: #ffffff; 
-            border: 2px solid #bbbbbb; 
-            border-radius: 12px; 
-            text-decoration: none; 
-            color: #333; 
-            font-weight: 600; 
-            transition: all 0.2s; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
-            cursor: pointer;
-        }
-        .btn:hover { background: #333; color: white; border-color: #333; }
-        footer { margin-top: 40px; font-size: 0.75rem; color: #aaa; }
+        footer { margin-top: 40px; font-size: 0.75rem; color: #aaaaaa; text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <a href="https://www.king-newton.com/" class="logo-link">
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQn6xjuG-I81vGfFkGiulp55TCfDojnd-B60w3yjt81XHWF6dWfFnP4uZWlyI7PiB6drX5N259UjpHGrjHzlQfzRcxhx2MbkMDTniiElsZFV9Y3UWgPi7X_cRyZiTYifnCisvqzQVy_krPvJCrED_JEErXfGSsWukxmkiCR0ZrbAJEBjixhP6FW68X4FXo/s16000-rw/logo.gif" alt="金牛頓工業 Logo" class="logo">
-    </a>
-    
-    <h1>金牛頓工業股份有限公司</h1>
-    <p>專業的工業技術解決方案提供者</p>
+    <header>
+        <a href="https://www.king-newton.com/">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQn6xjuG-I81vGfFkGiulp55TCfDojnd-B60w3yjt81XHWF6dWfFnP4uZWlyI7PiB6drX5N259UjpHGrjHzlQfzRcxhx2MbkMDTniiElsZFV9Y3UWgPi7X_cRyZiTYifnCisvqzQVy_krPvJCrED_JEErXfGSsWukxmkiCR0ZrbAJEBjixhP6FW68X4FXo/s16000-rw/logo.gif" alt="Logo" class="logo">
+        </a>
+        <div class="header-text">
+            <h1>整體現況</h1>
+            <div class="subtitle">金牛頓工業股份有限公司</div>
+        </div>
+    </header>
 
-    <div class="btn-group">
-        <a href="javascript:void(0)" class="btn" onclick="checkDynamicPassword('https://o936157111-ops.github.io/company-calendar/')">金牛頓公司活動行事曆</a>
-        <a href="javascript:void(0)" class="btn" onclick="checkDynamicPassword('https://myezlife.notion.site/321f1314078e80009000dbda3dcdefab')">公司行政文書</a>
-        <a href="javascript:void(0)" class="btn" onclick="checkDynamicPassword('https://king-newton.github.io/dashboard/')">年度累計營收銷售分析報告</a>
-        <a href="#" class="btn">核心業務與服務</a>
-        <a href="https://myezlife.notion.site/321f1314078e80efb0b4e44c37b65735" target="_blank" class="btn">專案案例分享</a>
-        <a href="https://www.king-newton.com/" class="btn">金牛頓公司官網</a>
+    <div class="dashboard-grid">
+        <div class="card" onclick="checkDynamicPassword('https://king-newton.github.io/dashboard/')">
+            <span class="card-label">目前累計營收</span>
+            <div id="revenue-val" class="data-value">讀取中...</div>
+        </div>
+
+        <div class="card" onclick="checkDynamicPassword('https://king-newton.github.io/dashboard/')">
+            <span class="card-label">公司毛利率</span>
+            <div id="margin-val" class="data-value">26.7%</div>
+        </div>
+
+        <div class="card" onclick="checkDynamicPassword('https://king-newton.github.io/dashboard/')">
+            <span class="card-label">營業費用總計</span>
+            <div id="expense-val" class="data-value">讀取中...</div>
+        </div>
+
+        <div class="card" onclick="checkDynamicPassword('https://king-newton.github.io/dashboard/')">
+            <span class="card-label">營業費用率</span>
+            <div id="expense-rate-val" class="data-value">...%</div>
+        </div>
+
+        <a href="https://o936157111-ops.github.io/company-calendar/" target="_blank" class="card full-width-card calendar-card">
+            📅 公司行事曆
+        </a>
+
+        <a href="https://www.king-newton.com/" target="_blank" class="card full-width-card website-card">
+            金牛頓官方網站
+        </a>
     </div>
 
-    <footer>
-        © 2026 金牛頓工業股份有限公司 All Rights Reserved.
-    </footer>
+    <footer>© 2026 金牛頓工業股份有限公司 All Rights Reserved.</footer>
 </div>
 
 <script>
+// 加上 Date.now() 強制跳過 Google 快取
+const revenueUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv&t=' + Date.now();
+const expenseUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv&t=' + Date.now();
+
+let globalRevenue = 0;
+let globalExpense = 0;
+
+function parseNum(str) {
+    if (!str) return null;
+    let n = parseFloat(str.replace(/[^\d.-]/g, ''));
+    return isNaN(n) ? null : n;
+}
+
+function updateUI() {
+    if (globalRevenue > 0) {
+        document.getElementById('revenue-val').innerText = Math.round(globalRevenue).toLocaleString();
+    }
+    if (globalExpense > 0) {
+        document.getElementById('expense-val').innerText = Math.round(globalExpense).toLocaleString();
+    }
+    if (globalRevenue > 0 && globalExpense > 0) {
+        let rate = (globalExpense / globalRevenue) * 100;
+        document.getElementById('expense-rate-val').innerText = rate.toFixed(1) + "%";
+    }
+}
+
+async function updateDashboard() {
+    try {
+        // 1. 同時抓取兩份資料
+        const [resR, resE] = await Promise.all([
+            fetch(revenueUrl),
+            fetch(expenseUrl)
+        ]);
+
+        const textR = await resR.text();
+        const rowsR = textR.split('\n').map(r => r.split(','));
+        let revSum = 0;
+        rowsR.forEach((r, idx) => {
+            if (idx === 0) return; // 跳過標題
+            let v = parseNum(r[6]);
+            if (v !== null) revSum += v;
+        });
+        globalRevenue = revSum;
+
+        const textE = await resE.text();
+        const rowsE = textE.split('\n').map(r => r.split(','));
+        for (let row of rowsE) {
+            let rowStr = row.join('|');
+            if (rowStr.includes("合計") || rowStr.includes("總計")) {
+                // 掃描該列尋找第一個有效數字
+                for (let col of row) {
+                    let v = parseNum(col);
+                    if (v !== null && v !== 0) {
+                        globalExpense = Math.abs(v);
+                        break;
+                    }
+                }
+                if (globalExpense !== 0) break;
+            }
+        }
+        
+        updateUI();
+    } catch(e) {
+        console.error("資料讀取失敗", e);
+    }
+}
+
+// 頁面載入後執行
+window.onload = updateDashboard;
+
 function checkDynamicPassword(targetUrl) {
     var today = new Date();
-    var yyyy = today.getFullYear();
-    var mm = String(today.getMonth() + 1).padStart(2, '0');
-    var dd = String(today.getDate()).padStart(2, '0');
-    var correctPassword = yyyy + mm + dd;
-    
-    var input = prompt("請輸入驗證碼：");
-    
-    if (input === correctPassword) {
+    var pw = today.getFullYear() + String(today.getMonth() + 1).padStart(2, '0') + String(today.getDate()).padStart(2, '0');
+    var input = prompt("請輸入驗證碼 (YYYYMMDD)：");
+    if (input === pw) {
         window.open(targetUrl, '_blank');
     } else if (input !== null) {
         alert("驗證失敗。");
     }
 }
 </script>
-
 </body>
 </html>
