@@ -1,4 +1,4 @@
-const CACHE_NAME = 'portaly-v18';
+const CACHE_NAME = 'portaly-v19';
 
 // 安裝 Service Worker 時，預先快取重要的檔案
 self.addEventListener('install', (event) => {
