@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KINGNEWTON - Intelligent Injection Molding</title>
     <style>
+        /* 基礎設定 */
         html, body { 
             margin: 0; padding: 0; height: 100vh; overflow: hidden; 
             font-family: 'Helvetica Neue', Arial, sans-serif; 
@@ -16,11 +17,10 @@
             height: 100vh; padding: 20px; box-sizing: border-box;
         }
         
-        /* 核心修改：電腦版維持自適應寬度，強制子元素置中 */
+        /* 置中容器 */
         .content-wrapper { 
             display: flex; flex-direction: column; align-items: center; gap: 40px;
-            width: fit-content; /* 寬度隨內容變化，自然達成置中 */
-            max-width: 100%;
+            width: fit-content; max-width: 100%;
         }
 
         .brand-inline { 
@@ -49,10 +49,7 @@
         }
         @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
 
-        /* 按鈕封裝：電腦版保持自動寬度 */
-        .nav-btn-wrapper { 
-            opacity: 0; animation: fadeIn 0.8s ease-in 3.5s forwards; 
-        }
+        .nav-btn-wrapper { opacity: 0; animation: fadeIn 0.8s ease-in 3.5s forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .nav-link {
@@ -62,26 +59,24 @@
         }
         .nav-link:hover { color: #000; border-color: #000; }
 
-      /* 手機版專屬優化 */
-@media (max-width: 600px) {
-    /* 增加左右內距，防止貼邊 */
-    .landing-container { padding: 0 20px; box-sizing: border-box; }
-    
-    /* 限制整體容器寬度，確保不會超出邊界 */
-    .content-wrapper { width: 100%; max-width: 300px; } 
-    
-    .brand-inline { gap: 10px; }
-    .logo-icon { height: 40px; }
-    .text-logo { height: 40px; }
-    
-    /* 按鈕也限制在安全寬度內 */
-    .nav-link { width: 100%; box-sizing: border-box; padding: 15px 5px; }
-}
+        /* 手機版優化：強制縮小並不超出邊界 */
+        @media (max-width: 600px) {
+            .content-wrapper { width: 90vw !important; } /* 強制容器不超過螢幕寬度的90% */
+            .brand-inline { gap: 10px; width: 100%; }
+            .logo-icon { height: 35px !important; }
+            .text-logo { height: 35px !important; }
+            .nav-link { 
+                display: block; width: 100%; padding: 15px 0; 
+                box-sizing: border-box; white-space: normal; 
+            }
+        }
+
+        /* 圖片檢視器 */
         #viewer {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: white; z-index: 9999; justify-content: center; align-items: center; cursor: pointer;
         }
-        #viewer img { max-width: 100vw; max-height: 100vh; object-fit: contain; }
+        #viewer img { max-width: 95vw; max-height: 95vh; object-fit: contain; }
     </style>
 </head>
 <body>
