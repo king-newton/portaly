@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KINGNEWTON - Intelligent Injection Molding</title>
     <style>
-        /* 基礎設定 */
         html, body { 
             margin: 0; padding: 0; height: 100vh; overflow: hidden; 
             font-family: 'Helvetica Neue', Arial, sans-serif; 
@@ -24,7 +23,7 @@
 
         .brand-inline { display: flex; align-items: center; justify-content: center; gap: 20px; }
 
-        /* 電腦版尺寸 */
+        /* 電腦版固定尺寸 */
         .logo-icon { 
             height: 60px; width: auto; 
             animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; 
@@ -56,16 +55,23 @@
         }
         .nav-link:hover { color: #000; border-color: #000; }
 
-        /* 手機版優化 */
+        /* 手機版修正 */
         @media (max-width: 600px) {
             .content-wrapper { width: 90vw !important; }
-            .brand-inline { gap: 10px; width: 100%; }
+            .brand-inline { gap: 10px; width: 100%; justify-content: center; }
             .logo-icon { height: 35px !important; }
             .text-logo { height: 35px !important; }
-            .nav-link { display: block; width: 100%; padding: 15px 0; box-sizing: border-box; }
+            
+            /* 按鈕文字改短後，強制與上方對齊 */
+            .nav-link { 
+                width: 100% !important; 
+                padding: 15px 0 !important; 
+                box-sizing: border-box !important; 
+                text-align: center;
+                font-size: 0.8rem; /* 縮小一點字體，確保完全不溢出 */
+            }
         }
 
-        /* 全螢幕檢視器 (徹底與上方邏輯脫鉤) */
         #viewer {
             display: none; position: fixed; top: 0; left: 0; 
             width: 100vw !important; height: 100vh !important;
@@ -92,7 +98,7 @@
             </div>
 
             <div class="nav-btn-wrapper">
-                <button class="nav-link" onclick="openViewer()">ENTER SMART MOLDING SYSTEM</button>
+                <button class="nav-link" onclick="openViewer()">SMART MOLDING SYSTEM</button>
             </div>
         </div>
     </div>
