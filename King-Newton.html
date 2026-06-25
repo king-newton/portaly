@@ -1,69 +1,53 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        html, body { margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #ffffff; color: #333; }
-        
-        .landing-container { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; gap: 40px; padding: 20px; }
-        
-        .brand-inline { 
-            display: flex; align-items: center; justify-content: center; gap: 20px; 
-        }
+<style>
+    html, body { 
+        margin: 0; padding: 0; height: 100vh; overflow: hidden; 
+        font-family: 'Helvetica Neue', Arial, sans-serif; 
+        background-color: #ffffff; color: #333; 
+    }
+    
+    .landing-container { 
+        display: flex; flex-direction: column; justify-content: center; align-items: center; 
+        height: 100vh; gap: 40px; padding: 20px;
+    }
+    
+    /* 核心修復：使用 flex-wrap 允許必要時自動折行 */
+    .brand-inline { 
+        display: flex; align-items: center; justify-content: center; gap: 15px; 
+        width: 100%; max-width: 500px; /* 限制最大寬度 */
+        flex-wrap: wrap; /* 關鍵：當空間不足時，自動換行避免溢出 */
+    }
 
-        /* 電腦版保持適當高度，讓 Logo 和文字有足夠的份量 */
-        .logo-icon { height: 60px; width: auto; animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; }
-        .text-logo { height: 60px; width: auto; }
+    .logo-icon { width: 50px; height: 50px; animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; }
+    .text-logo { max-width: 100%; height: auto; } /* 文字 Logo 改為彈性寬度 */
 
-        @keyframes doubleSpin {
-            0% { transform: rotateY(0deg); }
-            30% { transform: rotateY(360deg); }
-            100% { transform: rotateY(720deg); }
-        }
+    @keyframes doubleSpin {
+        0% { transform: rotateY(0deg); }
+        30% { transform: rotateY(360deg); }
+        100% { transform: rotateY(720deg); }
+    }
 
-        .text-logo-wrapper { position: relative; overflow: hidden; display: inline-block; }
-        .text-logo-wrapper::after {
-            content: ''; position: absolute; top: 0; left: -100%;
-            width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
-            animation: shine 1.2s ease-out 2.5s forwards; 
-        }
-        @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
+    .text-logo-wrapper { position: relative; overflow: hidden; display: inline-block; }
+    .text-logo-wrapper::after {
+        content: ''; position: absolute; top: 0; left: -100%;
+        width: 50%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
+        animation: shine 1.2s ease-out 2.5s forwards; 
+    }
+    @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
 
-        .nav-btn-wrapper { opacity: 0; animation: fadeIn 0.8s ease-in 3.5s forwards; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .nav-btn-wrapper { opacity: 0; animation: fadeIn 0.8s ease-in 3.5s forwards; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .nav-link {
-            text-decoration:none; color:#666; font-size: 0.9rem; letter-spacing:3px; 
-            border:1px solid #ccc; padding:10px 20px; display: inline-block;
-        }
+    .nav-link {
+        text-decoration:none; color:#666; font-size: 0.9rem; letter-spacing:3px; 
+        border:1px solid #ccc; padding:10px 20px; display: inline-block;
+        text-align: center;
+    }
 
-        /* 僅在手機螢幕過小時才進行「比例縮小」，確保電腦版維持原狀 */
-        @media (max-width: 600px) {
-            .logo-icon { height: 45px; }
-            .text-logo { height: 45px; }
-            .brand-inline { gap: 10px; }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="landing-container">
-        <div class="brand-inline">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgycBwl4acZWHME78WqStO8pF7LErCuigIL0Y6k1sO3cmCJViVewKnihzJRCA4x9zgriiGAsHmkJM5BzIzKsmF2xAgTvUask-vn5wJ43JPcg22edFuwgGTBFYn1VNmB5rRL-oANUzybjO27j6m9tuqqWUsBrvgiVhrHbIgkqDnZ361_kK5G3z_S8usoqaS8/s800/icon-standard.png" 
-                 class="logo-icon" alt="Icon">
-            
-            <div class="text-logo-wrapper">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHha3H0Dfbz6fjnvmtMrqe83Bk1gFzEN_UkEfC_cGm22tKqZheeXkeWDkHl-qXgyjrOrH6QpXnz1_qQ9IOmt77PtMPxqLhMeIlrc9Fpntb0ny_-nBliEbNn4JCyQR7ib0zhorK3OSSYZdrt35cN5Lb9EQ6o9oujSrPCPl7sHt0WgSuXL47mr4RvchCpbGB/w640-h72-rw/logo-standard.png" 
-                     class="text-logo" alt="KINGNEWTON Text">
-            </div>
-        </div>
-
-        <div class="nav-btn-wrapper">
-            <a href="product.html" class="nav-link">ENTER SMART MOLDING SYSTEM</a>
-        </div>
-    </div>
-
-</body>
-</html>
+    /* 手機版：進一步優化 */
+    @media (max-width: 480px) {
+        .brand-inline { gap: 10px; }
+        .logo-icon { width: 40px; height: 40px; }
+        .text-logo { max-width: 200px; } /* 限制手機上文字 Logo 最大寬度 */
+    }
+</style>
