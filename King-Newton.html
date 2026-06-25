@@ -62,15 +62,21 @@
         }
         .nav-link:hover { color: #000; border-color: #000; }
 
-        /* 手機版專屬優化 */
-        @media (max-width: 600px) {
-            .content-wrapper { width: 100%; } /* 手機版撐滿螢幕寬度，統一對齊 */
-            .brand-inline { gap: 10px; }
-            .logo-icon { height: 40px; }
-            .text-logo { height: 40px; }
-            .nav-link { display: block; width: 90%; margin: 0 auto; box-sizing: border-box; }
-        }
-
+      /* 手機版專屬優化 */
+@media (max-width: 600px) {
+    /* 增加左右內距，防止貼邊 */
+    .landing-container { padding: 0 20px; box-sizing: border-box; }
+    
+    /* 限制整體容器寬度，確保不會超出邊界 */
+    .content-wrapper { width: 100%; max-width: 300px; } 
+    
+    .brand-inline { gap: 10px; }
+    .logo-icon { height: 40px; }
+    .text-logo { height: 40px; }
+    
+    /* 按鈕也限制在安全寬度內 */
+    .nav-link { width: 100%; box-sizing: border-box; padding: 15px 5px; }
+}
         #viewer {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: white; z-index: 9999; justify-content: center; align-items: center; cursor: pointer;
