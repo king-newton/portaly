@@ -6,19 +6,15 @@
     <style>
         html, body { margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #ffffff; color: #333; }
         
-        .landing-container { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; gap: 50px; padding: 20px; }
+        .landing-container { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; gap: 40px; padding: 20px; }
         
-        /* 關鍵修正：確保這裡永遠不會換行 */
         .brand-inline { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            gap: 15px; 
-            white-space: nowrap; /* 強制不換行 */
-            flex-wrap: nowrap;    /* 強制不換行 */
+            display: flex; align-items: center; justify-content: center; gap: 20px; 
         }
 
-        .logo-icon { animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; }
+        /* 電腦版保持適當高度，讓 Logo 和文字有足夠的份量 */
+        .logo-icon { height: 60px; width: auto; animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; }
+        .text-logo { height: 60px; width: auto; }
 
         @keyframes doubleSpin {
             0% { transform: rotateY(0deg); }
@@ -33,13 +29,20 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
             animation: shine 1.2s ease-out 2.5s forwards; 
         }
-
         @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
 
-        /* RWD 調整：只縮小圖片比例，不改變排列方式 */
+        .nav-btn-wrapper { opacity: 0; animation: fadeIn 0.8s ease-in 3.5s forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .nav-link {
+            text-decoration:none; color:#666; font-size: 0.9rem; letter-spacing:3px; 
+            border:1px solid #ccc; padding:10px 20px; display: inline-block;
+        }
+
+        /* 僅在手機螢幕過小時才進行「比例縮小」，確保電腦版維持原狀 */
         @media (max-width: 600px) {
-            .logo-icon { height: 40px !important; }
-            .text-logo { height: 40px !important; }
+            .logo-icon { height: 45px; }
+            .text-logo { height: 45px; }
             .brand-inline { gap: 10px; }
         }
     </style>
@@ -49,15 +52,17 @@
     <div class="landing-container">
         <div class="brand-inline">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgycBwl4acZWHME78WqStO8pF7LErCuigIL0Y6k1sO3cmCJViVewKnihzJRCA4x9zgriiGAsHmkJM5BzIzKsmF2xAgTvUask-vn5wJ43JPcg22edFuwgGTBFYn1VNmB5rRL-oANUzybjO27j6m9tuqqWUsBrvgiVhrHbIgkqDnZ361_kK5G3z_S8usoqaS8/s800/icon-standard.png" 
-                 class="logo-icon" height="50" alt="Icon">
+                 class="logo-icon" alt="Icon">
             
             <div class="text-logo-wrapper">
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHha3H0Dfbz6fjnvmtMrqe83Bk1gFzEN_UkEfC_cGm22tKqZheeXkeWDkHl-qXgyjrOrH6QpXnz1_qQ9IOmt77PtMPxqLhMeIlrc9Fpntb0ny_-nBliEbNn4JCyQR7ib0zhorK3OSSYZdrt35cN5Lb9EQ6o9oujSrPCPl7sHt0WgSuXL47mr4RvchCpbGB/w640-h72-rw/logo-standard.png" 
-                     class="text-logo" height="50" alt="KINGNEWTON Text">
+                     class="text-logo" alt="KINGNEWTON Text">
             </div>
         </div>
 
-        <a href="product.html" style="text-decoration:none; color:#666; font-size: 0.9rem; letter-spacing:3px; border:1px solid #ccc; padding:10px 20px; transition:0.3s;">ENTER SMART MOLDING SYSTEM</a>
+        <div class="nav-btn-wrapper">
+            <a href="product.html" class="nav-link">ENTER SMART MOLDING SYSTEM</a>
+        </div>
     </div>
 
 </body>
