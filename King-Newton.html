@@ -12,27 +12,27 @@
         }
         
         .landing-container { 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            height: 100vh; gap: 40px; padding: 15px; box-sizing: border-box;
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; padding: 20px; box-sizing: border-box;
         }
         
+        /* 核心修改：電腦版維持自適應寬度，強制子元素置中 */
         .content-wrapper { 
-            width: 100%; max-width: 500px; /* 統一手機與電腦的對齊寬度 */
             display: flex; flex-direction: column; align-items: center; gap: 40px;
+            width: fit-content; /* 寬度隨內容變化，自然達成置中 */
+            max-width: 100%;
         }
 
         .brand-inline { 
-            display: flex; align-items: center; justify-content: center; 
-            gap: 15px; width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 20px; 
         }
 
+        /* 電腦版尺寸 */
         .logo-icon { 
-            height: 50px; width: auto; flex-shrink: 0;
+            height: 60px; width: auto; 
             animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; 
         }
-        
-        /* 圖片防溢出核心：限制寬度與高度 */
-        .text-logo { height: 50px; width: auto; max-width: 100%; object-fit: contain; }
+        .text-logo { height: 60px; width: auto; }
 
         @keyframes doubleSpin {
             0% { transform: rotateY(0deg); }
@@ -40,7 +40,7 @@
             100% { transform: rotateY(720deg); }
         }
 
-        .text-logo-wrapper { position: relative; overflow: hidden; display: inline-block; max-width: 70%; }
+        .text-logo-wrapper { position: relative; overflow: hidden; display: inline-block; }
         .text-logo-wrapper::after {
             content: ''; position: absolute; top: 0; left: -100%;
             width: 50%; height: 100%;
@@ -49,26 +49,33 @@
         }
         @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
 
-        .nav-btn-wrapper { opacity: 0; animation: fadeIn 0.8s ease-in 3.5s forwards; width: 100%; }
+        /* 按鈕封裝：電腦版保持自動寬度 */
+        .nav-btn-wrapper { 
+            opacity: 0; animation: fadeIn 0.8s ease-in 3.5s forwards; 
+        }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .nav-link {
             text-decoration: none; color: #666; font-size: 0.9rem; letter-spacing: 3px; 
-            border: 1px solid #ccc; padding: 15px 0; display: block; text-align: center;
-            transition: 0.3s; cursor: pointer; background: white;
+            border: 1px solid #ccc; padding: 15px 30px; display: inline-block;
+            transition: 0.3s; cursor: pointer; background: white; white-space: nowrap;
+        }
+        .nav-link:hover { color: #000; border-color: #000; }
+
+        /* 手機版專屬優化 */
+        @media (max-width: 600px) {
+            .content-wrapper { width: 100%; } /* 手機版撐滿螢幕寬度，統一對齊 */
+            .brand-inline { gap: 10px; }
+            .logo-icon { height: 40px; }
+            .text-logo { height: 40px; }
+            .nav-link { display: block; width: 90%; margin: 0 auto; box-sizing: border-box; }
         }
 
-        /* 圖片檢視器 */
         #viewer {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: white; z-index: 9999; justify-content: center; align-items: center; cursor: pointer;
         }
         #viewer img { max-width: 100vw; max-height: 100vh; object-fit: contain; }
-
-        @media (max-width: 480px) {
-            .logo-icon { height: 40px; }
-            .text-logo { height: 40px; }
-        }
     </style>
 </head>
 <body>
@@ -99,10 +106,8 @@
         const totalImages = 13;
         
         function openViewer() {
-            // 嘗試開啟全螢幕
             let elem = document.documentElement;
             if (elem.requestFullscreen) elem.requestFullscreen();
-            
             currentIndex = 1;
             updateViewer();
             document.getElementById('viewer').style.display = 'flex';
