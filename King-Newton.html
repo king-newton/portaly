@@ -12,33 +12,33 @@
             background-color: #ffffff; color: #333; 
         }
         
-        /* 居中容器 */
         .landing-container { 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
             height: 100vh; gap: 40px; padding: 20px;
         }
         
-        /* LOGO 區塊 */
+        /* LOGO 區塊：電腦版預設樣式 */
         .brand-inline { 
             display: flex; align-items: center; justify-content: center; 
-            gap: 15px; width: 100%; max-width: 600px;
+            gap: 20px; width: 100%; max-width: 800px;
         }
 
-        /* LOGO 翻轉動畫 */
         .logo-icon { 
-            width: 60px; height: 60px; 
+            height: 60px; width: auto; 
             animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; 
         }
+        
+        .text-logo { height: 60px; width: auto; display: block; }
+
+        /* LOGO 翻轉動畫 */
         @keyframes doubleSpin {
             0% { transform: rotateY(0deg); }
             30% { transform: rotateY(360deg); }
             100% { transform: rotateY(720deg); }
         }
 
-        /* 文字 LOGO 與閃光動畫 */
+        /* 文字閃光效果 */
         .text-logo-wrapper { position: relative; overflow: hidden; display: inline-block; }
-        .text-logo { height: 60px; width: auto; display: block; }
-        
         .text-logo-wrapper::after {
             content: ''; position: absolute; top: 0; left: -100%;
             width: 50%; height: 100%;
@@ -58,38 +58,12 @@
         }
         .nav-link:hover { color: #000; border-color: #000; }
 
-       /* 手機版 RWD 調整 */
-/* 手機版 RWD 修正：讓圖片比例更飽滿 */
-@media (max-width: 600px) {
-    .brand-inline { 
-        gap: 15px; /* 稍微拉開一點距離 */
-        padding: 0 20px; 
-    }
-    
-    .logo-icon { 
-        width: 45px; height: 45px; /* 增加一點大小 */
-        flex-shrink: 0; 
-    }
-    
-    .text-logo { 
-        height: 45px; /* 與圓形 Icon 高度一致 */
-        width: auto;  /* 保持原始比例 */
-        max-width: 60vw; /* 讓文字最大佔據螢幕 60% 的寬度，這樣就不會縮過頭 */
-    }
-}
-    
-    .logo-icon { 
-        width: 35px; height: 35px; /* 稍微縮小圖示，騰出空間給文字 */
-        flex-shrink: 0; /* 禁止圖示被壓縮 */
-    }
-    
-    .text-logo { 
-        height: auto; 
-        width: 100%; /* 讓文字圖填滿容器 */
-        max-width: 180px; /* 限制最大寬度，確保不超出 */
-        object-fit: contain; /* 確保圖片不變形且完整呈現 */
-    }
-}
+        /* --- 手機版專屬優化 (RWD) --- */
+        @media (max-width: 600px) {
+            .brand-inline { gap: 10px; padding: 0 10px; }
+            .logo-icon { height: 45px; } /* 手機版略微縮小 */
+            .text-logo { height: 45px; max-width: 60vw; } /* 確保文字商標自適應螢幕 */
+        }
     </style>
 </head>
 <body>
