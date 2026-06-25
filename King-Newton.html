@@ -6,7 +6,7 @@
     <title>KINGNEWTON - Intelligent Injection Molding</title>
     <style>
         html, body { 
-            margin: 0; padding: 0; height: 100vh; overflow-x: hidden; 
+            margin: 0; padding: 0; height: 100vh; overflow: hidden; 
             font-family: 'Helvetica Neue', Arial, sans-serif; 
             background-color: #ffffff; color: #333; 
         }
@@ -18,15 +18,11 @@
         
         .content-wrapper { 
             display: flex; flex-direction: column; align-items: center; gap: 40px;
-            width: 100%; max-width: 800px; /* 電腦版寬裕的空間 */
+            width: 100%; max-width: 800px;
         }
 
-        .brand-inline { 
-            display: flex; align-items: center; justify-content: center; 
-            gap: 20px;
-        }
+        .brand-inline { display: flex; align-items: center; justify-content: center; gap: 20px; }
 
-        /* 電腦版固定尺寸 */
         .logo-icon { 
             height: 60px; width: auto; 
             animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; 
@@ -54,22 +50,21 @@
         .nav-link {
             text-decoration: none; color: #666; font-size: 0.9rem; letter-spacing: 3px; 
             border: 1px solid #ccc; padding: 12px 25px; display: block; text-align: center;
-            transition: 0.3s;
+            transition: 0.3s; cursor: pointer; background: white;
         }
         .nav-link:hover { color: #000; border-color: #000; }
 
-        /* --- 手機版嚴格控制 --- */
+        /* 全螢幕圖片瀏覽器 */
+        #viewer {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: white; z-index: 9999; justify-content: center; align-items: center; cursor: pointer;
+        }
+        #viewer img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
         @media (max-width: 600px) {
-            .content-wrapper { max-width: 320px; } /* 強制 Logo 與按鈕都對齊這個寬度 */
-            .brand-inline { gap: 10px; width: 100%; }
-            
-            /* 使用 max-width 與 object-fit 確保圖片絕不超出容器 */
-            .logo-icon { height: 40px; } 
-            .text-logo { 
-                height: 40px; 
-                max-width: 100%; 
-                object-fit: contain; 
-            }
+            .content-wrapper { max-width: 320px; }
+            .logo-icon { height: 40px; }
+            .text-logo { height: 40px; }
         }
     </style>
 </head>
@@ -80,7 +75,6 @@
             <div class="brand-inline">
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgycBwl4acZWHME78WqStO8pF7LErCuigIL0Y6k1sO3cmCJViVewKnihzJRCA4x9zgriiGAsHmkJM5BzIzKsmF2xAgTvUask-vn5wJ43JPcg22edFuwgGTBFYn1VNmB5rRL-oANUzybjO27j6m9tuqqWUsBrvgiVhrHbIgkqDnZ361_kK5G3z_S8usoqaS8/s800/icon-standard.png" 
                      class="logo-icon" alt="Icon">
-                
                 <div class="text-logo-wrapper">
                     <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHha3H0Dfbz6fjnvmtMrqe83Bk1gFzEN_UkEfC_cGm22tKqZheeXkeWDkHl-qXgyjrOrH6QpXnz1_qQ9IOmt77PtMPxqLhMeIlrc9Fpntb0ny_-nBliEbNn4JCyQR7ib0zhorK3OSSYZdrt35cN5Lb9EQ6o9oujSrPCPl7sHt0WgSuXL47mr4RvchCpbGB/w640-h72-rw/logo-standard.png" 
                      class="text-logo" alt="KINGNEWTON Text">
@@ -88,10 +82,37 @@
             </div>
 
             <div class="nav-btn-wrapper">
-                <a href="product.html" class="nav-link">ENTER SMART MOLDING SYSTEM</a>
+                <button class="nav-link" onclick="openViewer()">ENTER SMART MOLDING SYSTEM</button>
             </div>
         </div>
     </div>
 
+    <div id="viewer" onclick="nextImage()">
+        <img id="viewer-img" src="" alt="Card">
+    </div>
+
+    <script>
+        let currentIndex = 1;
+        const totalImages = 13;
+        
+        function openViewer() {
+            currentIndex = 1;
+            updateViewer();
+            document.getElementById('viewer').style.display = 'flex';
+        }
+        
+        function nextImage() {
+            currentIndex++;
+            if (currentIndex > totalImages) {
+                document.getElementById('viewer').style.display = 'none'; // 到最後一張關閉
+            } else {
+                updateViewer();
+            }
+        }
+        
+        function updateViewer() {
+            document.getElementById('viewer-img').src = `https://king-newton.github.io/cards/SGES${currentIndex}.jpg`;
+        }
+    </script>
 </body>
 </html>
