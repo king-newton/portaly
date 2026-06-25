@@ -58,12 +58,26 @@
         }
         .nav-link:hover { color: #000; border-color: #000; }
 
-        /* 手機版 RWD 調整 */
-        @media (max-width: 480px) {
-            .brand-inline { gap: 8px; }
-            .logo-icon { width: 40px; height: 40px; }
-            .text-logo { height: 40px; }
-        }
+       /* 手機版 RWD 調整 */
+@media (max-width: 600px) {
+    .brand-inline { 
+        gap: 10px; 
+        padding: 0 15px; /* 增加兩側留白，避免貼邊 */
+        justify-content: center;
+    }
+    
+    .logo-icon { 
+        width: 35px; height: 35px; /* 稍微縮小圖示，騰出空間給文字 */
+        flex-shrink: 0; /* 禁止圖示被壓縮 */
+    }
+    
+    .text-logo { 
+        height: auto; 
+        width: 100%; /* 讓文字圖填滿容器 */
+        max-width: 180px; /* 限制最大寬度，確保不超出 */
+        object-fit: contain; /* 確保圖片不變形且完整呈現 */
+    }
+}
     </style>
 </head>
 <body>
