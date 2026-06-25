@@ -7,35 +7,40 @@
         html, body { margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #ffffff; color: #333; }
         
         .landing-container { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; gap: 50px; padding: 20px; }
-        .brand-inline { display: flex; align-items: center; gap: 20px; }
-
-        /* 雙圈翻轉：使用 Ease-Out 讓減速效果更明顯 */
-        .logo-icon {
-            animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards;
+        
+        /* 關鍵修正：確保這裡永遠不會換行 */
+        .brand-inline { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 15px; 
+            white-space: nowrap; /* 強制不換行 */
+            flex-wrap: nowrap;    /* 強制不換行 */
         }
+
+        .logo-icon { animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; }
 
         @keyframes doubleSpin {
             0% { transform: rotateY(0deg); }
-            30% { transform: rotateY(360deg); } /* 前30%時間完成第一圈，速度快 */
-            100% { transform: rotateY(720deg); } /* 後70%時間完成第二圈，明顯變慢並停止 */
+            30% { transform: rotateY(360deg); }
+            100% { transform: rotateY(720deg); }
         }
 
-        /* 閃光效果：改為亮白色反光 */
         .text-logo-wrapper { position: relative; overflow: hidden; display: inline-block; }
         .text-logo-wrapper::after {
             content: ''; position: absolute; top: 0; left: -100%;
             width: 50%; height: 100%;
-            /* 調整為明亮的白光效果 */
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
             animation: shine 1.2s ease-out 2.5s forwards; 
         }
 
         @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
 
+        /* RWD 調整：只縮小圖片比例，不改變排列方式 */
         @media (max-width: 600px) {
-            .brand-inline { flex-direction: column; gap: 15px; }
-            .logo-icon { height: 60px !important; }
-            .text-logo { height: 35px !important; }
+            .logo-icon { height: 40px !important; }
+            .text-logo { height: 40px !important; }
+            .brand-inline { gap: 10px; }
         }
     </style>
 </head>
