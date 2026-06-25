@@ -6,7 +6,7 @@
     <title>KINGNEWTON - Intelligent Injection Molding</title>
     <style>
         html, body { 
-            margin: 0; padding: 0; height: 100vh; overflow: hidden; 
+            margin: 0; padding: 0; height: 100vh; overflow-x: hidden; 
             font-family: 'Helvetica Neue', Arial, sans-serif; 
             background-color: #ffffff; color: #333; 
         }
@@ -16,22 +16,21 @@
             height: 100vh; gap: 40px; padding: 20px;
         }
         
-        /* 容器設定：移除電腦版的固定寬度限制，讓 Logo 自由展示 */
         .content-wrapper { 
-            width: 100%; 
             display: flex; flex-direction: column; align-items: center; gap: 40px;
+            width: 100%; max-width: 800px; /* 電腦版寬裕的空間 */
         }
 
         .brand-inline { 
             display: flex; align-items: center; justify-content: center; 
-            gap: 20px; 
+            gap: 20px;
         }
 
+        /* 電腦版固定尺寸 */
         .logo-icon { 
             height: 60px; width: auto; 
             animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; 
         }
-        
         .text-logo { height: 60px; width: auto; }
 
         @keyframes doubleSpin {
@@ -49,22 +48,28 @@
         }
         @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
 
-        .nav-btn-wrapper { opacity: 0; animation: fadeIn 0.8s ease-in 3.5s forwards; }
+        .nav-btn-wrapper { opacity: 0; animation: fadeIn 0.8s ease-in 3.5s forwards; width: 100%; max-width: 400px; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .nav-link {
             text-decoration: none; color: #666; font-size: 0.9rem; letter-spacing: 3px; 
-            border: 1px solid #ccc; padding: 12px 25px; display: inline-block;
+            border: 1px solid #ccc; padding: 12px 25px; display: block; text-align: center;
             transition: 0.3s;
         }
         .nav-link:hover { color: #000; border-color: #000; }
 
-        /* --- 修正後的手機版設定 --- */
+        /* --- 手機版嚴格控制 --- */
         @media (max-width: 600px) {
-            .content-wrapper { max-width: 350px; } /* 手機版才限制寬度 */
-            .logo-icon { height: 40px; }
-            .text-logo { height: 40px; }
-            .nav-link { width: 100%; padding: 12px 0; box-sizing: border-box; } /* 按鈕撐滿手機寬度 */
+            .content-wrapper { max-width: 320px; } /* 強制 Logo 與按鈕都對齊這個寬度 */
+            .brand-inline { gap: 10px; width: 100%; }
+            
+            /* 使用 max-width 與 object-fit 確保圖片絕不超出容器 */
+            .logo-icon { height: 40px; } 
+            .text-logo { 
+                height: 40px; 
+                max-width: 100%; 
+                object-fit: contain; 
+            }
         }
     </style>
 </head>
