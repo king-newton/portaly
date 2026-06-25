@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KINGNEWTON - Intelligent Injection Molding</title>
     <style>
-        /* 基礎設定 */
         html, body { 
             margin: 0; padding: 0; height: 100vh; overflow: hidden; 
             font-family: 'Helvetica Neue', Arial, sans-serif; 
@@ -17,10 +16,15 @@
             height: 100vh; gap: 40px; padding: 20px;
         }
         
-        /* LOGO 區塊：電腦版預設樣式 */
+        /* 容器設定：移除電腦版的固定寬度限制，讓 Logo 自由展示 */
+        .content-wrapper { 
+            width: 100%; 
+            display: flex; flex-direction: column; align-items: center; gap: 40px;
+        }
+
         .brand-inline { 
             display: flex; align-items: center; justify-content: center; 
-            gap: 20px; width: 100%; max-width: 800px;
+            gap: 20px; 
         }
 
         .logo-icon { 
@@ -28,16 +32,14 @@
             animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; 
         }
         
-        .text-logo { height: 60px; width: auto; display: block; }
+        .text-logo { height: 60px; width: auto; }
 
-        /* LOGO 翻轉動畫 */
         @keyframes doubleSpin {
             0% { transform: rotateY(0deg); }
             30% { transform: rotateY(360deg); }
             100% { transform: rotateY(720deg); }
         }
 
-        /* 文字閃光效果 */
         .text-logo-wrapper { position: relative; overflow: hidden; display: inline-block; }
         .text-logo-wrapper::after {
             content: ''; position: absolute; top: 0; left: -100%;
@@ -47,7 +49,6 @@
         }
         @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
 
-        /* 按鈕延遲出現動畫 */
         .nav-btn-wrapper { opacity: 0; animation: fadeIn 0.8s ease-in 3.5s forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -58,29 +59,32 @@
         }
         .nav-link:hover { color: #000; border-color: #000; }
 
-        /* --- 手機版專屬優化 (RWD) --- */
+        /* --- 修正後的手機版設定 --- */
         @media (max-width: 600px) {
-            .brand-inline { gap: 10px; padding: 0 10px; }
-            .logo-icon { height: 45px; } /* 手機版略微縮小 */
-            .text-logo { height: 45px; max-width: 60vw; } /* 確保文字商標自適應螢幕 */
+            .content-wrapper { max-width: 350px; } /* 手機版才限制寬度 */
+            .logo-icon { height: 40px; }
+            .text-logo { height: 40px; }
+            .nav-link { width: 100%; padding: 12px 0; box-sizing: border-box; } /* 按鈕撐滿手機寬度 */
         }
     </style>
 </head>
 <body>
 
     <div class="landing-container">
-        <div class="brand-inline">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgycBwl4acZWHME78WqStO8pF7LErCuigIL0Y6k1sO3cmCJViVewKnihzJRCA4x9zgriiGAsHmkJM5BzIzKsmF2xAgTvUask-vn5wJ43JPcg22edFuwgGTBFYn1VNmB5rRL-oANUzybjO27j6m9tuqqWUsBrvgiVhrHbIgkqDnZ361_kK5G3z_S8usoqaS8/s800/icon-standard.png" 
-                 class="logo-icon" alt="Icon">
-            
-            <div class="text-logo-wrapper">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHha3H0Dfbz6fjnvmtMrqe83Bk1gFzEN_UkEfC_cGm22tKqZheeXkeWDkHl-qXgyjrOrH6QpXnz1_qQ9IOmt77PtMPxqLhMeIlrc9Fpntb0ny_-nBliEbNn4JCyQR7ib0zhorK3OSSYZdrt35cN5Lb9EQ6o9oujSrPCPl7sHt0WgSuXL47mr4RvchCpbGB/w640-h72-rw/logo-standard.png" 
-                 class="text-logo" alt="KINGNEWTON Text">
+        <div class="content-wrapper">
+            <div class="brand-inline">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgycBwl4acZWHME78WqStO8pF7LErCuigIL0Y6k1sO3cmCJViVewKnihzJRCA4x9zgriiGAsHmkJM5BzIzKsmF2xAgTvUask-vn5wJ43JPcg22edFuwgGTBFYn1VNmB5rRL-oANUzybjO27j6m9tuqqWUsBrvgiVhrHbIgkqDnZ361_kK5G3z_S8usoqaS8/s800/icon-standard.png" 
+                     class="logo-icon" alt="Icon">
+                
+                <div class="text-logo-wrapper">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHha3H0Dfbz6fjnvmtMrqe83Bk1gFzEN_UkEfC_cGm22tKqZheeXkeWDkHl-qXgyjrOrH6QpXnz1_qQ9IOmt77PtMPxqLhMeIlrc9Fpntb0ny_-nBliEbNn4JCyQR7ib0zhorK3OSSYZdrt35cN5Lb9EQ6o9oujSrPCPl7sHt0WgSuXL47mr4RvchCpbGB/w640-h72-rw/logo-standard.png" 
+                     class="text-logo" alt="KINGNEWTON Text">
+                </div>
             </div>
-        </div>
 
-        <div class="nav-btn-wrapper">
-            <a href="product.html" class="nav-link">ENTER SMART MOLDING SYSTEM</a>
+            <div class="nav-btn-wrapper">
+                <a href="product.html" class="nav-link">ENTER SMART MOLDING SYSTEM</a>
+            </div>
         </div>
     </div>
 
