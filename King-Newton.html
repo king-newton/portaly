@@ -1,53 +1,88 @@
-<style>
-    html, body { 
-        margin: 0; padding: 0; height: 100vh; overflow: hidden; 
-        font-family: 'Helvetica Neue', Arial, sans-serif; 
-        background-color: #ffffff; color: #333; 
-    }
-    
-    .landing-container { 
-        display: flex; flex-direction: column; justify-content: center; align-items: center; 
-        height: 100vh; gap: 40px; padding: 20px;
-    }
-    
-    /* 核心修復：使用 flex-wrap 允許必要時自動折行 */
-    .brand-inline { 
-        display: flex; align-items: center; justify-content: center; gap: 15px; 
-        width: 100%; max-width: 500px; /* 限制最大寬度 */
-        flex-wrap: wrap; /* 關鍵：當空間不足時，自動換行避免溢出 */
-    }
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINGNEWTON - Intelligent Injection Molding</title>
+    <style>
+        /* 基礎設定 */
+        html, body { 
+            margin: 0; padding: 0; height: 100vh; overflow: hidden; 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            background-color: #ffffff; color: #333; 
+        }
+        
+        /* 居中容器 */
+        .landing-container { 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            height: 100vh; gap: 40px; padding: 20px;
+        }
+        
+        /* LOGO 區塊 */
+        .brand-inline { 
+            display: flex; align-items: center; justify-content: center; 
+            gap: 15px; width: 100%; max-width: 600px;
+        }
 
-    .logo-icon { width: 50px; height: 50px; animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; }
-    .text-logo { max-width: 100%; height: auto; } /* 文字 Logo 改為彈性寬度 */
+        /* LOGO 翻轉動畫 */
+        .logo-icon { 
+            width: 60px; height: 60px; 
+            animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; 
+        }
+        @keyframes doubleSpin {
+            0% { transform: rotateY(0deg); }
+            30% { transform: rotateY(360deg); }
+            100% { transform: rotateY(720deg); }
+        }
 
-    @keyframes doubleSpin {
-        0% { transform: rotateY(0deg); }
-        30% { transform: rotateY(360deg); }
-        100% { transform: rotateY(720deg); }
-    }
+        /* 文字 LOGO 與閃光動畫 */
+        .text-logo-wrapper { position: relative; overflow: hidden; display: inline-block; }
+        .text-logo { height: 60px; width: auto; display: block; }
+        
+        .text-logo-wrapper::after {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
+            animation: shine 1.2s ease-out 2.5s forwards; 
+        }
+        @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
 
-    .text-logo-wrapper { position: relative; overflow: hidden; display: inline-block; }
-    .text-logo-wrapper::after {
-        content: ''; position: absolute; top: 0; left: -100%;
-        width: 50%; height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
-        animation: shine 1.2s ease-out 2.5s forwards; 
-    }
-    @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
+        /* 按鈕延遲出現動畫 */
+        .nav-btn-wrapper { opacity: 0; animation: fadeIn 0.8s ease-in 3.5s forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    .nav-btn-wrapper { opacity: 0; animation: fadeIn 0.8s ease-in 3.5s forwards; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .nav-link {
+            text-decoration: none; color: #666; font-size: 0.9rem; letter-spacing: 3px; 
+            border: 1px solid #ccc; padding: 12px 25px; display: inline-block;
+            transition: 0.3s;
+        }
+        .nav-link:hover { color: #000; border-color: #000; }
 
-    .nav-link {
-        text-decoration:none; color:#666; font-size: 0.9rem; letter-spacing:3px; 
-        border:1px solid #ccc; padding:10px 20px; display: inline-block;
-        text-align: center;
-    }
+        /* 手機版 RWD 調整 */
+        @media (max-width: 480px) {
+            .brand-inline { gap: 8px; }
+            .logo-icon { width: 40px; height: 40px; }
+            .text-logo { height: 40px; }
+        }
+    </style>
+</head>
+<body>
 
-    /* 手機版：進一步優化 */
-    @media (max-width: 480px) {
-        .brand-inline { gap: 10px; }
-        .logo-icon { width: 40px; height: 40px; }
-        .text-logo { max-width: 200px; } /* 限制手機上文字 Logo 最大寬度 */
-    }
-</style>
+    <div class="landing-container">
+        <div class="brand-inline">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgycBwl4acZWHME78WqStO8pF7LErCuigIL0Y6k1sO3cmCJViVewKnihzJRCA4x9zgriiGAsHmkJM5BzIzKsmF2xAgTvUask-vn5wJ43JPcg22edFuwgGTBFYn1VNmB5rRL-oANUzybjO27j6m9tuqqWUsBrvgiVhrHbIgkqDnZ361_kK5G3z_S8usoqaS8/s800/icon-standard.png" 
+                 class="logo-icon" alt="Icon">
+            
+            <div class="text-logo-wrapper">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHha3H0Dfbz6fjnvmtMrqe83Bk1gFzEN_UkEfC_cGm22tKqZheeXkeWDkHl-qXgyjrOrH6QpXnz1_qQ9IOmt77PtMPxqLhMeIlrc9Fpntb0ny_-nBliEbNn4JCyQR7ib0zhorK3OSSYZdrt35cN5Lb9EQ6o9oujSrPCPl7sHt0WgSuXL47mr4RvchCpbGB/w640-h72-rw/logo-standard.png" 
+                 class="text-logo" alt="KINGNEWTON Text">
+            </div>
+        </div>
+
+        <div class="nav-btn-wrapper">
+            <a href="product.html" class="nav-link">ENTER SMART MOLDING SYSTEM</a>
+        </div>
+    </div>
+
+</body>
+</html>
