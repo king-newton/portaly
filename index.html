@@ -1,200 +1,281 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KINGNEWTON - Intelligent Injection Molding</title>
+    <title>行動戰情 - 金牛頓工業</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        html, body { 
-            margin: 0; padding: 0; height: 100vh; overflow: hidden; 
-            font-family: 'Helvetica Neue', Arial, sans-serif; 
-            background-color: #ffffff; color: #333; 
+        :root {
+            --bg-gradient: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent-blue: #38bdf8;
+            --text-white: #f8fafc;
+            --text-dim: #94a3b8;
+            --up-green: #4ade80;
+            --down-red: #fb7185;
+            --btn-bg: rgba(56, 189, 248, 0.1);
         }
+
+        body { margin: 0; padding: 0; background: var(--bg-gradient); background-attachment: fixed; color: var(--text-white); font-family: "PingFang TC", "Microsoft JhengHei", sans-serif; min-height: 100vh; }
+
+        #auth-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #020617; z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        #auth-input {
+            border: none; border-bottom: 2px solid var(--accent-blue); width: 200px;
+            font-size: 24px; text-align: center; outline: none; padding: 10px;
+            background: transparent; color: white; letter-spacing: 5px;
+        }
+
+        .container { padding: 15px; max-width: 800px; margin: auto; }
+
+        header { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; }
+        .header-title { font-size: 1.5rem; font-weight: bold; margin: 0; color: var(--accent-blue); }
+        .time-badge { background: var(--btn-bg); color: var(--accent-blue); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; border: 1px solid rgba(56,189,248,0.3); }
+
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .full-width { grid-column: span 2; }
+
+        .card {
+            background: var(--card-bg); padding: 15px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex; flex-direction: column; justify-content: center; min-height: 100px;
+        }
+
+        .card-label { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 6px; }
+        .card-value { font-size: 1.5rem; font-weight: 800; font-family: 'Consolas', monospace; white-space: nowrap; }
+        .card-footer { font-size: 0.7rem; color: var(--text-dim); margin-top: 6px; }
+
+        .target-input {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+            color: var(--accent-blue); padding: 4px 8px; border-radius: 6px; font-size: 1rem; width: 110px; text-align: right;
+        }
+
+        .ratio-bar {
+            margin-top: 15px; background: rgba(56, 189, 248, 0.08); 
+            padding: 15px; border-radius: 12px; border: 1px solid rgba(56,189,248,0.2);
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;
+        }
+        .ratio-item { display: flex; flex-direction: column; align-items: center; border-right: 1px solid rgba(255,255,255,0.1); }
+        .ratio-item:last-child { border-right: none; }
+        .ratio-label { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 4px; text-align: center; }
+        .ratio-val { font-size: 1.1rem; font-weight: bold; color: white; }
+
+        .calendar-btn {
+            display: flex; align-items: center; justify-content: center;
+            margin-top: 15px; padding: 15px; background: var(--btn-bg);
+            border: 1px solid var(--accent-blue); border-radius: 12px; color: var(--accent-blue);
+            text-decoration: none; font-weight: bold;
+        }
+
+        /* 重要事項提醒表格化修正 */
+        .important-notice {
+            margin-top: 20px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 15px;
+            overflow: hidden;
+        }
+        .notice-header { color: var(--accent-blue); font-weight: bold; font-size: 1.1rem; margin-bottom: 12px; }
+        .notice-table { width: 100%; border-collapse: collapse; }
+        .notice-table th { background: rgba(56, 189, 248, 0.1); text-align: left; padding: 12px 10px; color: var(--accent-blue); font-size: 0.85rem; border-bottom: 2px solid rgba(56, 189, 248, 0.3); }
+        .notice-table td { padding: 14px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; vertical-align: top; line-height: 1.6; }
         
-        .landing-container { 
-            display: flex; justify-content: center; align-items: center; 
-            height: 100vh; padding: 20px; box-sizing: border-box;
-        }
-        
-        .content-wrapper { 
-            display: flex; flex-direction: column; align-items: center; gap: 30px;
-            width: fit-content; max-width: 100%;
-        }
+        /* 調大項目欄寬度至 100px */
+        .item-col { width: 80px; color: var(--accent-blue); font-weight: bold; }
+        .detail-col { color: var(--text-white); }
 
-        .brand-inline { display: flex; align-items: center; justify-content: center; gap: 20px; }
+        footer { text-align: center; padding: 30px 0; font-size: 0.7rem; color: var(--text-dim); opacity: 0.4; }
 
-        .logo-icon { 
-            height: 60px; width: auto; 
-            animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; 
+        @media screen and (max-width: 480px) {
+            .card-value { font-size: 1.2rem; }
+            .ratio-val { font-size: 0.95rem; }
+            .notice-table td { font-size: 0.82rem; }
+            .item-col { width: 80px; } /* 手機端稍微縮小一點避免擠壓內容 */
         }
-        .text-logo { height: 60px; width: auto; }
-
-        @keyframes doubleSpin {
-            0% { transform: rotateY(0deg); }
-            30% { transform: rotateY(360deg); }
-            100% { transform: rotateY(720deg); }
-        }
-
-        .text-logo-wrapper { position: relative; overflow: hidden; display: inline-block; }
-        .text-logo-wrapper::after {
-            content: ''; position: absolute; top: 0; left: -100%;
-            width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
-            animation: shine 1.2s ease-out 2.5s forwards; 
-        }
-        @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
-
-        .nav-btn-wrapper, .link-group { 
-            opacity: 0; animation: fadeIn 0.8s ease-in 3.5s forwards; 
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .nav-link {
-            text-decoration: none; color: #666; font-size: 0.9rem; letter-spacing: 3px; 
-            border: 1px solid #ccc; padding: 15px 30px; display: inline-block;
-            transition: 0.3s; cursor: pointer; background: white; white-space: nowrap;
-        }
-        .nav-link:hover { color: #000; border-color: #000; }
-
-        /* 下方圖示區塊 */
-        .link-group { display: flex; gap: 20px; justify-content: center; }
-        .link-group img { width: 50px; height: 50px; object-fit: contain; transition: 0.3s; cursor: pointer; }
-        .link-group img:hover { transform: scale(1.1); }
-
-        /* 人員選擇視窗 */
-        .person-modal {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100vw; height: 100vh; background: rgba(0,0,0,0.8);
-            z-index: 99999; justify-content: center; align-items: center; cursor: pointer;
-            backdrop-filter: blur(5px); transition: opacity 0.3s; opacity: 0;
-        }
-        .person-modal.active { opacity: 1; display: flex; }
-        
-        .modal-body {
-            background: #fff; padding: 50px; border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            display: flex; gap: 40px; cursor: default;
-            animation: modalPopIn 0.4s ease-out forwards;
-        }
-
-        @keyframes modalPopIn {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .person-link { text-decoration: none; text-align: center; color: #333; }
-        
-        .avatar-wrap {
-            width: 150px; height: 150px; border-radius: 50%;
-            overflow: hidden; border: 4px solid #fff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: 0.3s; margin-bottom: 15px;
-        }
-        .person-link:hover .avatar-wrap { transform: scale(1.05); box-shadow: 0 6px 15px rgba(0,0,0,0.3); }
-
-        .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .person-name { font-size: 1.1rem; font-weight: bold; letter-spacing: 1px; }
-
-        /* 手機版修正 */
-        @media (max-width: 600px) {
-            .content-wrapper { width: 90vw !important; gap: 20px; }
-            .logo-icon, .text-logo { height: 35px !important; }
-            .nav-link { width: 100%; padding: 15px 0; text-align: center; font-size: 0.8rem; }
-            .link-group img { width: 40px; height: 40px; }
-            
-            .modal-body { gap: 20px; padding: 30px; flex-direction: column; }
-            .avatar-wrap { width: 120px; height: 120px; margin-bottom: 10px; }
-        }
-
-        #viewer {
-            display: none; position: fixed; top: 0; left: 0; 
-            width: 100vw !important; height: 100vh !important;
-            background: white; z-index: 99999; 
-            justify-content: center; align-items: center; cursor: pointer;
-        }
-        #viewer img { width: 100vw !important; height: 100vh !important; object-fit: contain !important; }
     </style>
 </head>
 <body>
 
-    <div class="landing-container">
-        <div class="content-wrapper">
-            <div class="brand-inline">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgycBwl4acZWHME78WqStO8pF7LErCuigIL0Y6k1sO3cmCJViVewKnihzJRCA4x9zgriiGAsHmkJM5BzIzKsmF2xAgTvUask-vn5wJ43JPcg22edFuwgGTBFYn1VNmB5rRL-oANUzybjO27j6m9tuqqWUsBrvgiVhrHbIgkqDnZ361_kK5G3z_S8usoqaS8/s800/icon-standard.png" class="logo-icon" alt="Icon">
-                <div class="text-logo-wrapper">
-                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHha3H0Dfbz6fjnvmtMrqe83Bk1gFzEN_UkEfC_cGm22tKqZheeXkeWDkHl-qXgyjrOrH6QpXnz1_qQ9IOmt77PtMPxqLhMeIlrc9Fpntb0ny_-nBliEbNn4JCyQR7ib0zhorK3OSSYZdrt35cN5Lb9EQ6o9oujSrPCPl7sHt0WgSuXL47mr4RvchCpbGB/w640-h72-rw/logo-standard.png" class="text-logo" alt="KINGNEWTON Text">
-                </div>
-            </div>
-
-            <div class="nav-btn-wrapper">
-                <button class="nav-link" onclick="openViewer()">SMART MOLDING SYSTEM</button>
-            </div>
-
-            <div class="link-group">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjf5dytVMZ1VUf_Gf0Bl2l-KO7Ch3n12L7xLIMItvIDihkPqNnOqNviEaCv04qWYIGFn3ANE8ZKU2n5QtE7Gaq1EJGK3XpkyzqHhJYIT78aSNsbZ0WLUCEE4Tv7KxZ55l7vWeSiRfzRlkkZF4m5Yk1fw6gWvE7X2zmqnq3d-ovGjgH12fGrtAYF0lGVwEHc/w400-h400-rw/home.png" alt="Home">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg50LvCzlVFNhPX8dybG3h0LrtPKOve0hB3fhW1UIhso3NwTE1GZks2OR8cyq4LvHNNEnyBQSfWmscd_49dhPIc5newseI7sCyaQUdGW7G6I9g63bmG4hGyLhTzCgJL85W3iScr1uG9kpL05FCIGMFwazGG5csYGgaZM54mqR96WsCRhumjAJtbQ2PE9z9y/w400-h400-rw/Injection%20Molding%20Machine.png" alt="Machine">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj0bTsaEWmraA3g-ilJ0juEtHzBUyj3hRbXq8I1FhEqDiMc2y5UT5Mp21-z9MoPxTKiF0xmx-HxjiXS3w0P9JauDWdZEq3iUnAAiHSAih7BP9W0jk1xbyDiDeEyvfRWo5OiU2S-a64LANxsV2a6aQb0Mq_LkkNF2yhTc4XH-peMlAJEr9smXOgXJ9CU8j3T/w329-h400-rw/contact.gif" alt="Contact" onclick="openPersonViewer()">
-            </div>
-        </div>
+    <div id="auth-overlay">
+        <input type="password" id="auth-input" autofocus maxlength="8" placeholder="請輸入密碼">
     </div>
 
-    <div id="viewer" onclick="nextImage()">
-        <img id="viewer-img" src="" alt="Card">
-    </div>
+    <div class="container">
+        <header>
+            <div class="header-flex">
+                <h1 class="header-title">行動戰情室</h1>
+                <div class="time-badge" id="day-info">第 -- 天</div>
+            </div>
+            <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 4px;" id="update-time">Syncing...</div>
+        </header>
 
-    <div id="person-viewer" class="person-modal" onclick="closePersonViewer()">
-        <div class="modal-body" onclick="event.stopPropagation()">
-            <a href="https://king-newton.github.io/cards/portal-jimmy.html" target="_blank" class="person-link">
-                <div class="avatar-wrap">
-                    <img src="https://king-newton.github.io/cards/pic-jimmy.jpg" alt="Jimmy">
+        <div class="grid">
+            <div class="card full-width">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="card-label">每月營收目標</span>
+                    <input type="text" id="monthly-target" class="target-input" value="7,500,000" onfocus="this.value=this.value.replace(/,/g,'')" onblur="formatCommas(this); calculateLogic()">
                 </div>
-                <div class="person-name">Jimmy Lee</div>
-            </a>
-            <a href="https://king-newton.github.io/cards/portal-james.html" target="_blank" class="person-link">
-                <div class="avatar-wrap">
-                    <img src="https://king-newton.github.io/cards/pic-james.jpg" alt="James">
+                <div style="display: flex; justify-content: space-between; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px;">
+                    <span class="card-footer">年度總目標</span>
+                    <span id="annual-target" style="font-family: 'Consolas'; color: var(--accent-blue); font-size: 0.85rem;">--</span>
                 </div>
-                <div class="person-name">James He</div>
-            </a>
+            </div>
+
+            <div class="card">
+                <span class="card-label">目前累積銷貨</span>
+                <div class="card-value" id="total-sales">--</div>
+                <span class="card-footer">未稅總計</span>
+            </div>
+            <div class="card">
+                <span class="card-label" id="diff-label">進度分析</span>
+                <div class="card-value" id="progress-status">--</div>
+                <span class="card-footer">與權重目標差</span>
+            </div>
+
+            <div class="card">
+                <span class="card-label">銷貨利潤合計</span>
+                <div class="card-value status-up" id="total-profit">--</div>
+                <span class="card-footer">扣除成本利潤</span>
+            </div>
+            <div class="card">
+                <span class="card-label">營業費用總計</span>
+                <div class="card-value status-down" id="expense-val">--</div>
+                <span class="card-footer">後台同步數據</span>
+            </div>
         </div>
+
+        <div class="ratio-bar">
+            <div class="ratio-item">
+                <span class="ratio-label">年度達成率</span>
+                <span id="rate-achieve" class="ratio-val" style="color:var(--up-green)">--%</span>
+            </div>
+            <div class="ratio-item">
+                <span class="ratio-label">目前毛利率</span>
+                <span id="rate-margin" class="ratio-val">--%</span>
+            </div>
+            <div class="ratio-item">
+                <span class="ratio-label">營業費用率</span>
+                <span id="rate-expense" class="ratio-val">--%</span>
+            </div>
+        </div>
+
+        <a href="https://o936157111-ops.github.io/company-calendar/" target="_blank" class="calendar-btn">📅 查看公司行事曆</a>
+
+        <div class="important-notice">
+            <div class="notice-header">重要事項提醒</div>
+            <table class="notice-table">
+                <thead>
+                    <tr>
+                        <th class="item-col">項目</th>
+                        <th class="detail-col">內容詳情</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="item-col">展覽</td>
+                        <td class="detail-col">提醒2026台北國際塑橡膠工業展<br><span style="color:var(--accent-blue); font-family:Consolas; font-weight:bold;">2026/09/15 開始 - 2026/09/18</span></td>
+                    </tr>
+                    <tr>
+                        <td class="item-col">專案</td>
+                        <td class="detail-col">產品型錄、LOGO、形象設計</td>
+                    </tr>
+                    <tr>
+                        <td class="item-col">產品</td>
+                        <td class="detail-col">AI-ESS技術手冊、教育訓練、售後服務</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer>© 2026 GOLD NEWTON INDUSTRIAL</footer>
     </div>
 
     <script>
-        let currentIndex = 1;
-        const totalImages = 13;
-        
-        function openViewer() {
-            let elem = document.documentElement;
-            if (elem.requestFullscreen) elem.requestFullscreen();
-            currentIndex = 1;
-            updateViewer();
-            document.getElementById('viewer').style.display = 'flex';
+        const SALES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=0&single=true&output=csv&t=" + Date.now();
+        const EXP_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQWoViZ8oexk0ZDVaXPcbxplYRiadGzvcF0nM_dI0iSpVQUqCpgJeCFCIfWKX60De_YcN_xmkreBZUx/pub?gid=1915259935&single=true&output=csv&t=" + Date.now();
+
+        document.getElementById('auth-input').addEventListener('input', function() {
+            const date = new Date();
+            const correctPw = date.getFullYear() + String(date.getMonth() + 1).padStart(2, '0') + String(date.getDate()).padStart(2, '0');
+            if (this.value === correctPw) document.getElementById('auth-overlay').style.display = 'none';
+        });
+
+        function fetchAll() {
+            Papa.parse(EXP_URL, {
+                download: true, header: false, skipEmptyLines: true,
+                complete: function(res) {
+                    let exp = 0;
+                    if (res.data) {
+                        outer: for (let row of res.data) {
+                            for (let cell of row) {
+                                let v = cell?.toString().replace(/[^0-9.]/g, '').trim();
+                                if (v !== "" && !isNaN(parseFloat(v))) { exp = parseFloat(v); break outer; }
+                            }
+                        }
+                    }
+                    document.getElementById('expense-val').innerText = Math.round(exp).toLocaleString();
+                    fetchSales();
+                }
+            });
         }
-        
-        const personModal = document.getElementById('person-viewer');
-        
-        function openPersonViewer() {
-            personModal.classList.add('active');
+
+        function fetchSales() {
+            Papa.parse(SALES_URL, {
+                download: true, header: true, skipEmptyLines: true,
+                complete: function(res) {
+                    let s = 0, p = 0;
+                    res.data.forEach(row => {
+                        s += parseFloat(row['本幣未稅金額']?.toString().replace(/,/g, '')) || 0;
+                        p += parseFloat(row['毛利']?.toString().replace(/,/g, '')) || 0;
+                    });
+                    document.getElementById('total-sales').innerText = Math.round(s).toLocaleString();
+                    document.getElementById('total-profit').innerText = Math.round(p).toLocaleString();
+                    const timeNow = new Date();
+                    document.getElementById('update-time').innerText = "最後同步時間：" + timeNow.toLocaleTimeString();
+                    calculateLogic(s, p);
+                }
+            });
         }
-        
-        function closePersonViewer() {
-            personModal.classList.remove('active');
-        }
-        
-        function nextImage() {
-            currentIndex++;
-            if (currentIndex > totalImages) {
-                if (document.exitFullscreen) document.exitFullscreen();
-                document.getElementById('viewer').style.display = 'none';
+
+        function calculateLogic(s, p) {
+            const dateObj = new Date();
+            const start = new Date(dateObj.getFullYear(), 0, 0);
+            const dayOfYear = Math.floor((dateObj - start) / 86400000);
+            document.getElementById('day-info').innerText = `${dateObj.getFullYear()}年第 ${dayOfYear} 天`;
+            let monthly = parseFloat(document.getElementById('monthly-target').value.replace(/,/g, '')) || 0;
+            let annual = monthly * 12;
+            document.getElementById('annual-target').innerText = Math.round(annual).toLocaleString();
+            if (s === undefined) s = parseFloat(document.getElementById('total-sales').innerText.replace(/,/g, '')) || 0;
+            let timeWeightedTarget = (annual / 365) * dayOfYear;
+            let diff = s - timeWeightedTarget;
+            let progEl = document.getElementById('progress-status');
+            let labelEl = document.getElementById('diff-label');
+            progEl.innerText = Math.round(Math.abs(diff)).toLocaleString();
+            if (diff >= 0) {
+                progEl.style.color = '#4ade80';
+                labelEl.innerText = '進度超前 (+)';
             } else {
-                updateViewer();
+                progEl.style.color = '#fb7185';
+                labelEl.innerText = '進度落後 (-)';
             }
+            let exp = parseFloat(document.getElementById('expense-val').innerText.replace(/,/g, '')) || 0;
+            document.getElementById('rate-achieve').innerText = annual > 0 ? `${(s/annual*100).toFixed(1)}%` : '0%';
+            document.getElementById('rate-margin').innerText = s > 0 ? `${(p/s*100).toFixed(1)}%` : '0%';
+            document.getElementById('rate-expense').innerText = s > 0 ? `${(exp/s*100).toFixed(1)}%` : '0%';
         }
-        
-        function updateViewer() {
-            document.getElementById('viewer-img').src = `https://king-newton.github.io/cards/SGES${currentIndex}.jpg`;
+
+        function formatCommas(i) { 
+            let v = parseFloat(i.value.replace(/[^0-9.]/g, '')); 
+            if(!isNaN(v)) i.value = v.toLocaleString(); 
         }
+
+        window.onload = fetchAll;
     </script>
 </body>
 </html>
