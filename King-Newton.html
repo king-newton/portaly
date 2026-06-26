@@ -28,7 +28,7 @@
 
         .logo-icon { 
             height: 60px; width: auto; flex-shrink: 0;
-            animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; 
+            animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) 0.5s forwards; 
         }
         
         .text-logo { height: 60px; width: auto; max-width: 100%; object-fit: contain; }
@@ -44,14 +44,11 @@
             content: ''; position: absolute; top: 0; left: -100%;
             width: 50%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
-            animation: shine 1.2s ease-out 2.5s forwards; 
+            animation: shine 1.2s ease-out 0.5s forwards; 
         }
         @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
 
-        .nav-btn-wrapper, .link-group { 
-            opacity: 0; animation: fadeIn 0.8s ease-in 3.5s forwards; 
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .nav-btn-wrapper, .link-group { opacity: 1; width: 100%; display: flex; justify-content: center; }
 
         .nav-link {
             text-decoration: none; color: #666; font-size: 0.9rem; letter-spacing: 3px; 
@@ -60,8 +57,11 @@
         }
         .nav-link:hover { color: #000; border-color: #000; }
 
-        .link-group { display: flex; gap: 20px; justify-content: center; }
-        .link-group img { width: 50px; height: 50px; object-fit: contain; transition: 0.3s; cursor: pointer; }
+        .link-group { gap: 20px; align-items: center; }
+        .link-group img { 
+            width: 50px; height: 50px; object-fit: contain; 
+            transition: 0.3s; cursor: pointer; display: block; 
+        }
         .link-group img:hover { transform: scale(1.1); }
 
         .person-modal {
@@ -88,9 +88,15 @@
         .person-name { font-size: 1.1rem; font-weight: bold; letter-spacing: 1px; }
 
         @media (max-width: 600px) {
-            .brand-inline { flex-direction: row; gap: 10px; }
+            /* 手機版統一寬度與居中 */
+            .brand-inline, .nav-link { 
+                width: 100%; 
+                max-width: 320px; 
+            }
+            .brand-inline { gap: 10px; }
             .logo-icon { height: 30px !important; }
             .text-logo { height: 30px !important; }
+            
             .modal-body { flex-direction: column; padding: 30px; gap: 20px; }
             .avatar-wrap { width: 120px; height: 120px; }
         }
