@@ -18,16 +18,20 @@
         
         .content-wrapper { 
             display: flex; flex-direction: column; align-items: center; gap: 30px;
-            width: fit-content; max-width: 100%;
+            width: 100%; max-width: 800px; margin: 0 auto; box-sizing: border-box;
         }
 
-        .brand-inline { display: flex; align-items: center; justify-content: center; gap: 20px; }
+        .brand-inline { 
+            display: flex; align-items: center; justify-content: center; 
+            gap: 20px; width: 100%; padding: 0 20px; box-sizing: border-box;
+        }
 
         .logo-icon { 
-            height: 60px; width: auto; 
+            height: 60px; width: auto; flex-shrink: 0;
             animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; 
         }
-        .text-logo { height: 60px; width: auto; }
+        
+        .text-logo { height: 60px; width: auto; max-width: 100%; object-fit: contain; }
 
         @keyframes doubleSpin {
             0% { transform: rotateY(0deg); }
@@ -35,7 +39,7 @@
             100% { transform: rotateY(720deg); }
         }
 
-        .text-logo-wrapper { position: relative; overflow: hidden; display: inline-block; }
+        .text-logo-wrapper { position: relative; overflow: hidden; display: inline-block; flex-shrink: 1; }
         .text-logo-wrapper::after {
             content: ''; position: absolute; top: 0; left: -100%;
             width: 50%; height: 100%;
@@ -56,12 +60,10 @@
         }
         .nav-link:hover { color: #000; border-color: #000; }
 
-        /* 下方圖示區塊 */
         .link-group { display: flex; gap: 20px; justify-content: center; }
         .link-group img { width: 50px; height: 50px; object-fit: contain; transition: 0.3s; cursor: pointer; }
         .link-group img:hover { transform: scale(1.1); }
 
-        /* 人員選擇視窗 */
         .person-modal {
             display: none; position: fixed; top: 0; left: 0;
             width: 100vw; height: 100vh; background: rgba(0,0,0,0.8);
@@ -69,42 +71,28 @@
             backdrop-filter: blur(5px); transition: opacity 0.3s; opacity: 0;
         }
         .person-modal.active { opacity: 1; display: flex; }
-        
         .modal-body {
             background: #fff; padding: 50px; border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             display: flex; gap: 40px; cursor: default;
-            animation: modalPopIn 0.4s ease-out forwards;
-        }
-
-        @keyframes modalPopIn {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
         }
 
         .person-link { text-decoration: none; text-align: center; color: #333; }
-        
         .avatar-wrap {
             width: 150px; height: 150px; border-radius: 50%;
             overflow: hidden; border: 4px solid #fff;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             transition: 0.3s; margin-bottom: 15px;
         }
-        .person-link:hover .avatar-wrap { transform: scale(1.05); box-shadow: 0 6px 15px rgba(0,0,0,0.3); }
-
         .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        
         .person-name { font-size: 1.1rem; font-weight: bold; letter-spacing: 1px; }
 
-        /* 手機版修正 */
         @media (max-width: 600px) {
-            .content-wrapper { width: 90vw !important; gap: 20px; }
-            .logo-icon, .text-logo { height: 35px !important; }
-            .nav-link { width: 100%; padding: 15px 0; text-align: center; font-size: 0.8rem; }
-            .link-group img { width: 40px; height: 40px; }
-            
-            .modal-body { gap: 20px; padding: 30px; flex-direction: column; }
-            .avatar-wrap { width: 120px; height: 120px; margin-bottom: 10px; }
+            .brand-inline { flex-direction: row; gap: 10px; }
+            .logo-icon { height: 30px !important; }
+            .text-logo { height: 30px !important; }
+            .modal-body { flex-direction: column; padding: 30px; gap: 20px; }
+            .avatar-wrap { width: 120px; height: 120px; }
         }
 
         #viewer {
@@ -117,7 +105,6 @@
     </style>
 </head>
 <body>
-
     <div class="landing-container">
         <div class="content-wrapper">
             <div class="brand-inline">
@@ -126,11 +113,9 @@
                     <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHha3H0Dfbz6fjnvmtMrqe83Bk1gFzEN_UkEfC_cGm22tKqZheeXkeWDkHl-qXgyjrOrH6QpXnz1_qQ9IOmt77PtMPxqLhMeIlrc9Fpntb0ny_-nBliEbNn4JCyQR7ib0zhorK3OSSYZdrt35cN5Lb9EQ6o9oujSrPCPl7sHt0WgSuXL47mr4RvchCpbGB/w640-h72-rw/logo-standard.png" class="text-logo" alt="KINGNEWTON Text">
                 </div>
             </div>
-
             <div class="nav-btn-wrapper">
                 <button class="nav-link" onclick="openViewer()">SMART MOLDING SYSTEM</button>
             </div>
-
             <div class="link-group">
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjf5dytVMZ1VUf_Gf0Bl2l-KO7Ch3n12L7xLIMItvIDihkPqNnOqNviEaCv04qWYIGFn3ANE8ZKU2n5QtE7Gaq1EJGK3XpkyzqHhJYIT78aSNsbZ0WLUCEE4Tv7KxZ55l7vWeSiRfzRlkkZF4m5Yk1fw6gWvE7X2zmqnq3d-ovGjgH12fGrtAYF0lGVwEHc/w400-h400-rw/home.png" alt="Home">
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg50LvCzlVFNhPX8dybG3h0LrtPKOve0hB3fhW1UIhso3NwTE1GZks2OR8cyq4LvHNNEnyBQSfWmscd_49dhPIc5newseI7sCyaQUdGW7G6I9g63bmG4hGyLhTzCgJL85W3iScr1uG9kpL05FCIGMFwazGG5csYGgaZM54mqR96WsCRhumjAJtbQ2PE9z9y/w400-h400-rw/Injection%20Molding%20Machine.png" alt="Machine">
@@ -138,63 +123,27 @@
             </div>
         </div>
     </div>
-
-    <div id="viewer" onclick="nextImage()">
-        <img id="viewer-img" src="" alt="Card">
-    </div>
-
+    <div id="viewer" onclick="nextImage()"><img id="viewer-img" src="" alt="Card"></div>
     <div id="person-viewer" class="person-modal" onclick="closePersonViewer()">
         <div class="modal-body" onclick="event.stopPropagation()">
             <a href="https://king-newton.github.io/cards/portal-jimmy.html" target="_blank" class="person-link">
-                <div class="avatar-wrap">
-                    <img src="https://king-newton.github.io/cards/pic-jimmy.jpg" alt="Jimmy">
-                </div>
+                <div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-jimmy.jpg" alt="Jimmy"></div>
                 <div class="person-name">Jimmy Lee</div>
             </a>
             <a href="https://king-newton.github.io/cards/portal-james.html" target="_blank" class="person-link">
-                <div class="avatar-wrap">
-                    <img src="https://king-newton.github.io/cards/pic-james.jpg" alt="James">
-                </div>
+                <div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-james.jpg" alt="James"></div>
                 <div class="person-name">James He</div>
             </a>
         </div>
     </div>
-
     <script>
-        let currentIndex = 1;
-        const totalImages = 13;
-        
-        function openViewer() {
-            let elem = document.documentElement;
-            if (elem.requestFullscreen) elem.requestFullscreen();
-            currentIndex = 1;
-            updateViewer();
-            document.getElementById('viewer').style.display = 'flex';
-        }
-        
+        let currentIndex = 1; const totalImages = 13;
+        function openViewer() { let elem = document.documentElement; if (elem.requestFullscreen) elem.requestFullscreen(); currentIndex = 1; updateViewer(); document.getElementById('viewer').style.display = 'flex'; }
         const personModal = document.getElementById('person-viewer');
-        
-        function openPersonViewer() {
-            personModal.classList.add('active');
-        }
-        
-        function closePersonViewer() {
-            personModal.classList.remove('active');
-        }
-        
-        function nextImage() {
-            currentIndex++;
-            if (currentIndex > totalImages) {
-                if (document.exitFullscreen) document.exitFullscreen();
-                document.getElementById('viewer').style.display = 'none';
-            } else {
-                updateViewer();
-            }
-        }
-        
-        function updateViewer() {
-            document.getElementById('viewer-img').src = `https://king-newton.github.io/cards/SGES${currentIndex}.jpg`;
-        }
+        function openPersonViewer() { personModal.classList.add('active'); }
+        function closePersonViewer() { personModal.classList.remove('active'); }
+        function nextImage() { currentIndex++; if (currentIndex > totalImages) { if (document.exitFullscreen) document.exitFullscreen(); document.getElementById('viewer').style.display = 'none'; } else { updateViewer(); } }
+        function updateViewer() { document.getElementById('viewer-img').src = `https://king-newton.github.io/cards/SGES${currentIndex}.jpg`; }
     </script>
 </body>
 </html>
