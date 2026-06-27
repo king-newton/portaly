@@ -11,45 +11,44 @@
         .landing-container { width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; scroll-snap-align: start; flex-shrink: 0; }
         .content-wrapper { display: flex; flex-direction: column; align-items: center; gap: 30px; width: 100%; max-width: 800px; padding: 20px; box-sizing: border-box; }
         
-        .brand-inline { display: flex; align-items: center; justify-content: center; gap: 20px; width: 100%; }
+        /* 修正 Logo 在手機版的顯示寬度 */
+        .brand-inline { display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; max-width: 100%; overflow: hidden; }
+        .logo-icon { height: 50px; width: auto; flex-shrink: 0; animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; }
+        .text-logo-wrapper { position: relative; overflow: hidden; height: 50px; flex-shrink: 1; }
+        .text-logo { height: 50px; width: auto; max-width: 100%; object-fit: contain; }
         
-        /* LOGO 動畫 */
-        .logo-icon { height: 60px; width: auto; animation: doubleSpin 2.5s cubic-bezier(0.1, 0.5, 0.1, 1) forwards; }
-        .text-logo-wrapper { position: relative; overflow: hidden; height: 60px; }
-        .text-logo { height: 60px; width: auto; }
         .text-logo-wrapper::after { content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent); animation: lightSweep 2.5s ease-out forwards 1.2s; }
         
         @keyframes doubleSpin { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(720deg); } }
         @keyframes lightSweep { 0% { left: -100%; } 100% { left: 200%; } }
         
-        .nav-link { text-decoration: none; color: #666; font-size: 0.9rem; letter-spacing: 3px; border: 1px solid #ccc; padding: 15px 30px; cursor: pointer; background: white; transition: 0.3s; }
-        .nav-link:hover { color: #000; border-color: #000; }
-        
+        .nav-link { text-decoration: none; color: #666; font-size: 0.9rem; letter-spacing: 3px; border: 1px solid #ccc; padding: 15px 30px; cursor: pointer; background: white; white-space: nowrap; }
         .link-group { gap: 20px; display: flex; align-items: center; justify-content: center; margin-top: 10px; }
-        .link-group img { width: 50px; height: 50px; cursor: pointer; transition: 0.3s; }
+        .link-group img { width: 50px; height: 50px; cursor: pointer; }
 
         .scroll-section { width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; scroll-snap-align: start; flex-shrink: 0; cursor: pointer; }
         .scroll-section img { width: 100vw; height: 100vh; object-fit: contain; }
 
-        /* TOP 按鈕：右移且半透明 */
-        .back-to-top { position: fixed; bottom: 30px; right: 20px; padding: 12px 20px; background: rgba(0,0,0,0.3); color: white; border: none; cursor: pointer; z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s; border-radius: 5px; }
+        .back-to-top { position: fixed; bottom: 30px; right: 20px; padding: 10px 15px; background: rgba(0,0,0,0.3); color: white; border: none; cursor: pointer; z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s; border-radius: 5px; }
         .back-to-top.show { opacity: 1; visibility: visible; }
-        .back-to-top:hover { background: rgba(0,0,0,0.7); }
 
-        /* 人員彈出視窗：支援垂直捲動 */
-        .person-modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 99999; justify-content: center; align-items: center; cursor: pointer; opacity: 0; transition: opacity 0.3s; overflow-y: auto; }
+        /* 人員視窗：保持橫向排列，縮小圓形 */
+        .person-modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 99999; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
         .person-modal.active { display: flex; opacity: 1; }
-        .modal-body { background: #fff; padding: 40px; border-radius: 10px; display: flex; gap: 40px; cursor: default; }
-        .person-link { text-decoration: none; text-align: center; color: #333; }
-        .avatar-wrap { width: 150px; height: 150px; border-radius: 50%; overflow: hidden; border: 4px solid #fff; margin-bottom: 15px; }
+        .modal-body { background: #fff; padding: 20px; border-radius: 10px; display: flex; gap: 15px; }
+        .person-link { text-decoration: none; text-align: center; color: #333; font-size: 0.8rem; }
+        .avatar-wrap { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid #ddd; margin-bottom: 5px; }
         .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 全螢幕 Viewer */
+        #viewer { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 99999; justify-content: center; align-items: center; }
+        #viewer img { width: 100vw; height: 100vh; object-fit: contain; }
 
         @media (max-width: 600px) {
             html, body { overflow: auto; }
             .container-scroll { overflow-y: visible; scroll-snap-type: none; height: auto; }
             .scroll-section { display: none; }
             .back-to-top { display: none; }
-            .modal-body { flex-direction: column; gap: 20px; padding: 20px; }
         }
     </style>
 </head>
@@ -60,9 +59,7 @@
             <div class="content-wrapper">
                 <div class="brand-inline">
                     <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgycBwl4acZWHME78WqStO8pF7LErCuigIL0Y6k1sO3cmCJViVewKnihzJRCA4x9zgriiGAsHmkJM5BzIzKsmF2xAgTvUask-vn5wJ43JPcg22edFuwgGTBFYn1VNmB5rRL-oANUzybjO27j6m9tuqqWUsBrvgiVhrHbIgkqDnZ361_kK5G3z_S8usoqaS8/s800/icon-standard.png" class="logo-icon">
-                    <div class="text-logo-wrapper">
-                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHha3H0Dfbz6fjnvmtMrqe83Bk1gFzEN_UkEfC_cGm22tKqZheeXkeWDkHl-qXgyjrOrH6QpXnz1_qQ9IOmt77PtMPxqLhMeIlrc9Fpntb0ny_-nBliEbNn4JCyQR7ib0zhorK3OSSYZdrt35cN5Lb9EQ6o9oujSrPCPl7sHt0WgSuXL47mr4RvchCpbGB/w640-h72-rw/logo-standard.png" class="text-logo">
-                    </div>
+                    <div class="text-logo-wrapper"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHha3H0Dfbz6fjnvmtMrqe83Bk1gFzEN_UkEfC_cGm22tKqZheeXkeWDkHl-qXgyjrOrH6QpXnz1_qQ9IOmt77PtMPxqLhMeIlrc9Fpntb0ny_-nBliEbNn4JCyQR7ib0zhorK3OSSYZdrt35cN5Lb9EQ6o9oujSrPCPl7sHt0WgSuXL47mr4RvchCpbGB/w640-h72-rw/logo-standard.png" class="text-logo"></div>
                 </div>
                 <button class="nav-link" onclick="handleLink()">SMART MOLDING SYSTEM</button>
                 <div class="link-group">
@@ -77,20 +74,18 @@
 
     <button class="back-to-top" id="topBtn" onclick="document.getElementById('mainScroll').scrollTo({top: 0, behavior: 'smooth'})">TOP</button>
     
+    <div id="viewer" onclick="nextImage()"><img id="viewer-img" src="" alt="Card"></div>
     <div id="person-viewer" class="person-modal" onclick="closePersonViewer()">
         <div class="modal-body" onclick="event.stopPropagation()">
-            <a href="https://king-newton.github.io/cards/portal-jimmy.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-jimmy.jpg"></div><div>Jimmy Lee</div></a>
-            <a href="https://king-newton.github.io/cards/portal-james.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-james.jpg"></div><div>James He</div></a>
-            <a href="https://king-newton.github.io/cards/portal-jeff.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-jeff.jpg"></div><div>Jeff Yang</div></a>
+            <a href="https://king-newton.github.io/cards/portal-jimmy.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-jimmy.jpg"></div><div>Jimmy</div></a>
+            <a href="https://king-newton.github.io/cards/portal-james.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-james.jpg"></div><div>James</div></a>
+            <a href="https://king-newton.github.io/cards/portal-jeff.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-jeff.jpg"></div><div>Jeff</div></a>
         </div>
     </div>
 
     <script>
         const container = document.getElementById('image-container');
-        for(let i=1; i<=13; i++) {
-            container.innerHTML += `<section class="scroll-section" onclick="scrollNext()"><img src="https://king-newton.github.io/cards/SGES${i}.jpg" loading="lazy"></section>`;
-        }
-
+        for(let i=1; i<=13; i++) { container.innerHTML += `<section class="scroll-section" onclick="scrollNext()"><img src="https://king-newton.github.io/cards/SGES${i}.jpg" loading="lazy"></section>`; }
         function scrollNext() { document.getElementById('mainScroll').scrollBy({ top: window.innerHeight, behavior: 'smooth' }); }
         
         const scrollElem = document.getElementById('mainScroll');
@@ -99,9 +94,13 @@
 
         function handleLink() {
             if (window.innerWidth > 600) { scrollElem.scrollTo({ top: window.innerHeight, behavior: 'smooth' }); }
-            else { alert("手機版功能維持現狀。"); }
+            else { openViewer(); }
         }
 
+        let currentIndex = 1;
+        function openViewer() { document.documentElement.requestFullscreen?.(); currentIndex = 1; updateViewer(); document.getElementById('viewer').style.display = 'flex'; }
+        function nextImage() { currentIndex++; if(currentIndex > 13) { document.exitFullscreen?.(); document.getElementById('viewer').style.display = 'none'; } else { updateViewer(); } }
+        function updateViewer() { document.getElementById('viewer-img').src = `https://king-newton.github.io/cards/SGES${currentIndex}.jpg`; }
         function openPersonViewer() { document.getElementById('person-viewer').classList.add('active'); }
         function closePersonViewer() { document.getElementById('person-viewer').classList.remove('active'); }
     </script>
