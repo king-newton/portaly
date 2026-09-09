@@ -9,7 +9,7 @@
         .container-scroll { width: 100vw; height: 100vh; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; scroll-snap-type: y mandatory; }
 
         .landing-container { width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; scroll-snap-align: start; flex-shrink: 0; }
-        .content-wrapper { display: flex; flex-direction: column; align-items: center; gap: 30px; width: 100%; max-width: 800px; padding: 20px; box-sizing: border-box; }
+        .content-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; max-width: 800px; padding: 20px; box-sizing: border-box; }
         
         /* 修正 Logo 在手機版的顯示寬度 */
         .brand-inline { display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; max-width: 100%; overflow: hidden; }
@@ -22,9 +22,58 @@
         @keyframes doubleSpin { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(720deg); } }
         @keyframes lightSweep { 0% { left: -100%; } 100% { left: 200%; } }
         
-        .nav-link { text-decoration: none; color: #666; font-size: 0.9rem; letter-spacing: 3px; border: 1px solid #ccc; padding: 15px 30px; cursor: pointer; background: white; white-space: nowrap; }
-        .link-group { gap: 20px; display: flex; align-items: center; justify-content: center; margin-top: 10px; }
+        .nav-link { text-decoration: none; color: #666; font-size: 0.9rem; letter-spacing: 3px; border: 1px solid #ccc; padding: 12px 25px; cursor: pointer; background: white; white-space: nowrap; }
+        .link-group { gap: 20px; display: flex; align-items: center; justify-content: center; margin-top: 5px; }
         .link-group img { width: 50px; height: 50px; cursor: pointer; }
+
+        /* 5個特色方框區塊（利用同一張 5-logo.png 進行背景裁切） */
+        .features-grid {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 5px;
+            flex-wrap: wrap;
+        }
+        .feature-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 75px;
+        }
+        .feature-box {
+            background-color: #1e293b;
+            border-radius: 12px;
+            width: 70px;
+            height: 70px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            margin-bottom: 5px;
+            /* 載入您提供的整張圖作為背景，並設定不重複與大小 */
+            background-image: url('https://king-newton.github.io/cards/5-logo.png');
+            background-size: 500% 100%; /* 將圖片放大為 5 倍寬，讓每個方框剛好顯示 1/5 */
+        }
+        
+        /* 依次對應 5 個圖示的水平位移 */
+        .icon-1 { background-position: 0% 0%; }
+        .icon-2 { background-position: 25% 0%; }
+        .icon-3 { background-position: 50% 0%; }
+        .icon-4 { background-position: 75% 0%; }
+        .icon-5 { background-position: 100% 0%; }
+
+        .feature-text-ch {
+            font-size: 11px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            line-height: 1.2;
+            margin-bottom: 1px;
+        }
+        .feature-text-en {
+            font-size: 9px;
+            color: #666;
+            text-align: center;
+            line-height: 1.1;
+        }
 
         .scroll-section { width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; scroll-snap-align: start; flex-shrink: 0; cursor: pointer; }
         .scroll-section img { width: 100vw; height: 100vh; object-fit: contain; }
@@ -32,10 +81,10 @@
         .back-to-top { position: fixed; bottom: 30px; right: 20px; padding: 10px 15px; background: rgba(0,0,0,0.3); color: white; border: none; cursor: pointer; z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s; border-radius: 5px; }
         .back-to-top.show { opacity: 1; visibility: visible; }
 
-        /* 人員視窗：保持橫向排列，縮小圓形 */
+        /* 人員視窗 */
         .person-modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 99999; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
         .person-modal.active { display: flex; opacity: 1; }
-        .modal-body { background: #fff; padding: 20px; border-radius: 10px; display: flex; gap: 15px; }
+        .modal-body { background: #fff; padding: 20px; border-radius: 10px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
         .person-link { text-decoration: none; text-align: center; color: #333; font-size: 0.8rem; }
         .avatar-wrap { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid #ddd; margin-bottom: 5px; }
         .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
@@ -49,6 +98,9 @@
             .container-scroll { overflow-y: visible; scroll-snap-type: none; height: auto; }
             .scroll-section { display: none; }
             .back-to-top { display: none; }
+            .features-grid { gap: 6px; }
+            .feature-column { width: 62px; }
+            .feature-box { width: 58px; height: 58px; }
         }
     </style>
 </head>
@@ -62,6 +114,36 @@
                     <div class="text-logo-wrapper"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHha3H0Dfbz6fjnvmtMrqe83Bk1gFzEN_UkEfC_cGm22tKqZheeXkeWDkHl-qXgyjrOrH6QpXnz1_qQ9IOmt77PtMPxqLhMeIlrc9Fpntb0ny_-nBliEbNn4JCyQR7ib0zhorK3OSSYZdrt35cN5Lb9EQ6o9oujSrPCPl7sHt0WgSuXL47mr4RvchCpbGB/w640-h72-rw/logo-standard.png" class="text-logo"></div>
                 </div>
                 <button class="nav-link" onclick="handleLink()">SMART MOLDING SYSTEM</button>
+                
+                <!-- 5個獨立方框，套用 5-logo.png 裁切與中英文說明 -->
+                <div class="features-grid">
+                    <div class="feature-column">
+                        <div class="feature-box icon-1"></div>
+                        <div class="feature-text-ch">AI 驅動</div>
+                        <div class="feature-text-en">AI Driven</div>
+                    </div>
+                    <div class="feature-column">
+                        <div class="feature-box icon-2"></div>
+                        <div class="feature-text-ch">伺服節能</div>
+                        <div class="feature-text-en">Servo Energy Saving</div>
+                    </div>
+                    <div class="feature-column">
+                        <div class="feature-box icon-3"></div>
+                        <div class="feature-text-ch">能源管理</div>
+                        <div class="feature-text-en">Energy Management</div>
+                    </div>
+                    <div class="feature-column">
+                        <div class="feature-box icon-4"></div>
+                        <div class="feature-text-ch">MES 系統</div>
+                        <div class="feature-text-en">MES System</div>
+                    </div>
+                    <div class="feature-column">
+                        <div class="feature-box icon-5"></div>
+                        <div class="feature-text-ch">工廠自動化</div>
+                        <div class="feature-text-en">Factory Automation</div>
+                    </div>
+                </div>
+
                 <div class="link-group">
                     <img src="https://king-newton.github.io/portaly/home.png">
                     <a href="http://www.borche.cn/product/index3.html"><img src="https://king-newton.github.io/portaly/Injection Molding Machine.png"></a>
@@ -80,6 +162,7 @@
             <a href="https://king-newton.github.io/cards/portal-jimmy.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-jimmy.jpg"></div><div>Jimmy</div></a>
             <a href="https://king-newton.github.io/cards/portal-james.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-james.jpg"></div><div>James</div></a>
             <a href="https://king-newton.github.io/cards/portal-jeff.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-jeff.jpg"></div><div>Jeff</div></a>
+            <a href="https://king-newton.github.io/cards/portal-gwen.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-gwen.jpg"></div><div>Gwen</div></a>
         </div>
     </div>
 
