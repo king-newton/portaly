@@ -32,12 +32,12 @@
         .back-to-top { position: fixed; bottom: 30px; right: 20px; padding: 10px 15px; background: rgba(0,0,0,0.3); color: white; border: none; cursor: pointer; z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s; border-radius: 5px; }
         .back-to-top.show { opacity: 1; visibility: visible; }
 
-        /* 人員視窗：保持橫向排列，縮小圓形 */
+        /* 人員視窗：改為上2下2排版，並確保完全置中於手機螢幕正中央 */
         .person-modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 99999; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
         .person-modal.active { display: flex; opacity: 1; }
-        .modal-body { background: #fff; padding: 20px; border-radius: 10px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        .modal-body { background: #fff; padding: 25px 20px; border-radius: 12px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; justify-items: center; width: 220px; box-sizing: border-box; }
         .person-link { text-decoration: none; text-align: center; color: #333; font-size: 0.8rem; }
-        .avatar-wrap { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid #ddd; margin-bottom: 5px; }
+        .avatar-wrap { width: 75px; height: 75px; border-radius: 50%; overflow: hidden; border: 2px solid #ddd; margin-bottom: 5px; }
         .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
         /* 全螢幕 Viewer */
@@ -75,6 +75,8 @@
     <button class="back-to-top" id="topBtn" onclick="document.getElementById('mainScroll').scrollTo({top: 0, behavior: 'smooth'})">TOP</button>
     
     <div id="viewer" onclick="nextImage()"><img id="viewer-img" src="" alt="Card"></div>
+    
+    <!-- 聯絡人彈跳視窗：上2下2置中排版 -->
     <div id="person-viewer" class="person-modal" onclick="closePersonViewer()">
         <div class="modal-body" onclick="event.stopPropagation()">
             <a href="https://king-newton.github.io/cards/portal-jimmy.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-jimmy.jpg"></div><div>Jimmy</div></a>
