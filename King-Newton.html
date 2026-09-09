@@ -32,13 +32,23 @@
         .back-to-top { position: fixed; bottom: 30px; right: 20px; padding: 10px 15px; background: rgba(0,0,0,0.3); color: white; border: none; cursor: pointer; z-index: 9999; opacity: 0; visibility: hidden; transition: 0.3s; border-radius: 5px; }
         .back-to-top.show { opacity: 1; visibility: visible; }
 
-        /* 人員視窗：改為上2下2排版，並確保完全置中於手機螢幕正中央 */
-        .person-modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 99999; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
-        .person-modal.active { display: flex; opacity: 1; }
-        .modal-body { background: #fff; padding: 25px 20px; border-radius: 12px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; justify-items: center; width: 220px; box-sizing: border-box; }
+        /* 通用彈跳視窗樣式 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 99999; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        
+        /* 人員視窗：上2下2置中排版 */
+        .person-body { background: #fff; padding: 25px 20px; border-radius: 12px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; justify-items: center; width: 220px; box-sizing: border-box; }
         .person-link { text-decoration: none; text-align: center; color: #333; font-size: 0.8rem; }
         .avatar-wrap { width: 75px; height: 75px; border-radius: 50%; overflow: hidden; border: 2px solid #ddd; margin-bottom: 5px; }
         .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 機型目錄視窗樣式 */
+        .catalog-body { background: #fff; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; gap: 15px; width: 90%; max-width: 320px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
+        .catalog-item { text-decoration: none; display: flex; align-items: center; gap: 12px; background: #f8f9fa; padding: 8px; border-radius: 8px; border: 1px solid #eee; transition: 0.2s; }
+        .catalog-item:hover { background: #f1f3f5; }
+        .catalog-img-wrap { width: 80px; height: 60px; flex-shrink: 0; border-radius: 4px; overflow: hidden; background: #ddd; }
+        .catalog-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .catalog-info { font-size: 0.85rem; color: #333; font-weight: bold; }
 
         /* 全螢幕 Viewer */
         #viewer { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 99999; justify-content: center; align-items: center; }
@@ -64,7 +74,8 @@
                 <button class="nav-link" onclick="handleLink()">SMART MOLDING SYSTEM</button>
                 <div class="link-group">
                     <img src="https://king-newton.github.io/portaly/home.png">
-                    <a href="http://www.borche.cn/product/index3.html"><img src="https://king-newton.github.io/portaly/Injection Molding Machine.png"></a>
+                    <!-- 點擊機台圖案開啟目錄下載視窗 -->
+                    <img src="https://king-newton.github.io/portaly/Injection Molding Machine.png" onclick="openCatalogViewer()">
                     <img src="https://king-newton.github.io/portaly/contact.gif" onclick="openPersonViewer()">
                 </div>
             </div>
@@ -76,13 +87,31 @@
     
     <div id="viewer" onclick="nextImage()"><img id="viewer-img" src="" alt="Card"></div>
     
-    <!-- 聯絡人彈跳視窗：上2下2置中排版 -->
-    <div id="person-viewer" class="person-modal" onclick="closePersonViewer()">
-        <div class="modal-body" onclick="event.stopPropagation()">
+    <!-- 聯絡人彈跳視窗 -->
+    <div id="person-viewer" class="modal-overlay" onclick="closePersonViewer()">
+        <div class="person-body" onclick="event.stopPropagation()">
             <a href="https://king-newton.github.io/cards/portal-jimmy.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-jimmy.jpg"></div><div>Jimmy</div></a>
             <a href="https://king-newton.github.io/cards/portal-james.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-james.jpg"></div><div>James</div></a>
             <a href="https://king-newton.github.io/cards/portal-jeff.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-jeff.jpg"></div><div>Jeff</div></a>
             <a href="https://king-newton.github.io/cards/portal-gwen.html" target="_blank" class="person-link"><div class="avatar-wrap"><img src="https://king-newton.github.io/cards/pic-gwen.jpg"></div><div>Gwen</div></a>
+        </div>
+    </div>
+
+    <!-- 射出機產品型錄下載視窗（已更新英文檔名） -->
+    <div id="catalog-viewer" class="modal-overlay" onclick="closeCatalogViewer()">
+        <div class="catalog-body" onclick="event.stopPropagation()">
+            <a href="https://www.king-newton.com/admin/attach/20260909/20260909032625_437.pdf" target="_blank" class="catalog-item">
+                <div class="catalog-img-wrap"><img src="https://king-newton.github.io/portaly/Bi.jpg" alt="Bi油壓機"></div>
+                <div class="catalog-info">Bi 油壓機型錄下載</div>
+            </a>
+            <a href="https://www.king-newton.com/admin/attach/20260909/20260909033228_859.pdf" target="_blank" class="catalog-item">
+                <div class="catalog-img-wrap"><img src="https://king-newton.github.io/portaly/Be.jpg" alt="Be混動機"></div>
+                <div class="catalog-info">Be 混動機型錄下載</div>
+            </a>
+            <a href="https://www.king-newton.com/admin/attach/20260909/20260909033639_264.pdf" target="_blank" class="catalog-item">
+                <div class="catalog-img-wrap"><img src="https://king-newton.github.io/portaly/BD.jpg" alt="BD全電機"></div>
+                <div class="catalog-info">BD 全電機型錄下載</div>
+            </a>
         </div>
     </div>
 
@@ -104,8 +133,12 @@
         function openViewer() { document.documentElement.requestFullscreen?.(); currentIndex = 1; updateViewer(); document.getElementById('viewer').style.display = 'flex'; }
         function nextImage() { currentIndex++; if(currentIndex > 13) { document.exitFullscreen?.(); document.getElementById('viewer').style.display = 'none'; } else { updateViewer(); } }
         function updateViewer() { document.getElementById('viewer-img').src = `https://king-newton.github.io/cards/SGES${currentIndex}.jpg`; }
+        
         function openPersonViewer() { document.getElementById('person-viewer').classList.add('active'); }
         function closePersonViewer() { document.getElementById('person-viewer').classList.remove('active'); }
+
+        function openCatalogViewer() { document.getElementById('catalog-viewer').classList.add('active'); }
+        function closeCatalogViewer() { document.getElementById('catalog-viewer').classList.remove('active'); }
     </script>
 </body>
 </html>
