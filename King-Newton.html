@@ -59,6 +59,9 @@
             .container-scroll { overflow-y: visible; scroll-snap-type: none; height: auto; }
             .scroll-section { display: none; }
             .back-to-top { display: none; }
+            
+            /* 手機版首頁：減少上方空白，讓內容往上收攏 */
+            .landing-container { height: auto; min-height: 80vh; padding-top: 40px; align-items: flex-start; }
         }
     </style>
 </head>
@@ -97,7 +100,7 @@
         </div>
     </div>
 
-    <!-- 射出機產品型錄下載視窗（已更新英文檔名） -->
+    <!-- 射出機產品型錄下載視窗 -->
     <div id="catalog-viewer" class="modal-overlay" onclick="closeCatalogViewer()">
         <div class="catalog-body" onclick="event.stopPropagation()">
             <a href="https://www.king-newton.com/admin/attach/20260909/20260909032625_437.pdf" target="_blank" class="catalog-item">
