@@ -60,8 +60,8 @@
             .scroll-section { display: none; }
             .back-to-top { display: none; }
             
-            /* 手機版首頁：減少上方空白，讓內容往上收攏 */
-            .landing-container { height: auto; min-height: 80vh; padding-top: 40px; align-items: flex-start; }
+            /* 手機版首頁：恢復滿版高度並維持置中，視覺比例更平衡 */
+            .landing-container { height: 100vh; align-items: center; }
         }
     </style>
 </head>
@@ -76,7 +76,7 @@
                 </div>
                 <button class="nav-link" onclick="handleLink()">SMART MOLDING SYSTEM</button>
                 <div class="link-group">
-                    <!-- 房子圖形加上連至官網的超連結 -->
+                    <!-- 房子圖形連至官網 -->
                     <a href="https://www.king-newton.com" target="_blank"><img src="https://king-newton.github.io/portaly/home.png" alt="Home"></a>
                     <!-- 點擊機台圖案開啟目錄下載視窗 -->
                     <img src="https://king-newton.github.io/portaly/Injection Molding Machine.png" onclick="openCatalogViewer()" alt="Injection Machine">
