@@ -43,7 +43,7 @@
         .avatar-wrap { width: 75px; height: 75px; border-radius: 50%; overflow: hidden; border: 2px solid #ddd; margin-bottom: 5px; }
         .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 機型目錄視窗樣式調整：容納左中右排版 */
+        /* 機型目錄視窗樣式調整 */
         .catalog-body { background: #fff; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; gap: 15px; width: 92%; max-width: 350px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
         .catalog-item { text-decoration: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #f8f9fa; padding: 8px; border-radius: 8px; border: 1px solid #eee; transition: 0.2s; }
         .catalog-item:hover { background: #f1f3f5; }
@@ -57,22 +57,14 @@
         .catalog-qrcode { width: 45px; height: 45px; flex-shrink: 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; background: #fff; padding: 2px; box-sizing: border-box; transition: 0.2s; }
         .catalog-qrcode:hover { transform: scale(1.05); border-color: #0066cc; }
 
-        /* QR Code 放大彈跳檢視視窗 */
+        /* QR Code 放大顯示燈箱 */
         #qrcode-viewer { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; justify-content: center; align-items: center; flex-direction: column; gap: 15px; }
         #qrcode-viewer img { width: 260px; height: 260px; background: white; padding: 15px; border-radius: 12px; object-fit: contain; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         .qrcode-close-btn { background: #fff; color: #333; border: none; padding: 10px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
 
-        /* 全螢幕 Viewer */
-        #viewer { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 99999; justify-content: center; align-items: center; }
-        #viewer img { width: 100vw; height: 100vh; object-fit: contain; }
-
         @media (max-width: 600px) {
-            html, body { overflow: auto; }
-            .container-scroll { overflow-y: visible; scroll-snap-type: none; height: auto; }
-            .scroll-section { display: none; }
-            .back-to-top { display: none; }
-            
-            .landing-container { height: 100vh; align-items: center; }
+            /* 讓手機版也能正常捲動看圖，保持與電腦版一致的體驗 */
+            html, body { overflow: hidden; }
         }
     </style>
 </head>
@@ -85,6 +77,7 @@
                     <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgycBwl4acZWHME78WqStO8pF7LErCuigIL0Y6k1sO3cmCJViVewKnihzJRCA4x9zgriiGAsHmkJM5BzIzKsmF2xAgTvUask-vn5wJ43JPcg22edFuwgGTBFYn1VNmB5rRL-oANUzybjO27j6m9tuqqWUsBrvgiVhrHbIgkqDnZ361_kK5G3z_S8usoqaS8/s800/icon-standard.png" class="logo-icon">
                     <div class="text-logo-wrapper"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHha3H0Dfbz6fjnvmtMrqe83Bk1gFzEN_UkEfC_cGm22tKqZheeXkeWDkHl-qXgyjrOrH6QpXnz1_qQ9IOmt77PtMPxqLhMeIlrc9Fpntb0ny_-nBliEbNn4JCyQR7ib0zhorK3OSSYZdrt35cN5Lb9EQ6o9oujSrPCPl7sHt0WgSuXL47mr4RvchCpbGB/w640-h72-rw/logo-standard.png" class="text-logo"></div>
                 </div>
+                <!-- 點擊後無論電腦或手機，皆會平滑捲動到下一頁 (SGES1.jpg) -->
                 <button class="nav-link" onclick="handleLink()">SMART MOLDING SYSTEM</button>
                 
                 <div class="link-group">
@@ -102,8 +95,6 @@
 
     <button class="back-to-top" id="topBtn" onclick="document.getElementById('mainScroll').scrollTo({top: 0, behavior: 'smooth'})">TOP</button>
     
-    <div id="viewer" onclick="closeImageViewer()"><img id="viewer-img" src="" alt="Booth Map"></div>
-    
     <!-- 聯絡人彈跳視窗 -->
     <div id="person-viewer" class="modal-overlay" onclick="closePersonViewer()">
         <div class="person-body" onclick="event.stopPropagation()">
@@ -114,7 +105,7 @@
         </div>
     </div>
 
-    <!-- 射出機產品型錄下載視窗 (已加入右側 QR Code 及其放大點擊事件) -->
+    <!-- 射出機產品型錄下載視窗 -->
     <div id="catalog-viewer" class="modal-overlay" onclick="closeCatalogViewer()">
         <div class="catalog-body" onclick="event.stopPropagation()">
             
@@ -168,15 +159,11 @@
         const topBtn = document.getElementById('topBtn');
         scrollElem.addEventListener('scroll', () => { topBtn.classList.toggle('show', scrollElem.scrollTop > window.innerHeight * 0.5); });
 
+        /* 統一所有裝置（電腦、手機直式/橫式）的行為：點擊按鈕直接平滑往下捲動看圖 */
         function handleLink() {
-            if (window.innerWidth > 600) { scrollElem.scrollTo({ top: window.innerHeight, behavior: 'smooth' }); }
-            else { openViewerFullScreen(); }
+            scrollElem.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
         }
 
-        let currentIndex = 1;
-        function openViewerFullScreen() { document.documentElement.requestFullscreen?.(); currentIndex = 1; updateViewer(); document.getElementById('viewer').style.display = 'flex'; }
-        function updateViewer() { document.getElementById('viewer-img').src = `https://king-newton.github.io/cards/SGES${currentIndex}.jpg`; }
-        
         function openPersonViewer() { document.getElementById('person-viewer').classList.add('active'); }
         function closePersonViewer() { document.getElementById('person-viewer').classList.remove('active'); }
 
@@ -185,17 +172,13 @@
 
         /* QR Code 放大視窗控制函式 */
         function openQrCodeModal(imgSrc) {
-            event.stopPropagation(); // 避免點擊時同時觸發關閉型錄視窗
+            event.stopPropagation();
             document.getElementById('qrcode-viewer-img').src = imgSrc;
             document.getElementById('qrcode-viewer').style.display = 'flex';
         }
 
         function closeQrCodeModal() {
             document.getElementById('qrcode-viewer').style.display = 'none';
-        }
-
-        function closeImageViewer() {
-            document.getElementById('viewer').style.display = 'none';
         }
     </script>
 </body>
