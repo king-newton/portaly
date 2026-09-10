@@ -22,7 +22,8 @@
         @keyframes doubleSpin { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(720deg); } }
         @keyframes lightSweep { 0% { left: -100%; } 100% { left: 200%; } }
         
-        .nav-link { text-decoration: none; color: #666; font-size: 0.9rem; letter-spacing: 3px; border: 1px solid #ccc; padding: 12px 25px; cursor: pointer; background: white; white-space: nowrap; }
+        .nav-link { text-decoration: none; color: #666; font-size: 0.9rem; letter-spacing: 3px; border: 1px solid #ccc; padding: 12px 25px; cursor: pointer; background: white; white-space: nowrap; border-radius: 4px; transition: 0.2s; }
+        .nav-link:hover { background: #f8f9fa; color: #111; border-color: #999; }
         .link-group { gap: 20px; display: flex; align-items: center; justify-content: center; margin-top: 5px; }
         .link-group img { width: 50px; height: 50px; cursor: pointer; }
 
@@ -42,13 +43,24 @@
         .avatar-wrap { width: 75px; height: 75px; border-radius: 50%; overflow: hidden; border: 2px solid #ddd; margin-bottom: 5px; }
         .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 機型目錄視窗樣式 */
-        .catalog-body { background: #fff; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; gap: 15px; width: 90%; max-width: 320px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
-        .catalog-item { text-decoration: none; display: flex; align-items: center; gap: 12px; background: #f8f9fa; padding: 8px; border-radius: 8px; border: 1px solid #eee; transition: 0.2s; }
+        /* 機型目錄視窗樣式調整：容納左中右排版 */
+        .catalog-body { background: #fff; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; gap: 15px; width: 92%; max-width: 350px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
+        .catalog-item { text-decoration: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #f8f9fa; padding: 8px; border-radius: 8px; border: 1px solid #eee; transition: 0.2s; }
         .catalog-item:hover { background: #f1f3f5; }
-        .catalog-img-wrap { width: 80px; height: 60px; flex-shrink: 0; border-radius: 4px; overflow: hidden; background: #ddd; }
+        
+        .catalog-left { display: flex; align-items: center; gap: 10px; flex-grow: 1; text-decoration: none; overflow: hidden; }
+        .catalog-img-wrap { width: 70px; height: 50px; flex-shrink: 0; border-radius: 4px; overflow: hidden; background: #ddd; }
         .catalog-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        .catalog-info { font-size: 0.85rem; color: #333; font-weight: bold; }
+        .catalog-info { font-size: 0.8rem; color: #333; font-weight: bold; line-height: 1.2; }
+
+        /* QR Code 小圖樣式 */
+        .catalog-qrcode { width: 45px; height: 45px; flex-shrink: 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; background: #fff; padding: 2px; box-sizing: border-box; transition: 0.2s; }
+        .catalog-qrcode:hover { transform: scale(1.05); border-color: #0066cc; }
+
+        /* QR Code 放大彈跳檢視視窗 */
+        #qrcode-viewer { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; justify-content: center; align-items: center; flex-direction: column; gap: 15px; }
+        #qrcode-viewer img { width: 260px; height: 260px; background: white; padding: 15px; border-radius: 12px; object-fit: contain; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .qrcode-close-btn { background: #fff; color: #333; border: none; padding: 10px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
 
         /* 全螢幕 Viewer */
         #viewer { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: white; z-index: 99999; justify-content: center; align-items: center; }
@@ -60,7 +72,6 @@
             .scroll-section { display: none; }
             .back-to-top { display: none; }
             
-            /* 手機版首頁：恢復滿版高度並維持置中，視覺比例更平衡 */
             .landing-container { height: 100vh; align-items: center; }
         }
     </style>
@@ -75,13 +86,15 @@
                     <div class="text-logo-wrapper"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhHha3H0Dfbz6fjnvmtMrqe83Bk1gFzEN_UkEfC_cGm22tKqZheeXkeWDkHl-qXgyjrOrH6QpXnz1_qQ9IOmt77PtMPxqLhMeIlrc9Fpntb0ny_-nBliEbNn4JCyQR7ib0zhorK3OSSYZdrt35cN5Lb9EQ6o9oujSrPCPl7sHt0WgSuXL47mr4RvchCpbGB/w640-h72-rw/logo-standard.png" class="text-logo"></div>
                 </div>
                 <button class="nav-link" onclick="handleLink()">SMART MOLDING SYSTEM</button>
+                
                 <div class="link-group">
-                    <!-- 房子圖形連至官網 -->
                     <a href="https://www.king-newton.com" target="_blank"><img src="https://king-newton.github.io/portaly/home.png" alt="Home"></a>
-                    <!-- 點擊機台圖案開啟目錄下載視窗 -->
                     <img src="https://king-newton.github.io/portaly/Injection Molding Machine.png" onclick="openCatalogViewer()" alt="Injection Machine">
                     <img src="https://king-newton.github.io/portaly/contact.gif" onclick="openPersonViewer()" alt="Contact">
                 </div>
+
+                <!-- 點擊後直接連結至官方指定網址 -->
+                <a href="https://booth.e-taitra.com.tw/map/v2/zh-TW/2026PL/ex/175828" target="_blank" class="nav-link" style="display: inline-block; text-align: center;">2026 台北國際塑橡膠工業展</a>
             </div>
         </div>
         <div id="image-container"></div>
@@ -89,7 +102,7 @@
 
     <button class="back-to-top" id="topBtn" onclick="document.getElementById('mainScroll').scrollTo({top: 0, behavior: 'smooth'})">TOP</button>
     
-    <div id="viewer" onclick="nextImage()"><img id="viewer-img" src="" alt="Card"></div>
+    <div id="viewer" onclick="closeImageViewer()"><img id="viewer-img" src="" alt="Booth Map"></div>
     
     <!-- 聯絡人彈跳視窗 -->
     <div id="person-viewer" class="modal-overlay" onclick="closePersonViewer()">
@@ -101,26 +114,49 @@
         </div>
     </div>
 
-    <!-- 射出機產品型錄下載視窗 -->
+    <!-- 射出機產品型錄下載視窗 (已加入右側 QR Code 及其放大點擊事件) -->
     <div id="catalog-viewer" class="modal-overlay" onclick="closeCatalogViewer()">
         <div class="catalog-body" onclick="event.stopPropagation()">
-            <a href="https://www.king-newton.com/admin/attach/20260909/20260909032625_437.pdf" target="_blank" class="catalog-item">
-                <div class="catalog-img-wrap"><img src="https://king-newton.github.io/portaly/Bi.jpg" alt="Bi_M_雙缸內曲肘"></div>
-                <div class="catalog-info">Bi_M_雙缸內曲肘型錄下載</div>
-            </a>
-             <a href="https://www.king-newton.com/admin/attach/20260910/20260910025017_878.pdf" target="_blank" class="catalog-item">
-                <div class="catalog-img-wrap"><img src="https://www.king-newton.com/admin/attach/20260910/20260910025006_710.jpg" alt="Bi-外曲肘"></div>
-                <div class="catalog-info">Bi-外曲肘型錄下載</div>
-            </a>
-            <a href="https://www.king-newton.com/admin/attach/20260909/20260909033228_859.pdf" target="_blank" class="catalog-item">
-                <div class="catalog-img-wrap"><img src="https://king-newton.github.io/portaly/Be.jpg" alt="Be混動機"></div>
-                <div class="catalog-info">Be 混動機型錄下載</div>
-            </a>
-            <a href="https://www.king-newton.com/admin/attach/20260909/20260909033639_264.pdf" target="_blank" class="catalog-item">
-                <div class="catalog-img-wrap"><img src="https://king-newton.github.io/portaly/BD.jpg" alt="BD全電機"></div>
-                <div class="catalog-info">BD 全電機型錄下載</div>
-            </a>
+            
+            <div class="catalog-item">
+                <a href="https://www.king-newton.com/admin/attach/20260909/20260909032625_437.pdf" target="_blank" class="catalog-left">
+                    <div class="catalog-img-wrap"><img src="https://king-newton.github.io/portaly/Bi.jpg" alt="Bi_M_雙缸內曲肘"></div>
+                    <div class="catalog-info">Bi_M_雙缸內曲肘型錄下載</div>
+                </a>
+                <img src="https://king-newton.github.io/portaly/Bi_M-QRCODE.png" class="catalog-qrcode" onclick="openQrCodeModal('https://king-newton.github.io/portaly/Bi_M-QRCODE.png')" alt="QR Code">
+            </div>
+
+            <div class="catalog-item">
+                <a href="https://www.king-newton.com/admin/attach/20260910/20260910025017_878.pdf" target="_blank" class="catalog-left">
+                    <div class="catalog-img-wrap"><img src="https://www.king-newton.com/admin/attach/20260910/20260910025006_710.jpg" alt="Bi-外曲肘"></div>
+                    <div class="catalog-info">Bi-外曲肘型錄下載</div>
+                </a>
+                <img src="https://king-newton.github.io/portaly/Bi-QRCODE.png" class="catalog-qrcode" onclick="openQrCodeModal('https://king-newton.github.io/portaly/Bi-QRCODE.png')" alt="QR Code">
+            </div>
+
+            <div class="catalog-item">
+                <a href="https://www.king-newton.com/admin/attach/20260909/20260909033228_859.pdf" target="_blank" class="catalog-left">
+                    <div class="catalog-img-wrap"><img src="https://king-newton.github.io/portaly/Be.jpg" alt="Be混動機"></div>
+                    <div class="catalog-info">Be 混動機型錄下載</div>
+                </a>
+                <img src="https://king-newton.github.io/portaly/Be-QRCODE.png" class="catalog-qrcode" onclick="openQrCodeModal('https://king-newton.github.io/portaly/Be-QRCODE.png')" alt="QR Code">
+            </div>
+
+            <div class="catalog-item">
+                <a href="https://www.king-newton.com/admin/attach/20260909/20260909033639_264.pdf" target="_blank" class="catalog-left">
+                    <div class="catalog-img-wrap"><img src="https://king-newton.github.io/portaly/BD.jpg" alt="BD全電機"></div>
+                    <div class="catalog-info">BD 全電機型錄下載</div>
+                </a>
+                <img src="https://king-newton.github.io/portaly/BD-QRCODE.png" class="catalog-qrcode" onclick="openQrCodeModal('https://king-newton.github.io/portaly/BD-QRCODE.png')" alt="QR Code">
+            </div>
+
         </div>
+    </div>
+
+    <!-- QR Code 放大顯示燈箱 -->
+    <div id="qrcode-viewer" onclick="closeQrCodeModal()">
+        <img id="qrcode-viewer-img" src="" alt="Enlarged QR Code">
+        <button class="qrcode-close-btn" onclick="closeQrCodeModal()">關閉</button>
     </div>
 
     <script>
@@ -134,12 +170,11 @@
 
         function handleLink() {
             if (window.innerWidth > 600) { scrollElem.scrollTo({ top: window.innerHeight, behavior: 'smooth' }); }
-            else { openViewer(); }
+            else { openViewerFullScreen(); }
         }
 
         let currentIndex = 1;
-        function openViewer() { document.documentElement.requestFullscreen?.(); currentIndex = 1; updateViewer(); document.getElementById('viewer').style.display = 'flex'; }
-        function nextImage() { currentIndex++; if(currentIndex > 13) { document.exitFullscreen?.(); document.getElementById('viewer').style.display = 'none'; } else { updateViewer(); } }
+        function openViewerFullScreen() { document.documentElement.requestFullscreen?.(); currentIndex = 1; updateViewer(); document.getElementById('viewer').style.display = 'flex'; }
         function updateViewer() { document.getElementById('viewer-img').src = `https://king-newton.github.io/cards/SGES${currentIndex}.jpg`; }
         
         function openPersonViewer() { document.getElementById('person-viewer').classList.add('active'); }
@@ -147,6 +182,21 @@
 
         function openCatalogViewer() { document.getElementById('catalog-viewer').classList.add('active'); }
         function closeCatalogViewer() { document.getElementById('catalog-viewer').classList.remove('active'); }
+
+        /* QR Code 放大視窗控制函式 */
+        function openQrCodeModal(imgSrc) {
+            event.stopPropagation(); // 避免點擊時同時觸發關閉型錄視窗
+            document.getElementById('qrcode-viewer-img').src = imgSrc;
+            document.getElementById('qrcode-viewer').style.display = 'flex';
+        }
+
+        function closeQrCodeModal() {
+            document.getElementById('qrcode-viewer').style.display = 'none';
+        }
+
+        function closeImageViewer() {
+            document.getElementById('viewer').style.display = 'none';
+        }
     </script>
 </body>
 </html>
