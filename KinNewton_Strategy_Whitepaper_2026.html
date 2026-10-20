@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金牛頓公司轉型戰略與變革白皮書</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
+        }
+        .accordion-content.expanded {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .rotate-icon {
+            transition: transform 0.3s ease;
+        }
+        .rotate-icon.active {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans leading-relaxed min-h-screen">
+
+    <!-- Header / Banner -->
+    <header class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white py-10 px-4 shadow-lg border-b-4 border-amber-500">
+        <div class="max-w-5xl mx-auto text-center">
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">金牛頓公司轉型戰略與變革白皮書</h1>
+            <p class="text-amber-400 font-medium text-lg md:text-xl">── 從傳統零組件供應走向「以服務為核心的智慧數位生態圈」</p>
+            <div class="mt-4 text-xs text-slate-400">By Eric 2026/10/4</div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-5xl mx-auto px-4 py-8">
+
+        <!-- Controls / Search & Actions -->
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+            <div class="relative w-full sm:w-80">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" onkeyup="filterChapters()" placeholder="搜尋章節關鍵字..." 
+                       class="w-full pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+            <div class="flex gap-3 w-full sm:w-auto justify-end">
+                <button onclick="toggleAll(true)" class="px-4 py-2 text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200">
+                    <i class="fa-solid fa-folder-open mr-1.5"></i>全部展開
+                </button>
+                <button onclick="toggleAll(false)" class="px-4 py-2 text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg transition-colors border border-slate-200">
+                    <i class="fa-solid fa-folder-closed mr-1.5"></i>全部收合
+                </button>
+            </div>
+        </div>
+
+        <!-- Accordion Chapter List -->
+        <div class="space-y-4" id="chapterContainer">
+
+            <!-- 第一章 -->
+            <div class="chapter-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <button onclick="toggleAccordion(1)" class="w-full px-6 py-5 flex justify-between items-center bg-white hover:bg-slate-50 transition-colors text-left border-l-4 border-blue-600">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span class="bg-blue-100 text-blue-800 text-sm px-2.5 py-0.5 rounded-full font-semibold">01</span>
+                        第一章：轉型的緣由與核心戰略
+                    </h2>
+                    <i id="icon-1" class="fa-solid fa-chevron-down text-slate-400 rotate-icon text-lg"></i>
+                </button>
+                <div id="content-1" class="accordion-content">
+                    <div class="p-6 border-t border-slate-100 text-slate-700 space-y-5 text-base">
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-2">一、 策略核心主旨（Core Purpose）</h3>
+                            <p class="bg-amber-50 border-l-4 border-amber-400 p-3 rounded font-medium text-amber-900 text-base">
+                                「告別盲目冒進與單賣硬體，以『舊機智慧改機』為穩健基石，串聯上下游；打造 AI 智能服務平台，全員一條心，穩健搶佔新未來。」
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-2">二、 宏觀大環境變局：為什麼我們不得不轉型？</h3>
+                            <ul class="list-disc pl-5 space-y-1.5">
+                                <li><strong>全球化解體與地緣政治衝突（供應鏈在地化與短鏈化）：</strong>多國之間的貿易壁壘、區域衝突以及美國主導的科技戰與供應鏈重組，迫使全球科技與製造巨頭必須重新建構「具備高度韌性與在地應變能力」的供應鏈。過去那種「靠單一低成本零件大量出口」的老路已經走不通。</li>
+                                <li><strong>AI 浪潮全面席捲，基礎設施重構：</strong>全球資本支出全面向 AI、高效能運算（HPC）與資料中心傾斜。所有製造業的終端客戶，都在被動或主動地面臨「不升級 AI 就被市場淘汰」的壓力。</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-2">三、 大客戶與同業的戰略轉型解析：台灣射出機產業的生死存亡</h3>
+                            <div class="space-y-2">
+                                <p class="font-semibold text-slate-900">主要大客戶（如富強鑫）的雙軌轉型：</p>
+                                <ul class="list-disc pl-5 space-y-1">
+                                    <li><strong>本業高度智慧化：</strong>射出機本業全面轉向半導體智慧製造、車用高階、AI 基建與全電動精密成型設備。</li>
+                                    <li><strong>跨足高階新事業：</strong>例如跨足 AI 伺服器與 GPU 電源供應鏈所需的 MLPC（疊層固態電容）高階被動元件領域，打造第二成長引擎。</li>
+                                </ul>
+                                <p class="font-semibold text-slate-900 mt-2">國內主要同業的全面升級（如全立發、華嶸、樺欽等）：</p>
+                                <ul class="list-disc pl-5 space-y-1">
+                                    <li><strong>全立發（CLF）：</strong>朝向大噸位兩板式智慧機、IIoT 數據採集與回收料（PCR）製程優化發展。</li>
+                                    <li><strong>華嶸（Huarong）：</strong>強力串聯微物理發泡、機械手取件、自動化周邊與生產履歷。</li>
+                                    <li><strong>樺欽（Hwa Chin）：</strong>主打全電動化、雙色精密化及結合 ERP/MES 的生產管理。</li>
+                                </ul>
+                                <p class="text-sm text-slate-500 italic mt-1">(註：我們可在 2026 南港展覽館的橡塑膠展中清晰看見各大廠全面朝大型化、全電化、ESG節能與IIoT物聯網靠攏的主軸)</p>
+                                <p class="text-rose-700 font-medium bg-rose-50 p-2 rounded mt-2"><strong>對金牛頓的關鍵警訊：</strong>大客戶訂單的下滑與同業的全面升級，代表傳統零件與舊系統需求正面臨衝擊。若內部同仁仍抱持觀望，公司將隨著這波產業斷層沉沒。</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-2">四、 我們的突破口：漸進式「經驗共享 ➔ 服務平台 ➔ 雙軌並進」戰略</h3>
+                            <p class="mb-2">面對非常時期，我們絕非被動挨打，而是透過靈活的商業組合與雙軌並進來搶佔市場。我們必須透過穩健且接地氣的商業組合來搶佔市場：</p>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li><strong>以「舊機智慧改造」為首要切入點（撥亂反正的主軸）：</strong>考量中小企業客戶預算與轉型痛點，優先強力推廣「伺服節能系統 + 智能上位機」的舊機智慧改造方案，以最低成本與快速見效協助客戶升級，穩固公司基本現金流。博創高性價比新機銷售則作為「進階選項」，針對有實際擴廠與充足預算的客戶提供，循序漸進。</li>
+                                <li><strong>多元融資與軟體訂閱方案：</strong>設備融資支援與租賃公司合作提供「租賃貸款方案」；智慧軟體與 MOLDINTEL 合作提供「訂閱制」模式，月付享受智能服務。</li>
+                            </ul>
+                            <div class="bg-slate-100 p-3 rounded-lg mt-3 text-sm space-y-1">
+                                <p class="font-bold text-slate-800">為什麼不以「新機為主，舊機智慧改機為輔」？</p>
+                                <ol class="list-decimal pl-5 space-y-1 text-slate-600">
+                                    <li><strong>中小企業客戶的資金緊縮與觀望心態：</strong>高單價全新整機決策週期極長，業務端易陷阻力。</li>
+                                    <li><strong>通路衝突與既有客戶的疏離感：</strong>強推整機易與同業正面衝突，動搖老客戶信任。</li>
+                                    <li><strong>現金流與庫存的高風險：</strong>新機資金佔用大，違背戰時「嚴守現金紀律、追求最小可行性（MVP）」原則。</li>
+                                </ol>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-2">五、 嚴守現金流紀律：交易習慣革新與 MVP 策略</h3>
+                            <ul class="list-disc pl-5 space-y-1.5">
+                                <li><strong>交易習慣轉為「定期合約制」：</strong>我司不再盲目置放庫存。客戶須簽訂定期合約、先付 3 成訂金，再由我司依約採購進口。合約期限內必須出完貨，未出庫存貨售價強制加成。</li>
+                                <li><strong>關於 MVP（最小可行性產品）的落實：</strong>不花大錢開發完美大系統，先用最低成本、最快解決客戶當下痛點的版本切入市場，換取現金流回報。</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-2">六、 戰略定調與三大核心宗旨</h3>
+                            <p class="font-semibold text-blue-800 mb-1">戰略定調：從「硬體供應」走向「以服務為核心的智慧數位生態圈」</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>認清現實，穩紮穩打：</strong>停止觀望，以「舊機改機」為基礎，逐步迎向 AI 智能與智慧機械浪潮。</li>
+                                <li><strong>定位清楚，不做硬體拼圖：</strong>不做高風險大整機，而是成為「串聯上下游，以服務為本的平台整合商」。</li>
+                                <li><strong>步伐一致，拒絕一盤散沙：</strong>財務紀律為本（現金流安全），階段性穩扎穩打；全員共識對齊，用對的方向把一條路走到底。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第二章 -->
+            <div class="chapter-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <button onclick="toggleAccordion(2)" class="w-full px-6 py-5 flex justify-between items-center bg-white hover:bg-slate-50 transition-colors text-left border-l-4 border-blue-600">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span class="bg-blue-100 text-blue-800 text-sm px-2.5 py-0.5 rounded-full font-semibold">02</span>
+                        第二章：業務部實戰工作與轉型推動計畫
+                    </h2>
+                    <i id="icon-2" class="fa-solid fa-chevron-down text-slate-400 rotate-icon text-lg"></i>
+                </button>
+                <div id="content-2" class="accordion-content">
+                    <div class="p-6 border-t border-slate-100 text-slate-700 space-y-4 text-base">
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">一、 業務部轉型核心目標：從「被動賣零件」轉為「主動推廣改機方案與服務」</h3>
+                            <p>打破各吹各調的陋習：業務同仁必須徹底理解產業變局，統一對客話術，主導「以伺服節能與智能上位機協助客戶升級效能、降低成本」的綜合解決方案。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">二、 既有客戶的平穩過渡與「無差別銜接」策略</h3>
+                            <p>以誠意溝通化解轉型陣痛：向既有客戶透明溝通「這是為了提供更長遠、更穩定的高品質服務」，取得理解與信任，保留未來轉化為新業務的無限可能。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">三、 前線情報蒐集與「利潤導向」的客戶分級與退場機制（關鍵機制）</h3>
+                            <p>業務人員需隨時關心客戶，深入了解其近期發展政策。若評估確認客戶未來無法與我司產生交集或無利潤可能，應及早啟動「有序退場與放棄機制」，將資源轉移至新戰略客戶。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">四、 執行「改機為主、新機為輔」的雙軌並進</h3>
+                            <p>強力推動舊機智慧改造（伺服節能系統 ＋ 智能上位機）作為切入市場的第一主力；針對有整機汰換需求的客戶，搭配博創智能聯網射出機作為進階升級選項。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">五、 靈活運用多元商業工具與嚴守現金流紀律</h3>
+                            <p>結合租賃貸款與軟體訂閱制降低門檻。全面實施「定期合約制」，不預先置放庫存，落實預收 3 成訂金與出貨期限管理。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第三章 -->
+            <div class="chapter-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <button onclick="toggleAccordion(3)" class="w-full px-6 py-5 flex justify-between items-center bg-white hover:bg-slate-50 transition-colors text-left border-l-4 border-blue-600">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span class="bg-blue-100 text-blue-800 text-sm px-2.5 py-0.5 rounded-full font-semibold">03</span>
+                        第三章：財務部紀律與現金流防線規劃
+                    </h2>
+                    <i id="icon-3" class="fa-solid fa-chevron-down text-slate-400 rotate-icon text-lg"></i>
+                </button>
+                <div id="content-3" class="accordion-content">
+                    <div class="p-6 border-t border-slate-100 text-slate-700 space-y-4 text-base">
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">一、 財務部戰時定位：從「被動會計稽核」轉為「主動干預總指揮」</h3>
+                            <p>提前介入業務報價流程，實施<strong>「財務一票否決權」</strong>源頭把關：未獲財務部支持與正式同意前，業務無權與客戶簽約。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">二、 進口成本全面管控與動態風險預判</h3>
+                            <p>嚴密監控四大變數（幣別匯率、運費漲跌、關稅與法規費用、雜費）。計算應收應付款之現金差額，提前提出資金缺口預警。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">三、 嚴格落實「零庫存與定期合約制」審查與庫存處置</h3>
+                            <p>公司原則上不置放庫存。進口與採購作業須依據「正式定期合約」與「3成預收訂金入帳證明」啟動，到期未出庫存貨強制執行售價加成。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">四、 客戶利潤稽核與支持業務「有序退場」</h3>
+                            <p>建立定期動態檢核機制，審查客戶實際成本貢獻與利潤表現，全力支援業務端執行有序退場。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第四章 -->
+            <div class="chapter-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <button onclick="toggleAccordion(4)" class="w-full px-6 py-5 flex justify-between items-center bg-white hover:bg-slate-50 transition-colors text-left border-l-4 border-blue-600">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span class="bg-blue-100 text-blue-800 text-sm px-2.5 py-0.5 rounded-full font-semibold">04</span>
+                        第四章：管理部組織重整與共識推進計畫
+                    </h2>
+                    <i id="icon-4" class="fa-solid fa-chevron-down text-slate-400 rotate-icon text-lg"></i>
+                </button>
+                <div id="content-4" class="accordion-content">
+                    <div class="p-6 border-t border-slate-100 text-slate-700 space-y-4 text-base">
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">一、 管理部戰時定位：從「後勤行政」轉為「戰時組織共識與推動引擎」</h3>
+                            <p>確保全體同仁對大環境變局有高度共識，打破各部門「一盤散沙」被動狀態，將危機感轉化為實際行動力。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">二、 內部教育訓練與心態重塑計畫</h3>
+                            <p>定期舉辦內部溝通會與訓練營，協助同仁揚棄舊思維，適應「以舊機改機為主、新機為輔」的全新作業模式。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">三、 跨部門協作與資訊透明化機制</h3>
+                            <p>建立業務與財務鐵三角協作平台，管考前線情報蒐集與內部歸檔機制。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">四、 激勵與紀律並重的考核制度調整</h3>
+                            <p>調整績效指標（KPI），納入「舊改機轉換率、智慧新機推廣、定期合約執行率、現金流控管」。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第五章 -->
+            <div class="chapter-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <button onclick="toggleAccordion(5)" class="w-full px-6 py-5 flex justify-between items-center bg-white hover:bg-slate-50 transition-colors text-left border-l-4 border-blue-600">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span class="bg-blue-100 text-blue-800 text-sm px-2.5 py-0.5 rounded-full font-semibold">05</span>
+                        第五章：新舊交融、心態破冰與產品永續發展戰略
+                    </h2>
+                    <i id="icon-5" class="fa-solid fa-chevron-down text-slate-400 rotate-icon text-lg"></i>
+                </button>
+                <div id="content-5" class="accordion-content">
+                    <div class="p-6 border-t border-slate-100 text-slate-700 space-y-4 text-base">
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">一、 直面內部抗拒：打破老員工的「舒適圈惰性」與「等待心態」</h3>
+                            <p>明確宣告市場結構性改變不可逆，將「抗拒改變」轉化為「參與新局」動能。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">二、 理性看待市場現實：傳統中古產品的「最後防線與過渡價值」</h3>
+                            <p>承認市場緩衝期，不盲目放棄舊業務，合理保留中古設備服務，守住基本現金流。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">三、 雙軌交融的藝術：如何平穩引導客戶從「舊習慣」走向「新升級」</h3>
+                            <p>以舊改機為敲門磚切入建立信任，溫水煮青蛙式引導客戶看見未來 ESG 與升級必要性。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">四、 產品線的全面支撐：以資金與人才為底氣，打造新舊並進的產品護城河</h3>
+                            <p>一邊全力衝刺舊機智慧改機（守當下現金流），一邊推廣智慧新機與軟體訂閱（開拓未來），做到進可攻、退可守。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第六章 -->
+            <div class="chapter-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <button onclick="toggleAccordion(6)" class="w-full px-6 py-5 flex justify-between items-center bg-white hover:bg-slate-50 transition-colors text-left border-l-4 border-blue-600">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span class="bg-blue-100 text-blue-800 text-sm px-2.5 py-0.5 rounded-full font-semibold">06</span>
+                        第六章：業務部門具體工作施行細則與落地機制
+                    </h2>
+                    <i id="icon-6" class="fa-solid fa-chevron-down text-slate-400 rotate-icon text-lg"></i>
+                </button>
+                <div id="content-6" class="accordion-content">
+                    <div class="p-6 border-t border-slate-100 text-slate-700 space-y-4 text-base">
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-2">一、 業務承做客戶案件的「標準時序流程（Step-by-Step）」</h3>
+                            <ol class="list-decimal pl-5 space-y-1.5">
+                                <li><strong>第一階段：</strong>產品底蘊理解與潛在名單初篩（理解改機方案與節能優勢）。</li>
+                                <li><strong>第二階段：</strong>訪客需求登錄與《客戶需求與現況明細表》之建立。</li>
+                                <li><strong>第三階段：</strong>跨部門整合評估與《內部專案討論會議》。</li>
+                                <li><strong>第四階段：</strong>成本試算、利潤核定與「財務一票否決」（未獲財務用印前禁止對外報價）。</li>
+                                <li><strong>第五階段：</strong>正式合約簽訂與《定期合約審查表》管考（3 成訂金規範）。</li>
+                                <li><strong>第六階段：</strong>交機、夥伴服務對接與售後管考。</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-2">二、 無數位系統時期的「過渡期四大核心表單工具」</h3>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>工具一：</strong>《客戶需求與現況明細表》</li>
+                                <li><strong>工具二：</strong>《跨部門專案協調與資源協助申請單》</li>
+                                <li><strong>工具三：</strong>《總成本與利潤試算表》（含財務一票否決欄）</li>
+                                <li><strong>工具四：</strong>《專案執行與售後服務追蹤表》</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第七章 -->
+            <div class="chapter-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <button onclick="toggleAccordion(7)" class="w-full px-6 py-5 flex justify-between items-center bg-white hover:bg-slate-50 transition-colors text-left border-l-4 border-blue-600">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span class="bg-blue-100 text-blue-800 text-sm px-2.5 py-0.5 rounded-full font-semibold">07</span>
+                        第七章：財務部標準作業流程與核心風險管控 SOP
+                    </h2>
+                    <i id="icon-7" class="fa-solid fa-chevron-down text-slate-400 rotate-icon text-lg"></i>
+                </button>
+                <div id="content-7" class="accordion-content">
+                    <div class="p-6 border-t border-slate-100 text-slate-700 space-y-4 text-base">
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-2">一、 財務審查的標準時序流程（Step-by-Step）</h3>
+                            <ol class="list-decimal pl-5 space-y-1">
+                                <li><strong>第一階段：</strong>接收申請與進口變數檢核（匯率、運費、關稅、合作夥伴報價）。</li>
+                                <li><strong>第二階段：</strong>現金差額預判與資金缺口警示。</li>
+                                <li><strong>第三階段：</strong>利潤底線審查與行使「一票否決權」。</li>
+                                <li><strong>第四階段：</strong>定期合約、3成訂金與零庫存採購啟動。</li>
+                                <li><strong>第五階段：</strong>交貨後追蹤、逾期庫存加成與客戶利潤動態複核。</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-2">二、 財務部過渡期四大核心表單工具</h3>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>工具一：</strong>《進口變動成本與風險檢核表》</li>
+                                <li><strong>工具二：</strong>《現金差額與資金缺口預警單》</li>
+                                <li><strong>工具三：</strong>《財務一票否決與報價核定單》</li>
+                                <li><strong>工具四：</strong>《客戶利潤貢獻度與動態複核表》</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第八章 -->
+            <div class="chapter-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <button onclick="toggleAccordion(8)" class="w-full px-6 py-5 flex justify-between items-center bg-white hover:bg-slate-50 transition-colors text-left border-l-4 border-blue-600">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span class="bg-blue-100 text-blue-800 text-sm px-2.5 py-0.5 rounded-full font-semibold">08</span>
+                        第八章：海外市場（泰國、越南）業務推展與運營規範專章
+                    </h2>
+                    <i id="icon-8" class="fa-solid fa-chevron-down text-slate-400 rotate-icon text-lg"></i>
+                </button>
+                <div id="content-8" class="accordion-content">
+                    <div class="p-6 border-t border-slate-100 text-slate-700 space-y-4 text-base">
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">一、 海外市場前期準備與市場調研（Market Research）規範</h3>
+                            <p>在地產業聚落與台商動態調研、痛點與法規適應性調研、競爭態勢與通路生態調研（可請當地合作夥伴提供）。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">二、 海外合作夥伴（舊改機技師、當地廠家）之開發與篩選作業</h3>
+                            <p>嚴格招募標準、提供標準化技術培訓與文件對接、明確權責劃分與合約約束。</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-900 border-l-2 border-blue-600 pl-2 mb-1">三、 產品銷售策略、銷售前後服務與管理流程</h3>
+                            <p>售前需求診斷與 ROI 試算；售中落實跨境定期合約與 3 成訂金；售後遠端數據監控與在地快速響應。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第九章 -->
+            <div class="chapter-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <button onclick="toggleAccordion(9)" class="w-full px-6 py-5 flex justify-between items-center bg-white hover:bg-slate-50 transition-colors text-left border-l-4 border-amber-500">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span class="bg-amber-100 text-amber-800 text-sm px-2.5 py-0.5 rounded-full font-semibold">09</span>
+                        第九章：打造以服務為本的「產業經驗資訊分享平台」之規劃與落實
+                    </h2>
+                    <i id="icon-9" class="fa-solid fa-chevron-down text-slate-400 rotate-icon text-lg"></i>
+                </button>
+                <div id="content-9" class="accordion-content">
+                    <div class="p-6 border-t border-slate-100 text-slate-700 space-y-5 text-base">
+                        <div>
+                            <h3 class="text-lg font-bold text-amber-900 border-l-2 border-amber-500 pl-2 mb-2">一、 平台的戰略定位：從「銷售導向」轉為「價值共享與獲客磁場」</h3>
+                            <ul class="list-disc pl-5 space-y-1.5">
+                                <li><strong>打破傳統資訊落差：</strong>效仿網聯時代共享精神，提供免費且具實質價值的技術資訊，建立上中下游產業有意願造訪的專業資訊樞紐。</li>
+                                <li><strong>以服務聚人，以專業建立信任：</strong>透過公開、無私的實戰經驗分享，將金牛頓塑造為業界首屈一指的技術與智慧化升級智庫。</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-amber-900 border-l-2 border-amber-500 pl-2 mb-2">二、 核心內容規劃：以「伺服節能系統維修案例與故障排錯」為起點</h3>
+                            <ul class="list-disc pl-5 space-y-1.5">
+                                <li><strong>去識別化的真實實戰案例分享：</strong>詳細拆解故障緣由、檢測維修過程與日常預防，保護客戶隱私同時展現現場技術能力。</li>
+                                <li><strong>降低技術門檻與解決痛點：</strong>轉化複雜智慧化知識為白話實用乾貨，成為業界疑難雜症的第一手搜尋解答。</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-amber-900 border-l-2 border-amber-500 pl-2 mb-2">三、 執行落地藍圖：低成本、高效率的漸進式實施步驟</h3>
+                            <ol class="list-decimal pl-5 space-y-1.5">
+                                <li><strong>第一階段（MVP 模式）：</strong>盤點最常見 10 大維修與節能案例，建立線上排錯專區。</li>
+                                <li><strong>第二階段（互動工具）：</strong>加入舊機升級伺服節能效益與電費節省簡易試算器，引導讀者轉化為潛在客戶。</li>
+                                <li><strong>第三階段（生態圈串聯）：</strong>開放上游供應商與下游夥伴技術對接，升級為台/越/泰跨國節能服務生態平台。</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-amber-900 border-l-2 border-amber-500 pl-2 mb-2">四、 內部協作與管考機制</h3>
+                            <p>管理部統籌跨部門內容產出小組。平台主動諮詢案件無縫接軌《客戶需求與現況明細表》，形成「線上知識吸引 ➔ 尋求技術協助 ➔ 財務合約審查 ➔ 落地改機服務」的一條龍閉環。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 總結與執行細節指南 -->
+            <div class="chapter-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <button onclick="toggleAccordion(10)" class="w-full px-6 py-5 flex justify-between items-center bg-slate-900 text-white hover:bg-slate-800 transition-colors text-left border-l-4 border-amber-400">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <span class="bg-amber-400 text-slate-900 text-sm px-2.5 py-0.5 rounded-full font-semibold">附錄</span>
+                        總結與執行細節指南
+                    </h2>
+                    <i id="icon-10" class="fa-solid fa-chevron-down text-slate-400 rotate-icon text-lg"></i>
+                </button>
+                <div id="content-10" class="accordion-content">
+                    <div class="p-6 border-t border-slate-100 text-slate-700 space-y-5 text-base">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 border-l-2 border-amber-500 pl-2 mb-2">一、 定期有效之轉型運作與會議討論方針</h3>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>設立「轉型推進週會」：</strong>檢視《客戶需求與現況明細表》、海外進度與合約執行狀況。</li>
+                                <li><strong>落實跨部門「專案協調例會」：</strong>重大案件與海外改機前召開，明確權責與維修分工。</li>
+                                <li><strong>工作明細動態管考：</strong>產出「行動清單（Action Items）」指定負責人與期限。</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 border-l-2 border-amber-500 pl-2 mb-2">二、 人員不足下的因應策略及實際辦法</h3>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>落實師徒制：</strong>資深技師帶領「做中學」，快速累積改機技術。</li>
+                                <li><strong>善用外部生態夥伴：</strong>非核心/在地安裝維修外包給各地協力廠；軟體/AI 仰賴夥伴（MOLDINTEL）支援。</li>
+                                <li><strong>嚴格執行客戶分級退場：</strong>放棄無利潤客戶，資源集中於高效能戰略客戶。</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 border-l-2 border-amber-500 pl-2 mb-2">三、 執行管理追蹤與適時修正機制</h3>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>四大過渡表單追蹤鏈：</strong>從拜訪、申請、試算（一票否決）到售後形成閉環。</li>
+                                <li><strong>KPI 指標動態對齊：</strong>考核轉向舊改機轉換率、定期合約執行率、現金流狀況。</li>
+                                <li><strong>停損與策略修正檢核點：</strong>每季定期複核，遇結構性瓶頸立即微調戰術。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-center py-6 border-t border-slate-800 mt-12 text-sm">
+        <p>© 2026 金牛頓工業股份有限公司 KinNewton Co., Ltd. 版權所有</p>
+    </footer>
+
+    <!-- JavaScript Controls -->
+    <script>
+        function toggleAccordion(id) {
+            const content = document.getElementById(`content-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
+            
+            content.classList.toggle('expanded');
+            icon.classList.toggle('active');
+        }
+
+        function toggleAll(expand) {
+            const totalChapters = 10;
+            for (let i = 1; i <= totalChapters; i++) {
+                const content = document.getElementById(`content-${i}`);
+                const icon = document.getElementById(`icon-${i}`);
+                
+                if (expand) {
+                    content.classList.add('expanded');
+                    icon.classList.add('active');
+                } else {
+                    content.classList.remove('expanded');
+                    icon.classList.remove('active');
+                }
+            }
+        }
+
+        function filterChapters() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.chapter-card');
+
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                if (text.includes(input)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
