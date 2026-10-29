@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>公司每日打卡與工作回報</title>
+    <title>公司每日出勤打卡</title>
     <style>
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
@@ -33,7 +33,7 @@
             font-weight: bold; 
             color: #444;
         }
-        select, textarea { 
+        select { 
             width: 100%; 
             padding: 12px; 
             box-sizing: border-box; 
@@ -41,9 +41,6 @@
             border-radius: 6px; 
             font-size: 16px; 
             background: #fff;
-        }
-        textarea {
-            resize: vertical;
         }
         button { 
             background: #007bff; 
@@ -86,7 +83,7 @@
 <body>
 
 <div class="card">
-    <h2>🚀 每日打卡與工作回報</h2>
+    <h2>🚀 公司出勤與狀態回報</h2>
     <form id="checkinForm">
         <div class="form-group">
             <label for="empName">員工姓名：</label>
@@ -108,14 +105,23 @@
         </div>
 
         <div class="form-group">
-            <label>打卡位置：</label>
-            <button type="button" class="loc-btn" onclick="getLocation()">📍 取得目前位置並打卡</button>
-            <div id="locationText">尚未取得位置</div>
+            <label for="workStatus">出勤狀態：</label>
+            <select id="workStatus" required>
+                <option value="" disabled selected>-- 請選擇目前的狀態 --</option>
+                <option value="上班">上班</option>
+                <option value="下班">下班</option>
+                <option value="加班">加班</option>
+                <option value="出差">出差</option>
+                <option value="休假">休假</option>
+                <option value="病假">病假</option>
+                <option value="公出">公出</option>
+            </select>
         </div>
 
         <div class="form-group">
-            <label for="workSummary">今日工作簡述：</label>
-            <textarea id="workSummary" rows="4" required placeholder="簡單描述今天做了什麼、進度如何..."></textarea>
+            <label>打卡位置：</label>
+            <button type="button" class="loc-btn" onclick="getLocation()">📍 取得目前位置並打卡</button>
+            <div id="locationText">尚未取得位置</div>
         </div>
 
         <button type="submit">送出今日紀錄</button>
@@ -188,7 +194,7 @@
         e.preventDefault();
         
         const name = document.getElementById("empName").value;
-        const summary = document.getElementById("workSummary").value;
+        const statusType = document.getElementById("workStatus").value;
         const nowTime = new Date().toLocaleString();
 
         if (!currentAddress && !currentCoords) {
@@ -197,20 +203,31 @@
         }
 
         const payload = {
-            name: name,
             time: nowTime,
-            location: currentAddress || currentCoords,
-            summary: summary
+            name: name,
+            status: statusType, // 新增的狀態欄位
+            location: currentAddress || currentCoords
         };
 
-       // 將 payload 透過 fetch() 傳送到您的 Google Apps Script 後端
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxipRSpdEDFiYjOnySIroCQ6v6UnNr-OGbFpt_FHkTZJ0jCH77-wKABLHVGA8ek5hE6DQ/exec'; // <-- 換成你的網址
+        // 串接您的 Google Apps Script 後端網址（請確保 GAS 那邊的試算表欄位有對應調整）
+        const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'; // <-- 請填入您的 GAS 網址
 
         document.getElementById("status").innerText = "正在傳送資料至雲端...";
 
+        // 如果您尚未接 GAS，可以先用以下註解掉的測試送出：
+        /*
+        console.log("準備送出的資料：", payload);
+        document.getElementById("status").innerText = "🎉 送出成功！(測試模式)";
+        document.getElementById("checkinForm").reset();
+        document.getElementById("locationText").innerText = "尚未取得位置";
+        currentAddress = "";
+        currentCoords = "";
+        return;
+        */
+
         fetch(scriptURL, {
             method: 'POST',
-            mode: 'no-cors', // 避免跨網域阻擋
+            mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json',
             },
