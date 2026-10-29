@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>公司每日打卡與工作簡述</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 30px auto; padding: 20px; background: #f9f9f9; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"], textarea { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        #status { margin-top: 10px; color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>🚀 每日打卡與工作回報</h2>
+    <form id="checkinForm">
+        <div class="form-group">
+            <label for="empName">員工姓名：</label>
+            <input type="text" id="empName" required placeholder="請輸入您的姓名">
+        </div>
+
+        <div class="form-group">
+            <label>打卡狀態：</label>
+            <button type="button" onclick="getLocation()">取得目前位置並打卡</button>
+            <p id="locationText" style="font-size: 14px; color: #555; margin-top: 5px;">尚未取得位置</p>
+        </div>
+
+        <div class="form-group">
+            <label for="workSummary">今日工作簡述：</label>
+            <textarea id="workSummary" rows="4" required placeholder="簡單描述今天做了什麼、進度如何..."></textarea>
+        </div>
+
+        <button type="submit">送出今日紀錄</button>
+        <p id="status"></p>
+    </form>
+</div>
+
+<script>
+    let currentCoords = "";
+
+    // 取得地理位置
+    function getLocation() {
+        const locText = document.getElementById("locationText");
+        if (navigator.geolocation) {
+            locText.innerText = "正在定位中...";
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    currentCoords = `緯度: ${lat.toFixed(4)}, 經度: ${lon.toFixed(4)}`;
+                    locText.innerText = `已取得位置：${currentCoords}`;
+                },
+                (error) => {
+                    locText.innerText = "無法取得位置，請確認是否授權定位。";
+                }
+            );
+        } else {
+            locText.innerText = "您的瀏覽器不支援地理定位功能。";
+        }
+    }
+
+    // 表單送出事件
+    document.getElementById("checkinForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        const name = document.getElementById("empName").value;
+        const summary = document.getElementById("workSummary").value;
+        const nowTime = new Date().toLocaleString();
+
+        const payload = {
+            name: name,
+            time: nowTime,
+            location: currentCoords || "未定位",
+            summary: summary
+        };
+
+        // 這裡可以把 payload 透過 fetch() 傳送到你的 Google Apps Script 網址
+        console.log("準備送出的資料：", payload);
+        
+        document.getElementById("status").innerText = "送出成功！感謝您的回報。";
+        document.getElementById("checkinForm").reset();
+        document.getElementById("locationText").innerText = "尚未取得位置";
+    });
+</script>
+
+</body>
+</html>
