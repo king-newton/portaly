@@ -203,14 +203,30 @@
             summary: summary
         };
 
-        // 之後可以把 payload 透過 fetch() 傳送到您的 Google Apps Script 後端
-        console.log("準備送出的資料：", payload);
-        
-        document.getElementById("status").innerText = "🎉 送出成功！感謝您的回報。";
-        document.getElementById("checkinForm").reset();
-        document.getElementById("locationText").innerText = "尚未取得位置";
-        currentAddress = "";
-        currentCoords = "";
+       // 將 payload 透過 fetch() 傳送到您的 Google Apps Script 後端
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxipRSpdEDFiYjOnySIroCQ6v6UnNr-OGbFpt_FHkTZJ0jCH77-wKABLHVGA8ek5hE6DQ/exec'; // <-- 換成你的網址
+
+        document.getElementById("status").innerText = "正在傳送資料至雲端...";
+
+        fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors', // 避免跨網域阻擋
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            document.getElementById("status").innerText = "🎉 送出成功！資料已存入雲端試算表。";
+            document.getElementById("checkinForm").reset();
+            document.getElementById("locationText").innerText = "尚未取得位置";
+            currentAddress = "";
+            currentCoords = "";
+        })
+        .catch(error => {
+            console.error('Error!', error);
+            document.getElementById("status").innerText = "❌ 送出失敗，請再試一次。";
+        });
     });
 </script>
 
