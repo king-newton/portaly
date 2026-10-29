@@ -17,6 +17,7 @@
             padding: 20px; 
             border-radius: 12px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+            margin-bottom: 20px;
         }
         h2 {
             margin-top: 0;
@@ -61,6 +62,21 @@
         }
         .loc-btn:hover {
             background: #218838;
+        }
+        .sheet-btn {
+            background: #ffc107;
+            color: #333;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .sheet-btn:hover {
+            background: #e0a800;
         }
         #locationText { 
             font-size: 14px; 
@@ -127,6 +143,15 @@
         <button type="submit">送出今日紀錄</button>
         <p id="status"></p>
     </form>
+</div>
+
+<!-- 主管/全員即時總表按鈕專區 -->
+<div class="card" style="text-align: center;">
+    <h3 style="margin-top: 0; color: #333; font-size: 18px;">📋 出勤紀錄查詢</h3>
+    <p style="font-size: 14px; color: #666;">點擊下方按鈕即可隨時查看全公司即時打卡總表：</p>
+    <a href="https://docs.google.com/spreadsheets/d/1dwedE1cB0-UaO3C8pp6hw2nPVex2o0pXDZaffzoiTuc/edit?usp=sharing" target="_blank" class="sheet-btn">
+        📊 開啟即時出勤總表
+    </a>
 </div>
 
 <script>
@@ -205,25 +230,13 @@
         const payload = {
             time: nowTime,
             name: name,
-            status: statusType, // 新增的狀態欄位
+            status: statusType,
             location: currentAddress || currentCoords
         };
 
-        // 串接您的 Google Apps Script 後端網址（請確保 GAS 那邊的試算表欄位有對應調整）
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxGzLW4QUO3DCSSoTtEhosM8bmAigYN7rSpdirkmU9BrQdkxQX2KA7-UvCepSiS1KHDsQ/exec'; // <-- 請填入您的 GAS 網址
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxGzLW4QUO3DCSSoTtEhosM8bmAigYN7rSpdirkmU9BrQdkxQX2KA7-UvCepSiS1KHDsQ/exec';
 
         document.getElementById("status").innerText = "正在傳送資料至雲端...";
-
-        // 如果您尚未接 GAS，可以先用以下註解掉的測試送出：
-        /*
-        console.log("準備送出的資料：", payload);
-        document.getElementById("status").innerText = "🎉 送出成功！(測試模式)";
-        document.getElementById("checkinForm").reset();
-        document.getElementById("locationText").innerText = "尚未取得位置";
-        currentAddress = "";
-        currentCoords = "";
-        return;
-        */
 
         fetch(scriptURL, {
             method: 'POST',
