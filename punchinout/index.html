@@ -33,13 +33,14 @@
             font-weight: bold; 
             color: #444;
         }
-        input[type="text"], textarea { 
+        select, textarea { 
             width: 100%; 
             padding: 12px; 
             box-sizing: border-box; 
             border: 1px solid #ddd; 
             border-radius: 6px; 
             font-size: 16px; 
+            background: #fff;
         }
         textarea {
             resize: vertical;
@@ -89,7 +90,21 @@
     <form id="checkinForm">
         <div class="form-group">
             <label for="empName">員工姓名：</label>
-            <input type="text" id="empName" required placeholder="請輸入您的姓名">
+            <select id="empName" required>
+                <option value="" disabled selected>-- 請選擇您的姓名 --</option>
+                <option value="陳秀燕">陳秀燕</option>
+                <option value="高欣宜">高欣宜</option>
+                <option value="ERIC">ERIC</option>
+                <option value="陳靖昂">陳靖昂</option>
+                <option value="何成偉">何成偉</option>
+                <option value="陳品鈞">陳品鈞</option>
+                <option value="楊添仰">楊添仰</option>
+                <option value="戴政宏">戴政宏</option>
+                <option value="曾晨杰">曾晨杰</option>
+                <option value="李佩娟">李佩娟</option>
+                <option value="余品橋">余品橋</option>
+                <option value="詹淑敏">詹淑敏</option>
+            </select>
         </div>
 
         <div class="form-group">
