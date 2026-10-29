@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公司線上請假與雙主管簽核系統</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto space-y-8">
+        
+        <!-- 標頭 -->
+        <div class="text-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <h1 class="text-2xl font-bold text-slate-800 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-file-signature text-emerald-600"></i> 公司請假與簽核管理入口
+            </h1>
+            <p class="text-sm text-slate-500 mt-1">串聯 Google 試算表 · 自動計算特休 · 雙主管電子印章簽核</p>
+        </div>
+
+        <!-- 功能頁籤切換 -->
+        <div class="flex border-b border-slate-200 bg-white rounded-xl p-1 shadow-sm">
+            <button onclick="switchTab('apply')" id="tab-apply" class="flex-1 py-3 font-bold text-sm text-center rounded-lg bg-emerald-600 text-white transition">
+                📝 員工請假申請
+            </button>
+            <button onclick="switchTab('approve')" id="tab-approve" class="flex-1 py-3 font-bold text-sm text-center rounded-lg text-slate-600 hover:bg-slate-50 transition">
+                🛡️ 主管簽核儀表板
+            </button>
+        </div>
+
+        <!-- 區塊一：員工請假申請表 -->
+        <div id="section-apply" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+            <h2 class="text-lg font-bold text-slate-800 border-b pb-3">填寫請假單</h2>
+            
+            <form id="leaveForm" onsubmit="submitLeave(event)" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- 姓名 -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">申請人姓名</label>
+                        <select id="empName" onchange="fetchEmployeeLeave(this.value)" required class="w-full bg-slate-50 p-3 rounded-xl border border-slate-200 text-sm outline-none focus:border-emerald-600">
+                            <option value="" disabled selected>-- 請選擇您的姓名 --</option>
+                            <option value="楊添仰">楊添仰</option>
+                            <option value="陳品鈞">陳品鈞</option>
+                            <option value="陳秀燕">陳秀燕</option>
+                            <option value="高欣宜">高欣宜</option>
+                            <option value="余品橋">余品橋</option>
+                            <option value="陳慧真">陳慧真</option>
+                            <option value="ERIC">ERIC</option>
+                            <option value="陳靖昂">陳靖昂</option>
+                            <option value="何成偉">何成偉</option>
+                            <option value="李佩娟">李佩娟</option>
+                            <option value="曾晨杰">曾晨杰</option>
+                            <option value="戴政宏">戴政宏</option>
+                            <option value="詹淑敏">詹淑敏</option>
+                        </select>
+                    </div>
+
+                    <!-- 剩餘特休即時顯示區 -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">115年剩餘特休天數</label>
+                        <div id="leaveBalance" class="w-full bg-emerald-50 text-emerald-800 p-3 rounded-xl border border-emerald-200 font-bold text-sm flex items-center justify-between">
+                            <span>點擊選擇姓名後自動查詢...</span>
+                            <i class="fa-solid fa-clock-rotate-left text-emerald-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 假別與請假時間 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">假別</label>
+                        <select id="leaveType" required class="w-full bg-slate-50 p-3 rounded-xl border border-slate-200 text-sm outline-none focus:border-emerald-600">
+                            <option value="特休假">特休假</option>
+                            <option value="事假">事假</option>
+                            <option value="病假">病假</option>
+                            <option value="公假/公出">公假/公出</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">開始時間</label>
+                        <input type="datetime-local" id="startTime" required class="w-full bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs outline-none focus:border-emerald-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">結束時間</label>
+                        <input type="datetime-local" id="endTime" required class="w-full bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs outline-none focus:border-emerald-600">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="md:col-span-1">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">請假總天數/時數</label>
+                        <input type="number" id="leaveDays" step="0.5" placeholder="例如：1 或 0.5" required class="w-full bg-slate-50 p-3 rounded-xl border border-slate-200 text-sm outline-none focus:border-emerald-600">
+                    </div>
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">請假事由</label>
+                        <input type="text" id="leaveReason" placeholder="請簡述請假原因..." required class="w-full bg-slate-50 p-3 rounded-xl border border-slate-200 text-sm outline-none focus:border-emerald-600">
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer">
+                    🚀 提交請假申請（送交雙主管簽核）
+                </button>
+            </form>
+        </div>
+
+        <!-- 區塊二：主管簽核儀表板 -->
+        <div id="section-approve" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4 hidden">
+            <h2 class="text-lg font-bold text-slate-800 border-b pb-3 flex items-center justify-between">
+                <span>審核待辦清單</span>
+                <button onclick="loadPendingLeaves()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg border">
+                    🔄 重整清單
+                </button>
+            </h2>
+
+            <!-- 主管簽核角色模擬 -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">簽核主管姓名：</label>
+                    <input type="text" id="managerName" value="主管代表" class="w-full p-2 rounded-lg border bg-white">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">簽核層級：</label>
+                    <select id="managerStep" class="w-full p-2 rounded-lg border bg-white font-bold text-emerald-700">
+                        <option value="1">第一層主管（一階審核）</option>
+                        <option value="2">第二層主管（二階最終核准）</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 待簽核清單表格 -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-600 border-b">
+                            <th class="p-3">單號</th>
+                            <th class="p-3">姓名</th>
+                            <th class="p-3">假別</th>
+                            <th class="p-3">天數</th>
+                            <th class="p-3">請假事由</th>
+                            <th class="p-3">簽核進度</th>
+                            <th class="p-3 text-center">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pendingTableBody">
+                        <tr>
+                            <td colspan="7" class="p-6 text-center text-slate-400">點擊「重整清單」載入最新待審假單...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 您剛部署成功的 GAS 網址
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwCpazOw8nEAirKT8j4ruNDwwB89KcA_LlmXPAHA7skjIKY2idXA23HyYctylp7aSPXgw/exec";
+        
+        let currentEmployees = [];
+
+        // 頁籤切換
+        function switchTab(tab) {
+            if (tab === 'apply') {
+                document.getElementById('section-apply').classList.remove('hidden');
+                document.getElementById('section-approve').classList.add('hidden');
+                document.getElementById('tab-apply').className = "flex-1 py-3 font-bold text-sm text-center rounded-lg bg-emerald-600 text-white transition";
+                document.getElementById('tab-approve').className = "flex-1 py-3 font-bold text-sm text-center rounded-lg text-slate-600 hover:bg-slate-50 transition";
+            } else {
+                document.getElementById('section-apply').classList.add('hidden');
+                document.getElementById('section-approve').classList.remove('hidden');
+                document.getElementById('tab-approve').className = "flex-1 py-3 font-bold text-sm text-center rounded-lg bg-emerald-600 text-white transition";
+                document.getElementById('tab-apply').className = "flex-1 py-3 font-bold text-sm text-center rounded-lg text-slate-600 hover:bg-slate-50 transition";
+                loadPendingLeaves();
+            }
+        }
+
+        // 載入員工特休資料
+        function fetchEmployeeLeave(name) {
+            const balanceDiv = document.getElementById('leaveBalance');
+            balanceDiv.innerHTML = "<span>正在向 Google 試算表查詢中...</span>";
+
+            fetch(`${GAS_WEB_APP_URL}?action=getEmployeeData`)
+                .then(res => res.json())
+                .then(res => {
+                    if (res.status === 'success') {
+                        currentEmployees = res.data;
+                        const emp = currentEmployees.find(e => e.name === name);
+                        if (emp) {
+                            balanceDiv.innerHTML = `<span>【${emp.name}】115年剩餘特休：<strong class="text-lg text-emerald-700">${emp.remainingLeave}</strong> 天</span>`;
+                        } else {
+                            balanceDiv.innerHTML = `<span>無資料</span>`;
+                        }
+                    }
+                })
+                .catch(err => {
+                    balanceDiv.innerHTML = `<span class="text-red-500">無法連線至雲端試算表</span>`;
+                });
+        }
+
+        // 提交請假單
+        function submitLeave(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "傳送中...";
+            submitBtn.disabled = true;
+
+            const payload = {
+                action: 'submitLeave',
+                name: document.getElementById('empName').value,
+                type: document.getElementById('leaveType').value,
+                startTime: document.getElementById('startTime').value,
+                endTime: document.getElementById('endTime').value,
+                days: document.getElementById('leaveDays').value,
+                reason: document.getElementById('leaveReason').value
+            };
+
+            fetch(GAS_WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(res => {
+                alert(`🎉 ${res.message}\n單號：${res.leaveId}`);
+                document.getElementById('leaveForm').reset();
+                document.getElementById('leaveBalance').innerHTML = "<span>點擊選擇姓名後自動查詢...</span>";
+            })
+            .catch(err => {
+                alert("❌ 送出失敗，請再試一次。");
+            })
+            .finally(() => {
+                submitBtn.innerText = "🚀 提交請假申請（送交雙主管簽核）";
+                submitBtn.disabled = false;
+            });
+        }
+
+        // 主管載入待審清單
+        function loadPendingLeaves() {
+            const tbody = document.getElementById('pendingTableBody');
+            tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">正在查詢待審核假單...</td></tr>`;
+
+            fetch(`${GAS_WEB_APP_URL}?action=getPendingLeaves`)
+                .then(res => res.json())
+                .then(res => {
+                    if (res.status === 'success' && res.data.length > 0) {
+                        tbody.innerHTML = res.data.map(item => `
+                            <tr class="border-b hover:bg-slate-50">
+                                <td class="p-3 font-mono text-slate-500">${item.id}</td>
+                                <td class="p-3 font-bold">${item.name}</td>
+                                <td class="p-3">${item.type}</td>
+                                <td class="p-3 text-emerald-700 font-bold">${item.days} 天</td>
+                                <td class="p-3 text-slate-600">${item.reason}</td>
+                                <td class="p-3">
+                                    <span class="px-2 py-1 rounded bg-slate-100 text-slate-600">一階: ${item.step1Status}</span>
+                                    <span class="px-2 py-1 rounded bg-slate-100 text-slate-600 ml-1">二階: ${item.step2Status}</span>
+                                </td>
+                                <td class="p-3 text-center">
+                                    <button onclick="approveLeave('${item.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg shadow text-xs">
+                                        ✍️ 同意並蓋章
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">目前沒有需要簽核的假單 🎉</td></tr>`;
+                    }
+                });
+        }
+
+        // 主管執行簽核 (加蓋電子印章時間戳記)
+        function approveLeave(leaveId) {
+            const managerName = document.getElementById('managerName').value;
+            const step = parseInt(document.getElementById('managerStep').value);
+
+            if (!managerName) {
+                alert("請先輸入簽核主管姓名！");
+                return;
+            }
+
+            if (!confirm(`確定要以【第 ${step} 層主管：${managerName}】身份核准單號 ${leaveId} 嗎？`)) return;
+
+            const payload = {
+                action: 'approveLeave',
+                leaveId: leaveId,
+                step: step,
+                managerName: managerName
+            };
+
+            fetch(GAS_WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(res => {
+                alert(`✅ 簽核完成！${res.message}`);
+                loadPendingLeaves();
+            });
+        }
+    </script>
+
+</body>
+</html>
