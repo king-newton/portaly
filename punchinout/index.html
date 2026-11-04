@@ -148,10 +148,10 @@
 <!-- 主管/全員即時總表按鈕專區 -->
 <div class="card" style="text-align: center;">
     <h3 style="margin-top: 0; color: #333; font-size: 18px;">📋 出勤紀錄查詢</h3>
-    <p style="font-size: 14px; color: #666;">點擊下方按鈕即可隨時在新視窗查看全公司即時打卡總表：</p>
-    <!-- 採用第2種：維持新視窗檢視 Google 試算表[cite: 1] -->
-    <a href="https://docs.google.com/spreadsheets/d/1dwedE1cB0-UaO3C8pp6hw2nPVex2o0pXDZaffzoiTuc/edit?usp=sharing" target="_blank" class="sheet-btn">
-        📊 開啟即時出勤總表
+    <p style="font-size: 14px; color: #666;">點擊下方按鈕即可隨時在新視窗查看出勤總表列印檔：</p>
+    <!-- 採用 PDF 匯出/列印報表檢視連結 -->
+    <a href="https://docs.google.com/spreadsheets/d/1dwedE1cB0-UaO3C8pp6hw2nPVex2o0pXDZaffzoiTuc/export?format=pdf" target="_blank" class="sheet-btn">
+        🖨️ 開啟即時出勤列印報表檔
     </a>
 </div>
 
@@ -250,8 +250,8 @@
         .then(response => {
             document.getElementById("status").innerText = "🎉 送出成功！資料已存入雲端試算表。";
             
-            // 【貼心優化】打卡成功後，自動在新視窗開啟總表讓使用者立刻確認
-            window.open('https://docs.google.com/spreadsheets/d/1dwedE1cB0-UaO3C8pp6hw2nPVex2o0pXDZaffzoiTuc/edit?usp=sharing', '_blank');
+            // 【修改處】打卡成功後，自動在新視窗開啟列印報表檔（PDF 格式預覽）
+            window.open('https://docs.google.com/spreadsheets/d/1dwedE1cB0-UaO3C8pp6hw2nPVex2o0pXDZaffzoiTuc/export?format=pdf', '_blank');
 
             document.getElementById("checkinForm").reset();
             document.getElementById("locationText").innerText = "尚未取得位置";
